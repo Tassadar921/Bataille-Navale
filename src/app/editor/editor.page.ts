@@ -10,6 +10,7 @@ export class EditorPage implements OnInit {
 
   public droppedData = '';
   public droppedData2 = '';
+  public matrix = [];
 
   @ViewChild(DroppableDirective, { read: ElementRef, static: true })
   droppableElement: ElementRef;
@@ -17,23 +18,21 @@ export class EditorPage implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    const tab = [];
+    for(let i = 0; i<10; i++){
+      tab.push(0);
+    }
+    for(let i = 0; i<10; i++){
+      this.matrix.push(tab);
+    }
   }
 
-  onDrop({ dropData }: DropEvent<string>): void {
+  onDrop = (dropData, letter, num) => {
+    console.log(dropData + ' ' + letter + num);
     this.droppedData = dropData;
     setTimeout(() => {
       this.droppedData = '';
     }, 2000);
-  }
-
-  onDrop2({ dropData }: DropEvent<string>): void {
-    this.droppedData2 = dropData;
-    setTimeout(() => {
-      this.droppedData2 = '';
-    }, 2000);
-  }
-
-  validateDrop: ValidateDrop = ({ target }) =>
-    this.droppableElement.nativeElement.contains(target as Node);
+  };
 
 }
