@@ -18,24 +18,19 @@
     <ion-row>
       <ion-col>{{el}}</ion-col>
       <div *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
-        <ion-col>
-<!--          <div class="dropZone"-->
-<!--            mwlDroppable-->
-<!--            (drop)="onDrop($event.dropData, letter, el)">-->
-<!--            -->
-<!--          </div>-->
-          {{letter+el}}
+        <ion-col mwlDroppable
+                 (drop)="onDrop($event.dropData, letter, el)"
+                 dragOverClass="drop-over-active">
         </ion-col>
       </div>
     </ion-row>
   </div>
 </ion-grid>
 
-<!--  <div-->
-<!--    mwlDraggable-->
-<!--    dropData="bar"-->
-<!--    dragActiveClass="drag-active"-->
-<!--    [dragSnapGrid]="{ x: 40, y: 40 }"-->
-<!--    [touchStartLongPress]="{ delay: 300, delta: 30 }">-->
-<!--    <img src="../../assets/pics/spaceship_blue_1.png">-->
-<!--  </div>-->
+  <div style="border: 1px white solid"
+    mwlDraggable
+    dropData="bar"
+    dragActiveClass="drag-active"
+    [dragSnapGrid]="{ x: 40, y: 40 }">
+    <img src="../../assets/pics/spaceship_blue_1.png">
+  </div>
