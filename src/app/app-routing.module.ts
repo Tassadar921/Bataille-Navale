@@ -7,14 +7,35 @@ const routes: Routes = [
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
   },
   {
-    path: 'message/:id',
-    loadChildren: () => import('./view-message/view-message.module').then( m => m.ViewMessagePageModule)
-  },
-  {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'welcome',
     pathMatch: 'full'
   },
+  {
+    path: 'welcome',
+    loadChildren: () => import('./welcome/welcome.module').then( m => m.WelcomePageModule)
+  },
+  {
+    path: 'room',
+    loadChildren: () => import('./room/room.module').then( m => m.RoomPageModule)
+  },
+  {
+    path: 'scoreboard',
+    loadChildren: () => import('./scoreboard/scoreboard.module').then( m => m.ScoreboardPageModule)
+  },
+  {
+    path: 'editor',
+    loadChildren: () => import('./editor/editor.module').then( m => m.EditorPageModule)
+  },
+  {
+    path: 'settings',
+    loadChildren: () => import('./settings/settings.module').then( m => m.SettingsPageModule)
+  },
+  {
+    path: 'friends',
+    loadChildren: () => import('./friends/friends.module').then( m => m.FriendsPageModule)
+  },
+
 ];
 
 @NgModule({

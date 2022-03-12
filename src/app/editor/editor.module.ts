@@ -1,0 +1,25 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import { IonicModule } from '@ionic/angular';
+
+import { EditorPageRoutingModule } from './editor-routing.module';
+
+import { EditorPage } from './editor.page';
+
+import {MenuComponent} from '../shared/menu/menu/menu.component';
+
+import {DragAndDropModule} from 'angular-draggable-droppable';
+
+@NgModule({
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    EditorPageRoutingModule,
+    DragAndDropModule
+  ],
+  declarations: [EditorPage, MenuComponent]
+})
+export class EditorPageModule {}
