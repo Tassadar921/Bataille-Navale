@@ -1,0 +1,44 @@
+.case-num{
+  border: thin solid white;
+  width:250%;
+  height: 100%;
+}
+
+.case{
+  border: thin solid white;
+  width:200%;
+  height: 50%;
+}
+
+.tableau{
+  border: medium solid white;
+  width: 200%;
+  background: url("../../../assets/img/fond.png");
+
+}
+
+.barre {
+  border-left: 4px solid white;
+  height: 200px;
+
+}
+#flex-container {
+
+  width: 150%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap:wrap;
+}
+
+.elem
+{
+  display:flex;
+
+  background-color:#202020;
+  border:5px solid black;
+}
+
+.ion-app{
+  background: url("../../../assets/img/fondg.png");
+}
