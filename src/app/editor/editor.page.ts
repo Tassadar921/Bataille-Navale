@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {DropEvent, DroppableDirective, ValidateDrop} from 'angular-draggable-droppable';
+import {DroppableDirective} from 'angular-draggable-droppable';
 
 @Component({
   selector: 'app-editor',
@@ -8,31 +8,59 @@ import {DropEvent, DroppableDirective, ValidateDrop} from 'angular-draggable-dro
 })
 export class EditorPage implements OnInit {
 
+  @ViewChild(DroppableDirective, {read: ElementRef, static: true})
+
   public droppedData = '';
-  public droppedData2 = '';
   public matrix = [];
+  public race;
 
-  @ViewChild(DroppableDirective, { read: ElementRef, static: true })
-  droppableElement: ElementRef;
+  private selected = 'U';
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     const tab = [];
-    for(let i = 0; i<10; i++){
-      tab.push(0);
-    }
-    for(let i = 0; i<10; i++){
-      this.matrix.push(tab);
-    }
+    let row;
+    for (let i = 0; i < 10; i++) {
+      row = [];
+      for (let k = 0; k < 10; k++) {
+        row.push(0);
+      }
+      this.matrix.push(row);
+      }
   }
+
+  setSelected = (val) => this.selected=val;
+
+  setClass = (key) => {
+    if(this.selected===key){
+      return 'selected';
+    }else{
+      return '';
+    }
+  };
+
+  letterToNum = (letter) => {
+    const num = [
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    ];
+    for (let i = 0; i<num[0].length; i++) {
+      if(num[0][i] === letter){
+        return num[1][i];
+      }
+    }
+    return -1;
+  };
 
   onDrop = (dropData, letter, num) => {
     console.log(dropData + ' ' + letter + num);
-    this.droppedData = dropData;
-    setTimeout(() => {
-      this.droppedData = '';
-    }, 2000);
+    const col = this.letterToNum(letter);
+    if(!this.matrix[num][col]) {
+      console.log(num);
+      console.log(col);
+      this.matrix[num][col] = dropData;
+      console.log(this.matrix);
+    }
   };
-
 }

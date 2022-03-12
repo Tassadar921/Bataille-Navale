@@ -1,19 +1,24 @@
-ion-col{
-  border: solid 1px white;
+#grid ion-col{
+  width:70px;
+  height:70px;
   text-align:center;
 }
 
+#grid {
+  width:780px;
+}
+
 ion-col{
-  width:40px;
-  height:40px;
+  border: solid 1px white;
 }
 
 [mwlDraggable] {
-  position: relative;
+  display:inline-block;
   z-index: 2;
   cursor: move;
-  padding:0;
-  margin:0;
+  border: 1px white solid;
+  width:auto;
+  height:auto;
 }
 
 [mwlDroppable] {
@@ -22,4 +27,8 @@ ion-col{
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.selected{
+  border: solid 5px white;
 }
