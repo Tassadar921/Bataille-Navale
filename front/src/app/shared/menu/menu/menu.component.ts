@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {GlobalVarsService} from '../../services/global-vars.service';
+import {StorageService} from '../../services/storage.service';
 import {Router} from '@angular/router';
 import * as moment from 'moment';
 
@@ -14,23 +14,24 @@ export class MenuComponent implements OnInit {
   public name;
 
   constructor(
-    public glob: GlobalVarsService,
+    public storage: StorageService,
     private router: Router,
   ) {
     setInterval(this.refreshTime, 2000);
-    this.name = this.glob.getNickname();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.refreshTime();
-    if(!this.glob.getNickname()){
+    if(!await this.storage.getNickname()){
       this.redirect('home');
+    }else {
+      this.name = await this.storage.getNickname();
     }
   }
 
   redirect = (direction) => {
     if (direction === 'home') {
-      this.glob.setNickname('');
+      this.storage.setNickname('');
     }
     this.router.navigateByUrl('/' + direction);
   };

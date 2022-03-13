@@ -1,0 +1,75 @@
+<ion-grid>
+  <ion-row>
+    <ion-searchbar type='text' [(ngModel)]="filter" (ionChange)="search(0,0)" style="text-align:center;"></ion-searchbar>
+  </ion-row>
+  <ion-row style="text-align:center;">
+    <ion-col>
+      <ion-button (click)="previousPage()">
+        <ion-icon name="arrow-undo" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-col>
+    <ion-col>
+      Page {{count + 1}}/{{this.nbPages}}
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="nextPage()">
+        <ion-icon name="arrow-redo" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+  <div *ngFor="let line of this.displayUsers">
+    <div class="item">
+      <ion-row>
+        <ion-col>
+          <ion-label style="text-align:center;">
+            <ion-text>{{line.username}}</ion-text>
+            <br>
+            <ion-text class="italic">last connexion :<br>{{line.lastConnected}}</ion-text>
+          </ion-label>
+        </ion-col>
+      </ion-row>
+      <div *ngIf="!line.sent && !line.received">
+        <ion-row style="text-align:center;">
+          <ion-col>
+            <ion-button (click)="askFriend(line.username)" color="success">Ask</ion-button>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="line.sent && !line.received">
+        <ion-row style="text-align:center;">
+          <ion-col>
+            <ion-button (click)="annulDemand(line.username)" color="danger">Annul demand</ion-button>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="!line.sent && line.received">
+        <ion-row style="text-align:center;">
+          <ion-col>
+            <p>Check your demands</p>
+          </ion-col>
+        </ion-row>
+      </div>
+    </div>
+  </div>
+  <ion-row style="text-align:center;">
+    <ion-col>
+      Page {{count + 1}}/{{this.nbPages}}
+    </ion-col>
+  </ion-row>
+  <ion-row style="text-align:center;">
+    <ion-col>
+      <ion-button (click)="previousPage()">
+        <ion-icon name="arrow-undo" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-col>
+    <ion-col>
+      {{notFriends.length}}<br>
+      <ion-icon name="people"></ion-icon>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="nextPage()">
+        <ion-icon name="arrow-redo" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-grid>

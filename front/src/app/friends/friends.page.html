@@ -1,1 +1,51 @@
 <app-menu></app-menu>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-segment value="0">
+        <ion-segment-button value="0" (click)="switchMain(0)">
+          <ion-icon name="people"></ion-icon>
+        </ion-segment-button>
+        <ion-segment-button value="1" (click)="switchMain(1)">
+          <ion-icon name="settings"></ion-icon>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-row>
+    <div *ngIf="main===0">
+      <ion-row>
+        <ion-col>
+          <app-see-friends></app-see-friends>
+        </ion-col>
+      </ion-row>
+    </div>
+    <div *ngIf="main===1">
+      <ion-row>
+        <ion-col>
+          <ion-segment value="0">
+            <ion-segment-button value="0" (click)="switchSecondary(0)">
+              <ion-icon name="person-add"></ion-icon>
+            </ion-segment-button>
+            <ion-segment-button value="1" (click)="switchSecondary(1)">
+              <ion-icon name="notifications"></ion-icon>
+              ({{numberInvits}})
+            </ion-segment-button>
+          </ion-segment>
+        </ion-col>
+      </ion-row>
+      <div *ngIf="secondary===0">
+        <ion-row>
+          <ion-col>
+            <app-add-friend></app-add-friend>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="secondary===1">
+        <ion-row>
+          <ion-col>
+            <app-demands></app-demands>
+          </ion-col>
+        </ion-row>
+      </div>
+    </div>
+  </ion-grid>
+</ion-content>

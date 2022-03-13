@@ -34,7 +34,15 @@ const routes: Routes = [
   {
     path: 'friends',
     loadChildren: () => import('./friends/friends.module').then( m => m.FriendsPageModule)
+  },  {
+    path: 'conf-account',
+    loadChildren: () => import('./conf-account/conf-account.module').then( m => m.ConfAccountPageModule)
   },
+  {
+    path: 'reset-password',
+    loadChildren: () => import('./reset-password/reset-password.module').then( m => m.ResetPasswordPageModule)
+  },
+
 
 ];
 
