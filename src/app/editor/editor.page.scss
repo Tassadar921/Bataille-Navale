@@ -1,7 +1,6 @@
 #grid ion-col{
   width:70px;
   height:70px;
-  text-align:center;
 }
 
 #grid {
@@ -10,10 +9,11 @@
 
 ion-col{
   border: solid 1px white;
+  text-align:center;
 }
 
 [mwlDraggable] {
-  display:inline-block;
+  display: inline;
   z-index: 2;
   cursor: move;
   border: 1px white solid;
@@ -29,6 +29,14 @@ ion-col{
   justify-content: center;
 }
 
-.selected{
+#selected{
   border: solid 5px white;
+  margin:0;
+  ion-icon{
+    filter: drop-shadow(0 0 0.75rem rgb(243, 153, 24));
+  }
+}
+
+.direction{
+  margin: 4px;
 }

@@ -2,91 +2,130 @@
 
 <ion-grid style="width:100%;">
   <ion-content>
-  <ion-row>
-    <ion-col class="grid">
-      <ion-item>
-        <ion-label>Race</ion-label>
-        <ion-select placeholder="Select a race" value="human" [(ngModel)]="race">
-          <ion-select-option value="human">Human</ion-select-option>
-          <ion-select-option value="vyrkul">Vyrkul Collective</ion-select-option>
-          <ion-select-option value="arash">Arash Enclave</ion-select-option>
-          <ion-select-option value="enkar">Enkar Republic</ion-select-option>
-          <ion-select-option value="sunari">Sunari Matriarchate</ion-select-option>
-        </ion-select>
-      </ion-item>
-
-      <p style="text-align:center;"> NOTE : La case où le vaisseau sera déposé correspondra à l'avant du vaisseau</p>
-
-      <ion-grid style="width:290px">
-        <ion-row>
-          <ion-col style="border: none">
-          </ion-col>
-          <ion-col [class]="setClass('U')">
-            <ion-button fill="clear" size="large" title="Orienter vers le haut" style="margin:0; passing:0;" (click)="setSelected('U')">
-            <ion-icon name="arrow-up-circle" slot="icon-only" color="success"></ion-icon>
-            </ion-button>
-          </ion-col>
-          <ion-col style="border: none">
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col [class]="setClass('L')">
-            <ion-button fill="clear" size="large" title="Orienter vers la gauche" style="margin:0; passing:0;" (click)="setSelected('L')">
-            <ion-icon name="arrow-back-circle" slot="icon-only" color="success"></ion-icon>
-            </ion-button>
-          </ion-col>
-          <ion-col [class]="setClass('D')">
-            <ion-button fill="clear" size="large" title="Orienter vers le bas" style="margin:0; passing:0;" (click)="setSelected('D')">
-            <ion-icon name="arrow-down-circle" slot="icon-only" color="success"></ion-icon>
-            </ion-button>
-          </ion-col>
-          <ion-col [class]="setClass('R')">
-            <ion-button fill="clear" size="large" title="Orienter vers la droite" style="margin:0; passing:0;" (click)="setSelected('R')">
-            <ion-icon name="arrow-forward-circle" slot="icon-only" color="success"></ion-icon>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-      <div *ngFor="let el of [1,2,3,4]">
-        <div *ngIf="race">
-        <div
-          mwlDraggable
-          dropData = {{race}}{{el}}
-          dragActiveClass="drag-active">
-          <img [src]="'../../assets/pics/spaceship_'+ race + el + '.png'">
-        </div>
-        </div>
-      </div>
-
-    </ion-col>
-    <ion-col>
-      <ion-grid id="grid">
-        <ion-row>
-          <ion-col>\</ion-col>
-          <ion-col>A</ion-col>
-          <ion-col>B</ion-col>
-          <ion-col>C</ion-col>
-          <ion-col>D</ion-col>
-          <ion-col>E</ion-col>
-          <ion-col>F</ion-col>
-          <ion-col>G</ion-col>
-          <ion-col>H</ion-col>
-          <ion-col>I</ion-col>
-          <ion-col>J</ion-col>
-        </ion-row>
-        <div *ngFor="let el of [1,2,3,4,5,6,7,8,9,10]">
+    <ion-row>
+      <ion-col class="grid">
+        <ion-grid>
           <ion-row>
-            <ion-col>{{el}}</ion-col>
-            <div *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
-              <ion-col mwlDroppable
-                       (drop)="onDrop($event.dropData, letter, el)"
-                       dragOverClass="drop-over-active">
-              </ion-col>
-            </div>
+            <p style="text-align:center;"> NOTE : La case où le vaisseau sera déposé correspondra à l'avant du
+              vaisseau</p>
+            <p>{{output}}</p>
           </ion-row>
-        </div>
-      </ion-grid>
-    </ion-col>
-  </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <ion-label>Race</ion-label>
+                <ion-select placeholder="Select a race" value="human" [(ngModel)]="race">
+                  <ion-select-option value="human">Human</ion-select-option>
+                  <ion-select-option value="vyrkul">Vyrkul Collective</ion-select-option>
+                  <ion-select-option value="arash">Arash Enclave</ion-select-option>
+                  <ion-select-option value="enkar">Enkar Republic</ion-select-option>
+                  <ion-select-option value="sunari">Sunari Matriarchate</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+
+            <ion-col>
+              <ion-grid style="width:300px">
+                <ion-row>
+                  <ion-col style="border: 1px solid transparent">
+                  </ion-col>
+                  <ion-col [id]="setId('U')" class="direction">
+                    <ion-button fill="clear" size="large" title="Orienter vers le haut" style="margin:0; passing:0;"
+                                (click)="setSelected('U')">
+                      <ion-icon name="arrow-up-circle" slot="icon-only" color="success"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                  <ion-col style="border: 1px solid transparent">
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col [id]="setId('L')" class="direction">
+                    <ion-button fill="clear" size="large" title="Orienter vers la gauche" style="margin:0; passing:0;"
+                                (click)="setSelected('L')">
+                      <ion-icon name="arrow-back-circle" slot="icon-only" color="success"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                  <ion-col [id]="setId('D')" class="direction">
+                    <ion-button fill="clear" size="large" title="Orienter vers le bas" style="margin:0; passing:0;"
+                                (click)="setSelected('D')">
+                      <ion-icon name="arrow-down-circle" slot="icon-only" color="success"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                  <ion-col [id]="setId('R')" class="direction">
+                    <ion-button fill="clear" size="large" title="Orienter vers la droite" style="margin:0; passing:0;"
+                                (click)="setSelected('R')">
+                      <ion-icon name="arrow-forward-circle" slot="icon-only" color="success"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              Spaceship
+            </ion-col>
+            <ion-col>
+              Schema
+            </ion-col>
+            <ion-col>
+              Peace to place
+            </ion-col>
+          </ion-row>
+
+          <div *ngFor="let el of [1,2,3,4]">
+            <div *ngIf="race">
+              <ion-row>
+                <ion-col>
+                  <img [src]="'../../assets/pics/spaceship_'+ race + el + '.png'"
+                       mwlDraggable
+                       dropData={{race}}{{el}}
+                       dragActiveClass="drag-active"
+                       style="width:75px; height:150px;">
+                </ion-col>
+                <ion-col>
+                  <!--                display schema-->
+                </ion-col>
+                <ion-col>
+                  <!--                display avant vaisseau-->
+                </ion-col>
+
+              </ion-row>
+            </div>
+          </div>
+        </ion-grid>
+      </ion-col>
+      <ion-col>
+        <ion-grid id="grid">
+          <ion-row>
+            <ion-col>\</ion-col>
+            <ion-col>A</ion-col>
+            <ion-col>B</ion-col>
+            <ion-col>C</ion-col>
+            <ion-col>D</ion-col>
+            <ion-col>E</ion-col>
+            <ion-col>F</ion-col>
+            <ion-col>G</ion-col>
+            <ion-col>H</ion-col>
+            <ion-col>I</ion-col>
+            <ion-col>J</ion-col>
+          </ion-row>
+          <div *ngFor="let el of [1,2,3,4,5,6,7,8,9,10]">
+            <ion-row>
+              <ion-col>{{el}}</ion-col>
+              <div *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
+                <ion-col mwlDroppable
+                         (drop)="onDrop($event.dropData, letter, el)"
+                         dragOverClass="drop-over-active">
+                </ion-col>
+              </div>
+            </ion-row>
+          </div>
+        </ion-grid>
+      </ion-col>
+    </ion-row>
   </ion-content>
 </ion-grid>

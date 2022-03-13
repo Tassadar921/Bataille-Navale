@@ -13,6 +13,7 @@ export class EditorPage implements OnInit {
   public droppedData = '';
   public matrix = [];
   public race;
+  public output = '';
 
   private selected = 'U';
 
@@ -32,7 +33,7 @@ export class EditorPage implements OnInit {
 
   setSelected = (val) => this.selected=val;
 
-  setClass = (key) => {
+  setId = (key) => {
     if(this.selected===key){
       return 'selected';
     }else{
