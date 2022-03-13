@@ -13,7 +13,6 @@
           <ion-row>
             <ion-col>
               <ion-item>
-                <ion-label>Race</ion-label>
                 <ion-select placeholder="Select a race" value="human" [(ngModel)]="race">
                   <ion-select-option value="human">Human</ion-select-option>
                   <ion-select-option value="vyrkul">Vyrkul Collective</ion-select-option>
@@ -72,7 +71,7 @@
               Schema
             </ion-col>
             <ion-col>
-              Peace to place
+              Piece to place
             </ion-col>
           </ion-row>
 
@@ -84,7 +83,7 @@
                        mwlDraggable
                        dropData={{race}}{{el}}
                        dragActiveClass="drag-active"
-                       style="width:75px; height:150px;">
+                       >
                 </ion-col>
                 <ion-col>
                   <!--                display schema-->
