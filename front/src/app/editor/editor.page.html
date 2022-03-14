@@ -8,7 +8,11 @@
           <ion-row>
             <p style="text-align:center;"> NOTE : La case où le vaisseau sera déposé correspondra à l'avant du
               vaisseau</p>
-            <p>{{output}}</p>
+          </ion-row>
+          <ion-row style="color:red;">
+            <ion-col>
+              <p>{{output}}</p>
+            </ion-col>
           </ion-row>
           <ion-row>
             <ion-col>
@@ -86,7 +90,8 @@
                        style="height:150px; border: none">
                 </ion-col>
                 <ion-col>
-                  <img [src]="'../../assets/pics/spaceship_schemas/schema_spaceship_'+ race + el + '.png'" style="height:150px">
+                  <img [src]="'../../assets/pics/spaceship_schemas/schema_spaceship_'+ race + el + '.png'"
+                       style="height:150px">
                 </ion-col>
                 <ion-col>
                   <!--                display avant vaisseau-->
@@ -117,10 +122,14 @@
               <ion-col>{{el}}</ion-col>
               <div *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
                 <ion-col mwlDroppable
-                         (drop)="onDrop($event.dropData, letter, el)"
+                         (drop)="onDrop($event.dropData, letter, el-1)"
                          dragOverClass="drop-over-active">
                   <div *ngIf="matrix[el-1][letterToNum(letter)]">
-                  {{matrix[el-1][letterToNum(letter)]}}
+                    <img
+                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][letterToNum(letter)].name + '.png'"
+                      [class]="matrix[el-1][letterToNum(letter)].direction"
+                      style="border: solid 1px red; width:70px; height:68px; margin-top:4px;">
+
                   </div>
                 </ion-col>
               </div>

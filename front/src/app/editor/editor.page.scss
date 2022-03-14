@@ -40,3 +40,15 @@ ion-col{
 .direction{
   margin: 4px;
 }
+
+.right{
+  transform: rotate(90deg);
+}
+
+.down{
+  transform: rotate(180deg);
+}
+
+.left{
+  transform: rotate(270deg);
+}
