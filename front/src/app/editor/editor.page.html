@@ -79,15 +79,14 @@
             <div *ngIf="race">
               <ion-row>
                 <ion-col>
-                  <img [src]="'../../assets/pics/spaceship_'+ race + el + '.png'"
+                  <img [src]="'../../assets/pics/spaceships/spaceship_'+ race + el + '.png'"
                        mwlDraggable
                        dropData={{race}}{{el}}
                        dragActiveClass="drag-active"
-                       style="width:70px"
-                       >
+                       style="height:150px; border: none">
                 </ion-col>
                 <ion-col>
-                  <!--                display schema-->
+                  <img [src]="'../../assets/pics/spaceship_schemas/schema_spaceship_'+ race + el + '.png'" style="height:150px">
                 </ion-col>
                 <ion-col>
                   <!--                display avant vaisseau-->
@@ -120,6 +119,9 @@
                 <ion-col mwlDroppable
                          (drop)="onDrop($event.dropData, letter, el)"
                          dragOverClass="drop-over-active">
+                  <div *ngIf="matrix[el-1][letterToNum(letter)]">
+                  {{matrix[el-1][letterToNum(letter)]}}
+                  </div>
                 </ion-col>
               </div>
             </ion-row>
