@@ -13,7 +13,7 @@
           <ion-row>
             <ion-col>
               <ion-item>
-                <ion-select placeholder="Select a race" value="human" [(ngModel)]="race">
+                <ion-select (ionChange)="reinitMatrix()" placeholder="Select a race" value="human" [(ngModel)]="race">
                   <ion-select-option value="human">Human</ion-select-option>
                   <ion-select-option value="vyrkul">Vyrkul Collective</ion-select-option>
                   <ion-select-option value="arash">Arash Enclave</ion-select-option>
@@ -132,6 +132,11 @@
               </div>
             </ion-row>
           </div>
+          <ion-row>
+            <ion-col>
+              <ion-button>Save</ion-button>
+            </ion-col>
+          </ion-row>
         </ion-grid>
       </ion-col>
     </ion-row>
