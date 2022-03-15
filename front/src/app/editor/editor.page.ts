@@ -169,8 +169,10 @@ export class EditorPage implements OnInit {
             tmpCol2-=2;
             break;
         }
-        if(tmpCol1>-1 && tmpCol1<10 && tmpLine2>-1 && tmpLine2<10) {
-          if (!this.matrix[line][col] && !this.matrix[line][tmpCol1]
+        if(tmpCol1>-1 && tmpCol1<10 && tmpLine1>-1 && tmpLine1<10
+        && tmpCol2>-1 && tmpCol2<10 && tmpLine2>-1 && tmpLine2<10){
+          if (!this.matrix[line][col] && !this.matrix[tmpLine1][tmpCol2]
+            && !this.matrix[line][tmpCol1] && !this.matrix[line][tmpCol2]
             && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine1][tmpCol1]
             && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine2][tmpCol1]) {
             if(this.direction==='U' || this.direction==='D') {
@@ -218,9 +220,7 @@ export class EditorPage implements OnInit {
             tmpCol3-=3;
             break;
         }
-        if(tmpLine1>-1 && tmpLine1<10 && tmpCol1>-1 && tmpCol1<10
-          && tmpLine2>-1 && tmpLine2<10 && tmpCol2>-1 && tmpCol2<10
-          && tmpLine3>-1 && tmpLine3<10 && tmpCol3>-1 && tmpCol3<10) {
+        if(tmpLine3>-1 && tmpLine3<10 && tmpCol3>-1 && tmpCol3<10) {
           if (!this.matrix[line][col] && !this.matrix[tmpLine1][tmpCol1]
             && !this.matrix[tmpLine2][tmpCol2] && !this.matrix[tmpLine3][tmpCol3]) {
             if(this.direction==='U' || this.direction==='D') {
@@ -291,6 +291,57 @@ export class EditorPage implements OnInit {
         }
         break;
       case 6:
+        switch (this.direction) {
+          case'U':
+            tmpLine1+=1;
+            tmpLine2+=2;
+            tmpLine3+=3;
+            tmpCol1+=1;
+            break;
+          case'L':
+            tmpLine1-=1;
+            tmpCol1+=1;
+            tmpCol2+=2;
+            tmpCol3+=3;
+            break;
+          case'D':
+            tmpLine1-=1;
+            tmpLine2-=2;
+            tmpLine3-=3;
+            tmpCol1-=1;
+            break;
+          case'R':
+            tmpLine1+=1;
+            tmpCol1-=1;
+            tmpCol2-=2;
+            tmpCol3-=3;
+            break;
+        }
+        if(tmpCol3>-1 && tmpCol3<10 && tmpLine3>-1 && tmpLine3<10) {
+          if (!this.matrix[line][col] && !this.matrix[line][tmpCol1]
+            && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine1][tmpCol1]
+            && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine2][tmpCol1]) {
+            if(this.direction==='U' || this.direction==='D') {
+              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+              this.matrix[line][tmpCol1] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+              this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+              this.matrix[tmpLine2][col] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+              this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+            }else{
+              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+              this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+              this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+              this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+              this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+            }
+          } else {
+            this.output = 'Unable to put this here';
+          }
+        } else {
+          this.output = 'Unable to put this here';
+        }
         break;
       case 7:
         break;
