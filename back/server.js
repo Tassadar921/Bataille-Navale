@@ -113,6 +113,14 @@ function preventDisconnect() {
                 battleSQL.saveDeck(req.body.username, req.body.matrix, req.body.race, req.body.deckName, con, res);
             });
 
+            app.post('/getDeckNames', function (req, res) {
+                battleSQL.getDeckNames(req.body.username, con, res);
+            });
+
+            app.post('/getMatrix', function (req, res) {
+                battleSQL.getMatrix(req.body.deckName, con, res);
+            });
+
             app.post('/test', function (req, res) {
                 //test action
             });

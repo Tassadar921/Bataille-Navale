@@ -1,15 +1,17 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {DroppableDirective} from 'angular-draggable-droppable';
 import {HttpService} from '../shared/services/http.service';
+import {DeckSelectionComponent} from './deck-selection/deck-selection.component';
 
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.page.html',
   styleUrls: ['./editor.page.scss'],
 })
-export class EditorPage implements OnInit {
+export class EditorPage implements OnInit, AfterViewInit {
 
   @ViewChild(DroppableDirective, {read: ElementRef, static: true})
+  @ViewChild(DeckSelectionComponent) deckSelection: DeckSelectionComponent;
 
   public droppedData = '';
   public matrix = [];
@@ -20,6 +22,7 @@ export class EditorPage implements OnInit {
 
   private direction = 'U';
   private retour;
+  private modal;
   private model = [
     {name: 'human1', shape: 3},
     {name: 'human2', shape: 4},
@@ -49,8 +52,19 @@ export class EditorPage implements OnInit {
 
   ngOnInit() {
     this.reinitMatrix();
-    this.onDrop('human4', 'B',0);
   }
+
+  ngAfterViewInit() {
+    this.modal = document.getElementById('modal');
+  }
+
+  closeModal = () => {
+    this.matrix = this.deckSelection.matrix;
+  };
+
+  modalClosing = () => {
+
+  };
 
   isFirst = (name) => name.includes('1.1');
 
@@ -121,12 +135,14 @@ export class EditorPage implements OnInit {
     if(this.deckName) {
       this.retour = await this.http.saveDeck(this.matrix, this.race, this.deckName);
       this.outputSubmit=this.retour.message;
-      console.log(this.retour.message);
     }
   };
 
+  chargeDeck = () => {
+
+  };
+
   onDrop = (dropData, col, line) => {
-    console.log(col+line);
     this.output = '';
     col = this.letterToNum(col);
     let tmpLine1 = line;
@@ -788,7 +804,7 @@ export class EditorPage implements OnInit {
         }
         break;
     }
-    console.log(this.matrix);
+    // console.log(this.matrix);
   };
 
   deleteSpaceship = (ship, col, line) => {

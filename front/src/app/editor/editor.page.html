@@ -13,32 +13,37 @@
           <ion-row>
             <ion-col>
               <ion-row>
-              <ion-item>
-                <ion-select (ionChange)="reinitMatrix()" placeholder="Select a race" value="human" [(ngModel)]="race">
-                  <ion-select-option value="human">Human</ion-select-option>
-                  <ion-select-option value="vyrkul">Vyrkul Collective</ion-select-option>
-                  <ion-select-option value="arash">Arash Enclave</ion-select-option>
-                  <ion-select-option value="enkar">Enkar Republic</ion-select-option>
-                  <ion-select-option value="sunari">Sunari Matriarchate</ion-select-option>
-                </ion-select>
-              </ion-item>
+                <ion-item>
+                  <ion-select (ionChange)="reinitMatrix()" placeholder="Select a race" value="human" [(ngModel)]="race">
+                    <ion-select-option value="human">Human</ion-select-option>
+                    <ion-select-option value="vyrkul">Vyrkul Collective</ion-select-option>
+                    <ion-select-option value="arash">Arash Enclave</ion-select-option>
+                    <ion-select-option value="enkar">Enkar Republic</ion-select-option>
+                    <ion-select-option value="sunari">Sunari Matriarchate</ion-select-option>
+                  </ion-select>
+                </ion-item>
               </ion-row>
               <ion-row>
-                  <ion-col style="border:none">
-                    <ion-button color="success" shape="round" id="openPopover">Save</ion-button>
-                  </ion-col>
+                <ion-col style="border:none">
+                  <ion-button color="secondary" shape="round" id="trigger-button">Edit</ion-button>
+                </ion-col>
               </ion-row>
               <ion-row>
-                  <ion-col style="border:none">
-                    <ion-button color="danger" shape="round" (click)="reinitMatrix()">Reset</ion-button>
-                  </ion-col>
+                <ion-col style="border:none">
+                  <ion-button color="danger" shape="round" (click)="reinitMatrix()">Reset</ion-button>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col style="border:none">
+                  <ion-button color="success" shape="round" id="openPopover">Save</ion-button>
+                </ion-col>
               </ion-row>
             </ion-col>
 
             <ion-col>
               <ion-grid style="width:300px">
                 <ion-row>
-                  <ion-col style="border: 1px solid transparent">
+                  <ion-col style="border: none;">
                   </ion-col>
                   <ion-col [id]="setId('U')" class="direction">
                     <ion-button fill="clear" size="large" title="Orienter vers le haut" style="margin:0; passing:0;"
@@ -46,7 +51,7 @@
                       <ion-icon name="accessibility" slot="icon-only" color="success"></ion-icon>
                     </ion-button>
                   </ion-col>
-                  <ion-col style="border: 1px solid transparent">
+                  <ion-col style="border: none">
                   </ion-col>
                 </ion-row>
                 <ion-row>
@@ -180,3 +185,9 @@
     </form>
   </ng-template>
 </ion-popover>
+
+<ion-modal id="modal" trigger="trigger-button" (ionModalWillDismiss)="closeModal()">
+  <ng-template>
+    <app-deck-selection></app-deck-selection>
+  </ng-template>
+</ion-modal>

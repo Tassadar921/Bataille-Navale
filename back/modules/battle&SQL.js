@@ -6,12 +6,13 @@ module.exports.saveDeck = function (username, matrix, race, deckName, con, res){
             if(r.length){
                 res.json({message: 'Name already taken'});
             }else{
-                let json = {};
-                for(let i=0; i<matrix.length; i++){
-                    json.unshift('name'+i + ': {' + matrix[i] + '}')
-                }
+                const json = JSON.stringify(matrix);
+                // for(let i=0; i<matrix.length; i++){
+                //     json.unshift('name'+i + ': {' + matrix[i] + '}')
+                // }
                 console.log(json);
-                con.query("INSERT INTO decks (name, deck, race, owner) VALUES " + "(\'" + deckName + "\', \'" + json + "\')" + "(\'" + race + "\', \'" + username + "\')", (err, resp) => {
+                console.log(typeof json);
+                con.query("INSERT INTO decks (name, deck, race, owner) VALUES " + "(\'" + deckName + "\', \'" + json + "\', \'" + race + "\', \'" + username + "\')", (err, resp) => {
                     if (err) {
                         throw err;
                     }else{
@@ -21,5 +22,31 @@ module.exports.saveDeck = function (username, matrix, race, deckName, con, res){
             }
         }
     });
-    res.json({message:'ok'});
+}
+
+module.exports.getDeckNames = function (username, con, res){
+    con.query("SELECT name, race FROM decks WHERE owner = ? ORDER BY name DESC",[username], (err, r) => {
+        if (err) {
+            throw err;
+        }else{
+            let tab = [];
+            for(let line of r){
+                tab.push({name: line.name, race: line.race});
+            }
+            res.json({output: tab});
+        }
+    });
+}
+
+module.exports.getMatrix = function (deckName, con, res){
+    con.query("SELECT deck FROM decks WHERE name = ? ORDER BY name DESC",[deckName], (err, r) => {
+        if (err) {
+            throw err;
+        }else{
+            // console.log(r[0]);
+            const matrix = JSON.parse(r[0].deck);
+            console.log(matrix);
+            res.json({output: matrix});
+        }
+    });
 }

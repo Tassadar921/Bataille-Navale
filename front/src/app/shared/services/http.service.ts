@@ -184,4 +184,20 @@ export class HttpService {
     });
     return this.retour;
   };
+
+  getDeckNames = async () => {
+    const data = {username: await this.storage.getNickname()};
+    await this.http.post<string>(environment.urlBack + 'getDeckNames', data).toPromise().then(response => {
+      this.retour = response;
+    });
+    return this.retour.output;
+  };
+
+  getMatrix = async (name) => {
+    const data = {deckName: name};
+    await this.http.post<string>(environment.urlBack + 'getMatrix', data).toPromise().then(response => {
+      this.retour = response;
+    });
+    return this.retour.output;
+  };
 }
