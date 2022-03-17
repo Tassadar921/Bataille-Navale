@@ -168,9 +168,18 @@ export class HttpService {
     return this.retour.message;
   };
 
-  lastConnected = async (username) => {
-    const data = {name: username};
+  lastConnected = async () => {
+    const data = {name: await this.storage.getNickname()};
     await this.http.post<string>(environment.urlBack + 'lastConnected', data).toPromise().then(response => {
+      this.retour = response;
+    });
+  };
+
+  /////////////////////////// EDITOR ///////////////////////////////
+
+  saveDeck = async (tab, faction, name) => {
+    const data = {username: await this.storage.getNickname(), matrix: tab, race: faction, deckName: name};
+    await this.http.post<string>(environment.urlBack + 'saveDeck', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour;

@@ -17,6 +17,7 @@ const session = require("express-session")({
 
 const account = require('./modules/checkingAccounts.js');
 const mail = require('./modules/sendMail');
+const battleSQL = require ('./modules/battle&SQL');
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -108,8 +109,12 @@ function preventDisconnect() {
                 account.deleteDemand(req.body.sender, req.body.receiver, con, res);
             });
 
+            app.post('/saveDeck', function (req, res) {
+                battleSQL.saveDeck(req.body.username, req.body.matrix, req.body.race, req.body.deckName, con, res);
+            });
+
             app.post('/test', function (req, res) {
-                //action
+                //test action
             });
         }
     });

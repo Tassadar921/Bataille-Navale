@@ -53,6 +53,13 @@ ion-col{
   transform: rotate(270deg);
 }
 
+.delete:hover{
+  border: 5px red solid;
+  cursor: pointer;
+  width:71px;
+  height:80px;
+}
+
 .imgInGrid{
-  max-width:none; width:70px; height:70px; margin-top:4px;
+  width:70px;
 }

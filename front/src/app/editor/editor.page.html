@@ -12,6 +12,7 @@
           </ion-row>
           <ion-row>
             <ion-col>
+              <ion-row>
               <ion-item>
                 <ion-select (ionChange)="reinitMatrix()" placeholder="Select a race" value="human" [(ngModel)]="race">
                   <ion-select-option value="human">Human</ion-select-option>
@@ -21,6 +22,17 @@
                   <ion-select-option value="sunari">Sunari Matriarchate</ion-select-option>
                 </ion-select>
               </ion-item>
+              </ion-row>
+              <ion-row>
+                  <ion-col style="border:none">
+                    <ion-button color="success" shape="round" id="openPopover">Save</ion-button>
+                  </ion-col>
+              </ion-row>
+              <ion-row>
+                  <ion-col style="border:none">
+                    <ion-button color="danger" shape="round" (click)="reinitMatrix()">Reset</ion-button>
+                  </ion-col>
+              </ion-row>
             </ion-col>
 
             <ion-col>
@@ -120,25 +132,51 @@
             <ion-row>
               <ion-col>{{el}}</ion-col>
               <div *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
-                <ion-col mwlDroppable
-                         (drop)="onDrop($event.dropData, letter, el-1)">
-                  <div *ngIf="matrix[el-1][letterToNum(letter)]">
-                    <img
+                <ion-col mwlDroppable (drop)="onDrop($event.dropData, letter, el-1)">
+                  <ion-row *ngIf="matrix[el-1][letterToNum(letter)] && isFirst(matrix[el-1][letterToNum(letter)].name)"
+                           class="container">
+                    <!-- ////////////////////////////////       MODIFIER NOM QUAND ON AURA LES CROIX ////////////////////////-->
+                    <ion-img
+                      alt=""
+                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][letterToNum(letter)].name + '_editor.png'"
+                      [class]="matrix[el-1][letterToNum(letter)].direction"
+                      class="delete imgInGrid"
+                      (click)="deleteSpaceship(matrix[el-1][letterToNum(letter)].name, letter, el-1)">
+                    </ion-img>
+                  </ion-row>
+                  <ion-row *ngIf="matrix[el-1][letterToNum(letter)] && !isFirst(matrix[el-1][letterToNum(letter)].name)"
+                           class="container">
+                    <!--                  <ion-row *ngIf="matrix[el-1][letterToNum(letter)]" class="container">-->
+                    <ion-img
+                      alt=""
                       [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][letterToNum(letter)].name + '.png'"
                       [class]="matrix[el-1][letterToNum(letter)].direction"
                       class="imgInGrid">
-                  </div>
+                    </ion-img>
+                  </ion-row>
                 </ion-col>
               </div>
             </ion-row>
           </div>
-          <ion-row>
-            <ion-col>
-              <ion-button>Save</ion-button>
-            </ion-col>
-          </ion-row>
         </ion-grid>
       </ion-col>
     </ion-row>
   </ion-content>
 </ion-grid>
+
+<ion-popover trigger="openPopover" size="auto" alignment="center">
+  <ng-template>
+    <form>
+      <ion-title>Name your deck</ion-title>
+      <ion-item>
+        <ion-label>Name</ion-label>
+        <ion-input type="text" (keyup)="trigger($event.key)" [(ngModel)]="deckName" required="true"
+                   [ngModelOptions]="{standalone: true}"></ion-input>
+      </ion-item>
+      <ion-button color="success" (click)="save()" type="submit">Submit deck</ion-button>
+      <div *ngIf="outputSubmit">
+        <p>Server response : {{outputSubmit}}</p>
+      </div>
+    </form>
+  </ng-template>
+</ion-popover>

@@ -1,5 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {DroppableDirective} from 'angular-draggable-droppable';
+import {HttpService} from '../shared/services/http.service';
 
 @Component({
   selector: 'app-editor',
@@ -14,8 +15,11 @@ export class EditorPage implements OnInit {
   public matrix = [];
   public race = 'human';
   public output = '';
+  public deckName = '';
+  public outputSubmit;
 
   private direction = 'U';
+  private retour;
   private model = [
     {name: 'human1', shape: 3},
     {name: 'human2', shape: 4},
@@ -39,12 +43,16 @@ export class EditorPage implements OnInit {
     {name: 'vyrkul4', shape: 6},
   ];
 
-  constructor() {
-  }
+  constructor(
+    private http: HttpService,
+  ) {}
 
   ngOnInit() {
     this.reinitMatrix();
+    this.onDrop('human4', 'B',0);
   }
+
+  isFirst = (name) => name.includes('1.1');
 
   reinitMatrix = () => {
     this.matrix = [];
@@ -103,7 +111,22 @@ export class EditorPage implements OnInit {
     }
   };
 
+  trigger = (input) => {
+    if(input==='Enter'){
+      this.save();
+    }
+  };
+
+  save = async () => {
+    if(this.deckName) {
+      this.retour = await this.http.saveDeck(this.matrix, this.race, this.deckName);
+      this.outputSubmit=this.retour.message;
+      console.log(this.retour.message);
+    }
+  };
+
   onDrop = (dropData, col, line) => {
+    console.log(col+line);
     this.output = '';
     col = this.letterToNum(col);
     let tmpLine1 = line;
@@ -502,8 +525,8 @@ export class EditorPage implements OnInit {
             && !this.matrix[tmpLine2][tmpCol3] && !this.matrix[tmpLine3][tmpCol3]
             && !this.matrix[tmpLine4][tmpCol3] && !this.matrix[line][tmpCol1]
             && !this.matrix[line][tmpCol3] && !this.matrix[line][tmpCol4]
-            && !this.matrix[tmpLine3][tmpCol4] &&!this.matrix[tmpLine1][tmpCol1]
-            && !this.matrix[tmpLine1][tmpCol3] &&!this.matrix[tmpLine1][tmpCol4]
+            && !this.matrix[tmpLine3][tmpCol4] && !this.matrix[tmpLine1][tmpCol1]
+            && !this.matrix[tmpLine1][tmpCol3] && !this.matrix[tmpLine1][tmpCol4]
             && !this.matrix[tmpLine2][tmpCol4]) {
             if (this.direction === 'U' || this.direction === 'D') {
               this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
@@ -663,7 +686,7 @@ export class EditorPage implements OnInit {
             && !this.matrix[tmpLine1][tmpCol2] && !this.matrix[tmpLine2][tmpCol2]
             && !this.matrix[tmpLine2][tmpCol3] && !this.matrix[tmpLine3][tmpCol3]
             && !this.matrix[line][tmpCol1] && !this.matrix[line][tmpCol3]
-            &&!this.matrix[tmpLine1][tmpCol1] && !this.matrix[tmpLine1][tmpCol3]
+            && !this.matrix[tmpLine1][tmpCol1] && !this.matrix[tmpLine1][tmpCol3]
             && !this.matrix[tmpLine3][col]) {
             if (this.direction === 'U' || this.direction === 'D') {
               this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
@@ -731,7 +754,7 @@ export class EditorPage implements OnInit {
             break;
         }
         if (tmpCol2 > -1 && tmpCol2 < 10 && tmpLine2 > -1 && tmpLine2 < 10
-        && tmpCol3 > -1 && tmpCol3 < 10 && tmpLine3 > -1 && tmpLine3 < 10) {
+          && tmpCol3 > -1 && tmpCol3 < 10 && tmpLine3 > -1 && tmpLine3 < 10) {
           if (!this.matrix[line][col] && !this.matrix[line][tmpCol1]
             && !this.matrix[line][tmpCol2] && !this.matrix[tmpLine1][tmpCol1]
             && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine1][col]
@@ -762,6 +785,467 @@ export class EditorPage implements OnInit {
           }
         } else {
           this.output = 'Unable to put this here';
+        }
+        break;
+    }
+    console.log(this.matrix);
+  };
+
+  deleteSpaceship = (ship, col, line) => {
+    col = this.letterToNum(col);
+    let tmpLine1 = line;
+    let tmpLine2 = line;
+    let tmpLine3 = line;
+    let tmpLine4 = line;
+    let tmpCol1 = col;
+    let tmpCol2 = col;
+    let tmpCol3 = col;
+    let tmpCol4 = col;
+    this.matrix[line][col] = 0;
+    switch (this.nameToShape(ship.split('_')[0])) {
+      case 2:
+        switch (this.direction) {
+          case'U':
+            tmpLine1 += 1;
+            break;
+          case'L':
+            tmpCol1 += 1;
+            break;
+          case'D':
+            tmpLine1 -= 1;
+            break;
+          case'R':
+            tmpCol1 -= 1;
+            break;
+        }
+        this.matrix[tmpLine1][tmpCol1] = 0;
+        break;
+      case 3:
+        switch (this.direction) {
+          case'U':
+            tmpLine1 += 1;
+            tmpLine2 += 2;
+            tmpCol1 += 1;
+            break;
+          case'L':
+            tmpLine1 -= 1;
+            tmpCol1 += 1;
+            tmpCol2 += 2;
+            break;
+          case'D':
+            tmpLine1 -= 1;
+            tmpLine2 -= 2;
+            tmpCol1 -= 1;
+            break;
+          case'R':
+            tmpLine1 += 1;
+            tmpCol1 -= 1;
+            tmpCol2 -= 2;
+            break;
+        }
+        this.matrix[tmpLine1][col] = 0;
+        this.matrix[line][tmpCol1] = 0;
+        this.matrix[tmpLine1][tmpCol1] = 0;
+        if (this.direction === 'U' || this.direction === 'D') {
+          this.matrix[tmpLine2][col] = 0;
+          this.matrix[tmpLine2][tmpCol1] = 0;
+        } else {
+          this.matrix[line][tmpCol2] = 0;
+          this.matrix[tmpLine1][tmpCol2] = 0;
+        }
+        break;
+      case 4:
+        switch (this.direction) {
+          case'U':
+            tmpLine1 += 1;
+            tmpLine2 += 2;
+            tmpLine3 += 3;
+            break;
+          case'L':
+            tmpCol1 += 1;
+            tmpCol2 += 2;
+            tmpCol3 += 3;
+            break;
+          case'D':
+            tmpLine1 -= 1;
+            tmpLine2 -= 2;
+            tmpLine3 -= 3;
+            break;
+          case'R':
+            tmpCol1 -= 1;
+            tmpCol2 -= 2;
+            tmpCol3 -= 3;
+            break;
+        }
+        if (this.direction === 'U' || this.direction === 'D') {
+          this.matrix[tmpLine1][tmpCol1] = 0;
+          this.matrix[tmpLine2][tmpCol2] = 0;
+          this.matrix[tmpLine3][tmpCol3] = 0;
+        } else {
+          this.matrix[line][tmpCol1] = 0;
+          this.matrix[line][tmpCol2] = 0;
+          this.matrix[line][tmpCol3] = 0;
+        }
+        break;
+      case 5:
+        switch (this.direction) {
+          case'U':
+            tmpLine1 += 1;
+            tmpLine2 += 2;
+            tmpLine3 += 3;
+            tmpCol1 += 1;
+            break;
+          case'L':
+            tmpLine1 -= 1;
+            tmpCol1 += 1;
+            tmpCol2 += 2;
+            tmpCol3 += 3;
+            break;
+          case'D':
+            tmpLine1 -= 1;
+            tmpLine2 -= 2;
+            tmpLine3 -= 3;
+            tmpCol1 -= 1;
+            break;
+          case'R':
+            tmpLine1 += 1;
+            tmpCol1 -= 1;
+            tmpCol2 -= 2;
+            tmpCol3 -= 3;
+            break;
+        }
+        this.matrix[tmpLine1][col] = 0;
+        this.matrix[line][tmpCol1] = 0;
+        this.matrix[tmpLine1][tmpCol1] = 0;
+        if (this.direction === 'U' || this.direction === 'D') {
+          this.matrix[tmpLine2][col] = 0;
+          this.matrix[tmpLine2][tmpCol1] = 0;
+          this.matrix[tmpLine3][col] = 0;
+          this.matrix[tmpLine3][tmpCol1] = 0;
+        } else {
+          this.matrix[line][tmpCol2] = 0;
+          this.matrix[tmpLine1][tmpCol2] = 0;
+          this.matrix[line][tmpCol3] = 0;
+          this.matrix[tmpLine1][tmpCol3] = 0;
+        }
+        break;
+      case 6:
+        switch (this.direction) {
+          case'U':
+            tmpLine1 += 1;
+            tmpLine2 += 2;
+            tmpLine3 += 3;
+            tmpLine4 += 4;
+            tmpCol1 += 1;
+            break;
+          case'L':
+            tmpLine1 -= 1;
+            tmpCol1 += 1;
+            tmpCol2 += 2;
+            tmpCol3 += 3;
+            tmpCol4 += 4;
+            break;
+          case'D':
+            tmpLine1 -= 1;
+            tmpLine2 -= 2;
+            tmpLine3 -= 3;
+            tmpLine4 -= 4;
+            tmpCol1 -= 1;
+            break;
+          case'R':
+            tmpLine1 += 1;
+            tmpCol1 -= 1;
+            tmpCol2 -= 2;
+            tmpCol3 -= 3;
+            tmpCol4 -= 4;
+            break;
+        }
+        this.matrix[line][tmpCol1] = 0;
+        this.matrix[tmpLine1][col] = 0;
+        this.matrix[tmpLine1][tmpCol1] = 0;
+        if (this.direction === 'U' || this.direction === 'D') {
+          this.matrix[tmpLine2][col] = 0;
+          this.matrix[tmpLine2][tmpCol1] = 0;
+          this.matrix[tmpLine3][col] = 0;
+          this.matrix[tmpLine3][tmpCol1] = 0;
+          this.matrix[tmpLine4][col] = 0;
+          this.matrix[tmpLine4][tmpCol1] = 0;
+        } else {
+          this.matrix[line][tmpCol2] = 0;
+          this.matrix[tmpLine1][tmpCol2] = 0;
+          this.matrix[line][tmpCol3] = 0;
+          this.matrix[tmpLine1][tmpCol3] = 0;
+          this.matrix[line][tmpCol4] = 0;
+          this.matrix[tmpLine1][tmpCol4] = 0;
+        }
+        break;
+      case 7:
+        switch (this.direction) {
+          case'U':
+            tmpLine1 += 1;
+            tmpLine2 += 2;
+            tmpLine3 += 3;
+            tmpLine4 += 4;
+            tmpCol1 -= 1;
+            tmpCol2 += 1;
+            break;
+          case'L':
+            tmpLine1 += 1;
+            tmpLine2 -= 1;
+            tmpCol1 += 1;
+            tmpCol2 += 2;
+            tmpCol3 += 3;
+            tmpCol4 += 4;
+            break;
+          case'D':
+            tmpLine1 -= 1;
+            tmpLine2 -= 2;
+            tmpLine3 -= 3;
+            tmpLine4 -= 4;
+            tmpCol1 += 1;
+            tmpCol2 -= 1;
+            break;
+          case'R':
+            tmpLine1 -= 1;
+            tmpLine2 += 1;
+            tmpCol1 -= 1;
+            tmpCol2 -= 2;
+            tmpCol3 -= 3;
+            tmpCol4 -= 4;
+            break;
+        }
+        this.matrix[tmpLine3][col] = 0;
+        this.matrix[tmpLine4][col] = 0;
+        if (this.direction === 'U' || this.direction === 'D') {
+          this.matrix[tmpLine1][col] = 0;
+          this.matrix[tmpLine2][col] = 0;
+          this.matrix[tmpLine3][tmpCol1] = 0;
+          this.matrix[tmpLine4][tmpCol1] = 0;
+          this.matrix[tmpLine3][tmpCol2] = 0;
+          this.matrix[tmpLine4][tmpCol2] = 0;
+        } else {
+          this.matrix[line][tmpCol1] = 0;
+          this.matrix[line][tmpCol2] = 0;
+          this.matrix[line][tmpCol3] = 0;
+          this.matrix[line][tmpCol4] = 0;
+          this.matrix[tmpLine2][tmpCol3] = 0;
+          this.matrix[tmpLine2][tmpCol4] = 0;
+        }
+        break;
+      case 8:
+        switch (this.direction) {
+          case'U':
+            tmpLine1 += 1;
+            tmpLine2 += 2;
+            tmpLine3 += 3;
+            tmpLine4 += 4;
+            tmpCol1 -= 1;
+            tmpCol2 += 1;
+            tmpCol3 += 2;
+            break;
+          case'L':
+            tmpLine1 -= 1;
+            tmpLine2 -= 2;
+            tmpLine3 += 1;
+            tmpCol1 += 1;
+            tmpCol2 += 2;
+            tmpCol3 += 3;
+            tmpCol4 += 4;
+            break;
+          case'D':
+            tmpLine1 -= 1;
+            tmpLine2 -= 2;
+            tmpLine3 -= 3;
+            tmpLine4 -= 4;
+            tmpCol1 += 1;
+            tmpCol2 -= 1;
+            tmpCol3 -= 2;
+            break;
+          case'R':
+            tmpLine1 += 1;
+            tmpLine2 += 2;
+            tmpLine3 -= 1;
+            tmpCol1 -= 1;
+            tmpCol2 -= 2;
+            tmpCol3 -= 3;
+            tmpCol4 -= 4;
+            break;
+        }
+        this.matrix[line][tmpCol2] = 0;
+        this.matrix[tmpLine1][col] = 0;
+        this.matrix[tmpLine1][tmpCol2] = 0;
+        this.matrix[tmpLine2][tmpCol2] = 0;
+        this.matrix[tmpLine3][tmpCol2] = 0;
+        this.matrix[tmpLine2][tmpCol3] = 0;
+        this.matrix[tmpLine3][tmpCol3] = 0;
+        if (this.direction === 'U' || this.direction === 'D') {
+          this.matrix[tmpLine2][col] = 0;
+          this.matrix[tmpLine3][col] = 0;
+          this.matrix[tmpLine4][col] = 0;
+          this.matrix[tmpLine2][tmpCol1] = 0;
+          this.matrix[tmpLine3][tmpCol1] = 0;
+          this.matrix[tmpLine4][tmpCol1] = 0;
+          this.matrix[tmpLine4][tmpCol2] = 0;
+          this.matrix[tmpLine4][tmpCol3] = 0;
+        } else {
+          this.matrix[line][tmpCol1] = 0;
+          this.matrix[line][tmpCol3] = 0;
+          this.matrix[line][tmpCol4] = 0;
+          this.matrix[tmpLine3][tmpCol4] = 0;
+          this.matrix[tmpLine1][tmpCol1] = 0;
+          this.matrix[tmpLine1][tmpCol3] = 0;
+          this.matrix[tmpLine1][tmpCol4] = 0;
+          this.matrix[tmpLine2][tmpCol4] = 0;
+        }
+        break;
+      case 9:
+        switch (this.direction) {
+          case'U':
+            tmpLine1 += 1;
+            tmpLine2 += 2;
+            tmpLine3 += 3;
+            tmpLine4 += 4;
+            tmpCol1 += 1;
+            tmpCol2 += 2;
+            break;
+          case'L':
+            tmpLine1 -= 1;
+            tmpLine2 -= 2;
+            tmpCol1 += 1;
+            tmpCol2 += 2;
+            tmpCol3 += 3;
+            tmpCol4 += 4;
+            break;
+          case'D':
+            tmpLine1 -= 1;
+            tmpLine2 -= 2;
+            tmpLine3 -= 3;
+            tmpLine4 -= 4;
+            tmpCol1 -= 1;
+            tmpCol2 -= 2;
+            break;
+          case'R':
+            tmpLine1 += 1;
+            tmpLine2 += 2;
+            tmpCol1 -= 1;
+            tmpCol2 -= 2;
+            tmpCol3 -= 3;
+            tmpCol4 -= 4;
+            break;
+        }
+        this.matrix[tmpLine1][col] = 0;
+        this.matrix[line][tmpCol1] = 0;
+        this.matrix[tmpLine1][tmpCol1] = 0;
+        this.matrix[tmpLine1][tmpCol2] = 0;
+        if (this.direction === 'U' || this.direction === 'D') {
+          this.matrix[tmpLine2][tmpCol1] = 0;
+          this.matrix[tmpLine3][tmpCol1] = 0;
+          this.matrix[tmpLine4][tmpCol1] = 0;
+          this.matrix[line][tmpCol2] = 0;
+        } else {
+          this.matrix[tmpLine1][tmpCol3] = 0;
+          this.matrix[tmpLine1][tmpCol4] = 0;
+          this.matrix[tmpLine2][col] = 0;
+          this.matrix[tmpLine2][tmpCol1] = 0;
+        }
+        break;
+      case 10:
+        switch (this.direction) {
+          case'U':
+            tmpLine1 += 1;
+            tmpLine2 += 2;
+            tmpLine3 += 3;
+            tmpCol1 -= 1;
+            tmpCol2 += 1;
+            tmpCol3 += 2;
+            break;
+          case'L':
+            tmpLine1 -= 1;
+            tmpLine2 -= 2;
+            tmpLine3 += 1;
+            tmpCol1 += 1;
+            tmpCol2 += 2;
+            tmpCol3 += 3;
+            break;
+          case'D':
+            tmpLine1 -= 1;
+            tmpLine2 -= 2;
+            tmpLine3 -= 3;
+            tmpCol1 += 1;
+            tmpCol2 -= 1;
+            tmpCol3 -= 2;
+            break;
+          case'R':
+            tmpLine1 += 1;
+            tmpLine2 += 2;
+            tmpLine3 -= 1;
+            tmpCol1 -= 1;
+            tmpCol2 -= 2;
+            tmpCol3 -= 3;
+            break;
+        }
+        this.matrix[tmpLine1][col] = 0;
+        this.matrix[tmpLine1][tmpCol2] = 0;
+        this.matrix[tmpLine2][tmpCol2] = 0;
+        this.matrix[tmpLine2][tmpCol3] = 0;
+        this.matrix[line][tmpCol2] = 0;
+        this.matrix[tmpLine3][tmpCol2] = 0;
+        this.matrix[tmpLine3][tmpCol3] = 0;
+        if (this.direction === 'U' || this.direction === 'D') {
+          this.matrix[tmpLine2][col] = 0;
+          this.matrix[tmpLine3][col] = 0;
+          this.matrix[tmpLine2][tmpCol1] = 0;
+          this.matrix[tmpLine3][tmpCol1] = 0;
+        } else {
+          this.matrix[line][tmpCol1] = 0;
+          this.matrix[line][tmpCol3] = 0;
+          this.matrix[tmpLine1][tmpCol1] = 0;
+          this.matrix[tmpLine1][tmpCol3] = 0;
+        }
+        break;
+      case 11:
+        switch (this.direction) {
+          case'U':
+            tmpLine1 += 1;
+            tmpLine2 += 2;
+            tmpLine3 += 3;
+            tmpCol1 += 1;
+            tmpCol2 += 2;
+            break;
+          case'L':
+            tmpLine1 -= 1;
+            tmpLine2 -= 2;
+            tmpCol1 += 1;
+            tmpCol2 += 2;
+            tmpCol3 += 3;
+            break;
+          case'D':
+            tmpLine1 -= 1;
+            tmpLine2 -= 2;
+            tmpLine3 -= 3;
+            tmpCol1 -= 1;
+            tmpCol2 -= 2;
+            break;
+          case'R':
+            tmpLine1 += 1;
+            tmpLine2 += 2;
+            tmpCol1 -= 1;
+            tmpCol2 -= 2;
+            tmpCol3 -= 3;
+            break;
+        }
+        this.matrix[tmpLine1][col] = 0;
+        this.matrix[line][tmpCol1] = 0;
+        this.matrix[tmpLine1][tmpCol1] = 0;
+        this.matrix[tmpLine2][tmpCol1] = 0;
+        if (this.direction === 'U' || this.direction === 'D') {
+          this.matrix[tmpLine3][tmpCol1] = 0;
+          this.matrix[line][tmpCol2] = 0;
+          this.matrix[tmpLine1][tmpCol2] = 0;
+        } else {
+          this.matrix[tmpLine1][tmpCol2] = 0;
+          this.matrix[tmpLine1][tmpCol3] = 0;
+          this.matrix[tmpLine2][col] = 0;
         }
         break;
     }

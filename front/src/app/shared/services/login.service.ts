@@ -17,7 +17,7 @@ export class LoginService {
   ) {}
 
   refresh = async () => { //pour chaque changement de page, update de lastconnected pour la session en cours
-    await this.httpService.lastConnected(await this.storage.getNickname());
+    await this.httpService.lastConnected();
   };
 
   setPlatform=()=>{ //nb d'éléments affichés quand on a un système de pages
