@@ -200,4 +200,20 @@ export class HttpService {
     });
     return this.retour.output;
   };
+
+  overwrite = async (tab, faction, name) => {
+    const data = {username: await this.storage.getNickname(), matrix: tab, race: faction, deckName: name};
+    await this.http.post<string>(environment.urlBack + 'overwrite', data).toPromise().then(response => {
+      this.retour = response;
+    });
+    return this.retour;
+  };
+
+  getNumberOfShips = async (faction) => {
+    const data = {race: faction};
+    await this.http.post<string>(environment.urlBack + 'getNumberOfShips', data).toPromise().then(response => {
+      this.retour = response;
+    });
+    return this.retour.output;
+  };
 }

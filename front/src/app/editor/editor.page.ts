@@ -1,28 +1,28 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {DroppableDirective} from 'angular-draggable-droppable';
 import {HttpService} from '../shared/services/http.service';
 import {DeckSelectionComponent} from './deck-selection/deck-selection.component';
+import {ActionSheetController} from '@ionic/angular';
 
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.page.html',
   styleUrls: ['./editor.page.scss'],
 })
-export class EditorPage implements OnInit, AfterViewInit {
+export class EditorPage implements OnInit {
 
   @ViewChild(DroppableDirective, {read: ElementRef, static: true})
   @ViewChild(DeckSelectionComponent) deckSelection: DeckSelectionComponent;
 
-  public droppedData = '';
   public matrix = [];
-  public race = 'human';
+  public race = 'Human';
   public output = '';
   public deckName = '';
   public outputSubmit;
+  public numberOfShips = [];
 
   private direction = 'U';
   private retour;
-  private modal;
   private model = [
     {name: 'human1', shape: 3},
     {name: 'human2', shape: 4},
@@ -48,27 +48,20 @@ export class EditorPage implements OnInit, AfterViewInit {
 
   constructor(
     private http: HttpService,
+    private actionSheetController: ActionSheetController,
   ) {}
 
-  ngOnInit() {
-    this.reinitMatrix();
-  }
-
-  ngAfterViewInit() {
-    this.modal = document.getElementById('modal');
+  async ngOnInit() {
+    await this.reinitMatrix();
   }
 
   closeModal = () => {
     this.matrix = this.deckSelection.matrix;
   };
 
-  modalClosing = () => {
-
-  };
-
   isFirst = (name) => name.includes('1.1');
 
-  reinitMatrix = () => {
+  reinitMatrix = async () => {
     this.matrix = [];
     let row;
     for (let i = 0; i < 10; i++) {
@@ -78,6 +71,7 @@ export class EditorPage implements OnInit, AfterViewInit {
       }
       this.matrix.push(row);
     }
+    this.numberOfShips = await this.http.getNumberOfShips(this.race);
   };
 
   setSelected = (val) => this.direction = val;
@@ -134,675 +128,718 @@ export class EditorPage implements OnInit, AfterViewInit {
   save = async () => {
     if(this.deckName) {
       this.retour = await this.http.saveDeck(this.matrix, this.race, this.deckName);
-      this.outputSubmit=this.retour.message;
+      if(this.retour.message==='Overwrite backup ?'){
+        const actionSheet = await this.actionSheetController.create({
+          header: this.retour.message,
+          buttons: [{
+            text: 'Oui',
+            role: 'destructive',
+            icon: 'create',
+            handler: () => {
+              this.http.overwrite(this.matrix, this.race, this.deckName);
+              this.outputSubmit = 'Overwriten';
+            }
+          }, {
+            text: 'Non',
+            icon: 'close',
+            role: 'cancel',
+          }]
+        });
+        await actionSheet.present();
+      }else {
+        this.outputSubmit = this.retour.message;
+      }
     }
   };
 
-  chargeDeck = () => {
-
-  };
+  changeNumberOfShips = (data, sign) => {
+    const num = data[data.length-1];
+    switch(sign){
+      case '+':
+        this.numberOfShips[num-1]++;
+        break;
+      case '-':
+        this.numberOfShips[num-1]--;
+        break;
+    }
+};
 
   onDrop = (dropData, col, line) => {
-    this.output = '';
-    col = this.letterToNum(col);
-    let tmpLine1 = line;
-    let tmpLine2 = line;
-    let tmpLine3 = line;
-    let tmpLine4 = line;
-    let tmpCol1 = col;
-    let tmpCol2 = col;
-    let tmpCol3 = col;
-    let tmpCol4 = col;
-    switch (this.nameToShape(dropData)) {
-      case 1:
-        if (!this.matrix[line][col]) {
-          this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-        } else {
-          this.output = 'Unable to put this here';
-        }
-        break;
-      case 2:
-        switch (this.direction) {
-          case'U':
-            tmpLine1 += 1;
-            break;
-          case'L':
-            tmpCol1 += 1;
-            break;
-          case'D':
-            tmpLine1 -= 1;
-            break;
-          case'R':
-            tmpCol1 -= 1;
-            break;
-        }
-        if (tmpCol1 > -1 && tmpCol1 < 10 && tmpLine1 > -1 && tmpLine1 < 10) {
-          if (!this.matrix[line][col] && !this.matrix[tmpLine1][tmpCol1]) {
+    if(this.numberOfShips[dropData[dropData.length-1]-1]>0) {
+      this.output = '';
+      col = this.letterToNum(col);
+      let tmpLine1 = line;
+      let tmpLine2 = line;
+      let tmpLine3 = line;
+      let tmpLine4 = line;
+      let tmpCol1 = col;
+      let tmpCol2 = col;
+      let tmpCol3 = col;
+      let tmpCol4 = col;
+      switch (this.nameToShape(dropData.toLowerCase())) {
+        case 1:
+          if (!this.matrix[line][col]) {
             this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-            this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+            this.changeNumberOfShips(dropData, '-');
           } else {
             this.output = 'Unable to put this here';
           }
-        } else {
-          this.output = 'Unable to put this here';
-        }
-        break;
-      case 3:
-        switch (this.direction) {
-          case'U':
-            tmpLine1 += 1;
-            tmpLine2 += 2;
-            tmpCol1 += 1;
-            break;
-          case'L':
-            tmpLine1 -= 1;
-            tmpCol1 += 1;
-            tmpCol2 += 2;
-            break;
-          case'D':
-            tmpLine1 -= 1;
-            tmpLine2 -= 2;
-            tmpCol1 -= 1;
-            break;
-          case'R':
-            tmpLine1 += 1;
-            tmpCol1 -= 1;
-            tmpCol2 -= 2;
-            break;
-        }
-        if (tmpCol1 > -1 && tmpCol1 < 10 && tmpLine1 > -1 && tmpLine1 < 10
-          && tmpCol2 > -1 && tmpCol2 < 10 && tmpLine2 > -1 && tmpLine2 < 10) {
-          if (!this.matrix[line][col] && !this.matrix[tmpLine1][tmpCol2]
-            && !this.matrix[line][tmpCol1] && !this.matrix[line][tmpCol2]
-            && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine1][tmpCol1]
-            && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine2][tmpCol1]) {
-            if (this.direction === 'U' || this.direction === 'D') {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][col] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-            } else {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-            }
-          } else {
-            this.output = 'Unable to put this here';
+          break;
+        case 2:
+          switch (this.direction) {
+            case'U':
+              tmpLine1 += 1;
+              break;
+            case'L':
+              tmpCol1 += 1;
+              break;
+            case'D':
+              tmpLine1 -= 1;
+              break;
+            case'R':
+              tmpCol1 -= 1;
+              break;
           }
-        } else {
-          this.output = 'Unable to put this here';
-        }
-        break;
-      case 4:
-        switch (this.direction) {
-          case'U':
-            tmpLine1 += 1;
-            tmpLine2 += 2;
-            tmpLine3 += 3;
-            break;
-          case'L':
-            tmpCol1 += 1;
-            tmpCol2 += 2;
-            tmpCol3 += 3;
-            break;
-          case'D':
-            tmpLine1 -= 1;
-            tmpLine2 -= 2;
-            tmpLine3 -= 3;
-            break;
-          case'R':
-            tmpCol1 -= 1;
-            tmpCol2 -= 2;
-            tmpCol3 -= 3;
-            break;
-        }
-        if (tmpLine3 > -1 && tmpLine3 < 10 && tmpCol3 > -1 && tmpCol3 < 10) {
-          if (!this.matrix[line][col] && !this.matrix[tmpLine1][tmpCol1]
-            && !this.matrix[tmpLine2][tmpCol2] && !this.matrix[tmpLine3][tmpCol3]) {
-            if (this.direction === 'U' || this.direction === 'D') {
+          if (tmpCol1 > -1 && tmpCol1 < 10 && tmpLine1 > -1 && tmpLine1 < 10) {
+            if (!this.matrix[line][col] && !this.matrix[tmpLine1][tmpCol1]) {
               this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
               this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+              this.changeNumberOfShips(dropData, '-');
             } else {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+              this.output = 'Unable to put this here';
             }
           } else {
             this.output = 'Unable to put this here';
           }
-        } else {
-          this.output = 'Unable to put this here';
-        }
-        break;
-      case 5:
-        switch (this.direction) {
-          case'U':
-            tmpLine1 += 1;
-            tmpLine2 += 2;
-            tmpLine3 += 3;
-            tmpCol1 += 1;
-            break;
-          case'L':
-            tmpLine1 -= 1;
-            tmpCol1 += 1;
-            tmpCol2 += 2;
-            tmpCol3 += 3;
-            break;
-          case'D':
-            tmpLine1 -= 1;
-            tmpLine2 -= 2;
-            tmpLine3 -= 3;
-            tmpCol1 -= 1;
-            break;
-          case'R':
-            tmpLine1 += 1;
-            tmpCol1 -= 1;
-            tmpCol2 -= 2;
-            tmpCol3 -= 3;
-            break;
-        }
-        if (tmpLine3 > -1 && tmpLine3 < 10 && tmpCol3 > -1 && tmpCol3 < 10 && tmpCol1 > -1
-          && tmpCol1 < 10 && tmpLine1 > -1 && tmpLine1 < 10) {
-          if (!this.matrix[line][col] && !this.matrix[line][tmpCol1]
-            && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine1][tmpCol1]
-            && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine2][tmpCol1]
-            && !this.matrix[tmpLine3][col] && !this.matrix[tmpLine3][tmpCol1]
-            && !this.matrix[line][tmpCol2] && !this.matrix[tmpLine1][tmpCol2]
-            && !this.matrix[line][tmpCol3] && !this.matrix[tmpLine1][tmpCol3]) {
-            if (this.direction === 'U' || this.direction === 'D') {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][col] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][col] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+          break;
+        case 3:
+          switch (this.direction) {
+            case'U':
+              tmpLine1 += 1;
+              tmpLine2 += 2;
+              tmpCol1 += 1;
+              break;
+            case'L':
+              tmpLine1 -= 1;
+              tmpCol1 += 1;
+              tmpCol2 += 2;
+              break;
+            case'D':
+              tmpLine1 -= 1;
+              tmpLine2 -= 2;
+              tmpCol1 -= 1;
+              break;
+            case'R':
+              tmpLine1 += 1;
+              tmpCol1 -= 1;
+              tmpCol2 -= 2;
+              break;
+          }
+          if (tmpCol1 > -1 && tmpCol1 < 10 && tmpLine1 > -1 && tmpLine1 < 10
+            && tmpCol2 > -1 && tmpCol2 < 10 && tmpLine2 > -1 && tmpLine2 < 10) {
+            if (!this.matrix[line][col] && !this.matrix[tmpLine1][tmpCol2]
+              && !this.matrix[line][tmpCol1] && !this.matrix[line][tmpCol2]
+              && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine1][tmpCol1]
+              && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine2][tmpCol1]) {
+              this.changeNumberOfShips(dropData, '-');
+              if (this.direction === 'U' || this.direction === 'D') {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][col] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+              } else {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+              }
             } else {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+              this.output = 'Unable to put this here';
             }
           } else {
             this.output = 'Unable to put this here';
           }
-        } else {
-          this.output = 'Unable to put this here';
-        }
-        break;
-      case 6:
-        switch (this.direction) {
-          case'U':
-            tmpLine1 += 1;
-            tmpLine2 += 2;
-            tmpLine3 += 3;
-            tmpLine4 += 4;
-            tmpCol1 += 1;
-            break;
-          case'L':
-            tmpLine1 -= 1;
-            tmpCol1 += 1;
-            tmpCol2 += 2;
-            tmpCol3 += 3;
-            tmpCol4 += 4;
-            break;
-          case'D':
-            tmpLine1 -= 1;
-            tmpLine2 -= 2;
-            tmpLine3 -= 3;
-            tmpLine4 -= 4;
-            tmpCol1 -= 1;
-            break;
-          case'R':
-            tmpLine1 += 1;
-            tmpCol1 -= 1;
-            tmpCol2 -= 2;
-            tmpCol3 -= 3;
-            tmpCol4 -= 4;
-            break;
-        }
-        if (tmpCol1 > -1 && tmpCol1 < 10 && tmpLine1 > -1 && tmpLine1 < 10
-          && tmpCol4 > -1 && tmpCol4 < 10 && tmpLine4 > -1 && tmpLine4 < 10) {
-          if (!this.matrix[line][col] && !this.matrix[line][tmpCol1]
-            && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine1][tmpCol1]
-            && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine2][tmpCol1]
-            && !this.matrix[tmpLine3][col] && !this.matrix[tmpLine3][tmpCol1]
-            && !this.matrix[line][tmpCol2] && !this.matrix[tmpLine1][tmpCol2]
-            && !this.matrix[line][tmpCol3] && !this.matrix[tmpLine1][tmpCol3]
-            && !this.matrix[line][tmpCol4] && !this.matrix[tmpLine1][tmpCol4]
-            && !this.matrix[tmpLine4][col] && !this.matrix[tmpLine4][tmpCol1]) {
-            if (this.direction === 'U' || this.direction === 'D') {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][col] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][col] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine4][col] = {name: dropData + '_5.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine4][tmpCol1] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
+          break;
+        case 4:
+          switch (this.direction) {
+            case'U':
+              tmpLine1 += 1;
+              tmpLine2 += 2;
+              tmpLine3 += 3;
+              break;
+            case'L':
+              tmpCol1 += 1;
+              tmpCol2 += 2;
+              tmpCol3 += 3;
+              break;
+            case'D':
+              tmpLine1 -= 1;
+              tmpLine2 -= 2;
+              tmpLine3 -= 3;
+              break;
+            case'R':
+              tmpCol1 -= 1;
+              tmpCol2 -= 2;
+              tmpCol3 -= 3;
+              break;
+          }
+          if (tmpLine3 > -1 && tmpLine3 < 10 && tmpCol3 > -1 && tmpCol3 < 10) {
+            if (!this.matrix[line][col] && !this.matrix[tmpLine1][tmpCol1]
+              && !this.matrix[tmpLine2][tmpCol2] && !this.matrix[tmpLine3][tmpCol3]) {
+              this.changeNumberOfShips(dropData, '-');
+              if (this.direction === 'U' || this.direction === 'D') {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+              } else {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+              }
             } else {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol4] = {name: dropData + '_5.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol4] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
+              this.output = 'Unable to put this here';
             }
           } else {
             this.output = 'Unable to put this here';
           }
-        } else {
-          this.output = 'Unable to put this here';
-        }
-        break;
-      case 7:
-        switch (this.direction) {
-          case'U':
-            tmpLine1 += 1;
-            tmpLine2 += 2;
-            tmpLine3 += 3;
-            tmpLine4 += 4;
-            tmpCol1 -= 1;
-            tmpCol2 += 1;
-            break;
-          case'L':
-            tmpLine1 += 1;
-            tmpLine2 -= 1;
-            tmpCol1 += 1;
-            tmpCol2 += 2;
-            tmpCol3 += 3;
-            tmpCol4 += 4;
-            break;
-          case'D':
-            tmpLine1 -= 1;
-            tmpLine2 -= 2;
-            tmpLine3 -= 3;
-            tmpLine4 -= 4;
-            tmpCol1 += 1;
-            tmpCol2 -= 1;
-            break;
-          case'R':
-            tmpLine1 -= 1;
-            tmpLine2 += 1;
-            tmpCol1 -= 1;
-            tmpCol2 -= 2;
-            tmpCol3 -= 3;
-            tmpCol4 -= 4;
-            break;
-        }
-        if (tmpLine1 > -1 && tmpLine1 < 10 && tmpLine4 > -1 && tmpLine4 < 10
-          && tmpLine2 > -1 && tmpLine2 < 10 && tmpCol2 > -1 && tmpCol2 < 10
-          && tmpCol1 > -1 && tmpCol1 < 10 && tmpCol4 > -1 && tmpCol4 < 10) {
-          if (!this.matrix[line][col] && !this.matrix[tmpLine3][tmpCol1]
-            && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine4][tmpCol1]
-            && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine3][tmpCol1]
-            && !this.matrix[tmpLine3][col] && !this.matrix[tmpLine3][tmpCol2]
-            && !this.matrix[tmpLine4][col] && !this.matrix[tmpLine4][tmpCol2]
-            && !this.matrix[line][tmpCol1] && !this.matrix[line][tmpCol2]
-            && !this.matrix[line][tmpCol3] && !this.matrix[line][tmpCol4]
-            && !this.matrix[tmpLine1][tmpCol3] && !this.matrix[tmpLine1][tmpCol4]
-            && !this.matrix[tmpLine2][tmpCol3] && !this.matrix[tmpLine2][tmpCol4]) {
-            if (this.direction === 'U' || this.direction === 'D') {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][col] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][col] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine4][col] = {name: dropData + '_5.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.0', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine4][tmpCol1] = {name: dropData + '_5.0', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol2] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine4][tmpCol2] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
+          break;
+        case 5:
+          switch (this.direction) {
+            case'U':
+              tmpLine1 += 1;
+              tmpLine2 += 2;
+              tmpLine3 += 3;
+              tmpCol1 += 1;
+              break;
+            case'L':
+              tmpLine1 -= 1;
+              tmpCol1 += 1;
+              tmpCol2 += 2;
+              tmpCol3 += 3;
+              break;
+            case'D':
+              tmpLine1 -= 1;
+              tmpLine2 -= 2;
+              tmpLine3 -= 3;
+              tmpCol1 -= 1;
+              break;
+            case'R':
+              tmpLine1 += 1;
+              tmpCol1 -= 1;
+              tmpCol2 -= 2;
+              tmpCol3 -= 3;
+              break;
+          }
+          if (tmpLine3 > -1 && tmpLine3 < 10 && tmpCol3 > -1 && tmpCol3 < 10 && tmpCol1 > -1
+            && tmpCol1 < 10 && tmpLine1 > -1 && tmpLine1 < 10) {
+            if (!this.matrix[line][col] && !this.matrix[line][tmpCol1]
+              && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine1][tmpCol1]
+              && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine2][tmpCol1]
+              && !this.matrix[tmpLine3][col] && !this.matrix[tmpLine3][tmpCol1]
+              && !this.matrix[line][tmpCol2] && !this.matrix[tmpLine1][tmpCol2]
+              && !this.matrix[line][tmpCol3] && !this.matrix[tmpLine1][tmpCol3]) {
+              this.changeNumberOfShips(dropData, '-');
+              if (this.direction === 'U' || this.direction === 'D') {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][col] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][col] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+              } else {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+              }
             } else {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol4] = {name: dropData + '_5.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.0', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol4] = {name: dropData + '_5.0', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol4] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
+              this.output = 'Unable to put this here';
             }
           } else {
             this.output = 'Unable to put this here';
           }
-        } else {
-          this.output = 'Unable to put this here';
-        }
-        break;
-      case 8:
-        switch (this.direction) {
-          case'U':
-            tmpLine1 += 1;
-            tmpLine2 += 2;
-            tmpLine3 += 3;
-            tmpLine4 += 4;
-            tmpCol1 -= 1;
-            tmpCol2 += 1;
-            tmpCol3 += 2;
-            break;
-          case'L':
-            tmpLine1 -= 1;
-            tmpLine2 -= 2;
-            tmpLine3 += 1;
-            tmpCol1 += 1;
-            tmpCol2 += 2;
-            tmpCol3 += 3;
-            tmpCol4 += 4;
-            break;
-          case'D':
-            tmpLine1 -= 1;
-            tmpLine2 -= 2;
-            tmpLine3 -= 3;
-            tmpLine4 -= 4;
-            tmpCol1 += 1;
-            tmpCol2 -= 1;
-            tmpCol3 -= 2;
-            break;
-          case'R':
-            tmpLine1 += 1;
-            tmpLine2 += 2;
-            tmpLine3 -= 1;
-            tmpCol1 -= 1;
-            tmpCol2 -= 2;
-            tmpCol3 -= 3;
-            tmpCol4 -= 4;
-            break;
-        }
-        if (tmpLine4 > -1 && tmpLine4 < 10 && tmpCol1 > -1 && tmpCol1 < 10
-          && tmpCol3 > -1 && tmpCol3 < 10 && tmpLine2 > -1 && tmpLine2 < 10
-          && tmpLine3 > -1 && tmpLine3 < 10 && tmpCol4 > -1 && tmpCol4 < 10) {
-          if (!this.matrix[line][col] && !this.matrix[tmpLine3][tmpCol1]
-            && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine2][tmpCol1]
-            && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine3][tmpCol1]
-            && !this.matrix[tmpLine3][col] && !this.matrix[tmpLine4][tmpCol1]
-            && !this.matrix[tmpLine4][col] && !this.matrix[line][tmpCol2]
-            && !this.matrix[tmpLine1][tmpCol2] && !this.matrix[tmpLine2][tmpCol2]
-            && !this.matrix[tmpLine3][tmpCol2] && !this.matrix[tmpLine4][tmpCol2]/////////
-            && !this.matrix[tmpLine2][tmpCol3] && !this.matrix[tmpLine3][tmpCol3]
-            && !this.matrix[tmpLine4][tmpCol3] && !this.matrix[line][tmpCol1]
-            && !this.matrix[line][tmpCol3] && !this.matrix[line][tmpCol4]
-            && !this.matrix[tmpLine3][tmpCol4] && !this.matrix[tmpLine1][tmpCol1]
-            && !this.matrix[tmpLine1][tmpCol3] && !this.matrix[tmpLine1][tmpCol4]
-            && !this.matrix[tmpLine2][tmpCol4]) {
-            if (this.direction === 'U' || this.direction === 'D') {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][col] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][col] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine4][col] = {name: dropData + '_5.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.0', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.0', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine4][tmpCol1] = {name: dropData + '_5.0', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol2] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol2] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine4][tmpCol2] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol3] = {name: dropData + '_3.3', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol3] = {name: dropData + '_4.3', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine4][tmpCol3] = {name: dropData + '_5.3', direction: this.getRotation(this.direction)};
+          break;
+        case 6:
+          switch (this.direction) {
+            case'U':
+              tmpLine1 += 1;
+              tmpLine2 += 2;
+              tmpLine3 += 3;
+              tmpLine4 += 4;
+              tmpCol1 += 1;
+              break;
+            case'L':
+              tmpLine1 -= 1;
+              tmpCol1 += 1;
+              tmpCol2 += 2;
+              tmpCol3 += 3;
+              tmpCol4 += 4;
+              break;
+            case'D':
+              tmpLine1 -= 1;
+              tmpLine2 -= 2;
+              tmpLine3 -= 3;
+              tmpLine4 -= 4;
+              tmpCol1 -= 1;
+              break;
+            case'R':
+              tmpLine1 += 1;
+              tmpCol1 -= 1;
+              tmpCol2 -= 2;
+              tmpCol3 -= 3;
+              tmpCol4 -= 4;
+              break;
+          }
+          if (tmpCol1 > -1 && tmpCol1 < 10 && tmpLine1 > -1 && tmpLine1 < 10
+            && tmpCol4 > -1 && tmpCol4 < 10 && tmpLine4 > -1 && tmpLine4 < 10) {
+            if (!this.matrix[line][col] && !this.matrix[line][tmpCol1]
+              && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine1][tmpCol1]
+              && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine2][tmpCol1]
+              && !this.matrix[tmpLine3][col] && !this.matrix[tmpLine3][tmpCol1]
+              && !this.matrix[line][tmpCol2] && !this.matrix[tmpLine1][tmpCol2]
+              && !this.matrix[line][tmpCol3] && !this.matrix[tmpLine1][tmpCol3]
+              && !this.matrix[line][tmpCol4] && !this.matrix[tmpLine1][tmpCol4]
+              && !this.matrix[tmpLine4][col] && !this.matrix[tmpLine4][tmpCol1]) {
+              this.changeNumberOfShips(dropData, '-');
+              if (this.direction === 'U' || this.direction === 'D') {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][col] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][col] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine4][col] = {name: dropData + '_5.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine4][tmpCol1] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
+              } else {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol4] = {name: dropData + '_5.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol4] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
+              }
             } else {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol4] = {name: dropData + '_5.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol2] = {name: dropData + '_3.0', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol3] = {name: dropData + '_4.0', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol4] = {name: dropData + '_5.0', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol4] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol2] = {name: dropData + '_3.3', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol3] = {name: dropData + '_4.3', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol4] = {name: dropData + '_5.3', direction: this.getRotation(this.direction)};
+              this.output = 'Unable to put this here';
             }
           } else {
             this.output = 'Unable to put this here';
           }
-        } else {
-          this.output = 'Unable to put this here';
-        }
-        break;
-      case 9:
-        switch (this.direction) {
-          case'U':
-            tmpLine1 += 1;
-            tmpLine2 += 2;
-            tmpLine3 += 3;
-            tmpLine4 += 4;
-            tmpCol1 += 1;
-            tmpCol2 += 2;
-            break;
-          case'L':
-            tmpLine1 -= 1;
-            tmpLine2 -= 2;
-            tmpCol1 += 1;
-            tmpCol2 += 2;
-            tmpCol3 += 3;
-            tmpCol4 += 4;
-            break;
-          case'D':
-            tmpLine1 -= 1;
-            tmpLine2 -= 2;
-            tmpLine3 -= 3;
-            tmpLine4 -= 4;
-            tmpCol1 -= 1;
-            tmpCol2 -= 2;
-            break;
-          case'R':
-            tmpLine1 += 1;
-            tmpLine2 += 2;
-            tmpCol1 -= 1;
-            tmpCol2 -= 2;
-            tmpCol3 -= 3;
-            tmpCol4 -= 4;
-            break;
-        }
-        if (tmpLine4 > -1 && tmpLine4 < 10 && tmpCol2 > -1 && tmpCol2 < 10
-          && tmpLine2 > -1 && tmpLine2 < 10 && tmpCol4 < 10 && tmpCol4 > -1) {
-          if (!this.matrix[line][col] && !this.matrix[line][tmpCol1]
-            && !this.matrix[line][tmpCol2] && !this.matrix[tmpLine1][tmpCol1]
-            && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine1][col]
-            && !this.matrix[tmpLine1][tmpCol1] && !this.matrix[tmpLine1][tmpCol2]
-            && !this.matrix[tmpLine1][tmpCol3] && !this.matrix[tmpLine1][tmpCol4]
-            && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine2][tmpCol1]
-            && !this.matrix[tmpLine3][tmpCol1] && !this.matrix[tmpLine4][tmpCol1]) {
-            if (this.direction === 'U' || this.direction === 'D') {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine4][tmpCol1] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol2] = {name: dropData + '_1.3', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_2.3', direction: this.getRotation(this.direction)};
+          break;
+        case 7:
+          switch (this.direction) {
+            case'U':
+              tmpLine1 += 1;
+              tmpLine2 += 2;
+              tmpLine3 += 3;
+              tmpLine4 += 4;
+              tmpCol1 -= 1;
+              tmpCol2 += 1;
+              break;
+            case'L':
+              tmpLine1 += 1;
+              tmpLine2 -= 1;
+              tmpCol1 += 1;
+              tmpCol2 += 2;
+              tmpCol3 += 3;
+              tmpCol4 += 4;
+              break;
+            case'D':
+              tmpLine1 -= 1;
+              tmpLine2 -= 2;
+              tmpLine3 -= 3;
+              tmpLine4 -= 4;
+              tmpCol1 += 1;
+              tmpCol2 -= 1;
+              break;
+            case'R':
+              tmpLine1 -= 1;
+              tmpLine2 += 1;
+              tmpCol1 -= 1;
+              tmpCol2 -= 2;
+              tmpCol3 -= 3;
+              tmpCol4 -= 4;
+              break;
+          }
+          if (tmpLine1 > -1 && tmpLine1 < 10 && tmpLine4 > -1 && tmpLine4 < 10
+            && tmpLine2 > -1 && tmpLine2 < 10 && tmpCol2 > -1 && tmpCol2 < 10
+            && tmpCol1 > -1 && tmpCol1 < 10 && tmpCol4 > -1 && tmpCol4 < 10) {
+            if (!this.matrix[line][col] && !this.matrix[tmpLine3][tmpCol1]
+              && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine4][tmpCol1]
+              && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine3][tmpCol1]
+              && !this.matrix[tmpLine3][col] && !this.matrix[tmpLine3][tmpCol2]
+              && !this.matrix[tmpLine4][col] && !this.matrix[tmpLine4][tmpCol2]
+              && !this.matrix[line][tmpCol1] && !this.matrix[line][tmpCol2]
+              && !this.matrix[line][tmpCol3] && !this.matrix[line][tmpCol4]
+              && !this.matrix[tmpLine1][tmpCol3] && !this.matrix[tmpLine1][tmpCol4]
+              && !this.matrix[tmpLine2][tmpCol3] && !this.matrix[tmpLine2][tmpCol4]) {
+              this.changeNumberOfShips(dropData, '-');
+              if (this.direction === 'U' || this.direction === 'D') {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][col] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][col] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine4][col] = {name: dropData + '_5.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.0', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine4][tmpCol1] = {name: dropData + '_5.0', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol2] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine4][tmpCol2] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
+              } else {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol4] = {name: dropData + '_5.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.0', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol4] = {name: dropData + '_5.0', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol4] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
+              }
             } else {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol4] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][col] = {name: dropData + '_1.3', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_2.3', direction: this.getRotation(this.direction)};
+              this.output = 'Unable to put this here';
             }
           } else {
             this.output = 'Unable to put this here';
           }
-        } else {
-          this.output = 'Unable to put this here';
-        }
-        break;
-      case 10:
-        switch (this.direction) {
-          case'U':
-            tmpLine1 += 1;
-            tmpLine2 += 2;
-            tmpLine3 += 3;
-            tmpCol1 -= 1;
-            tmpCol2 += 1;
-            tmpCol3 += 2;
-            break;
-          case'L':
-            tmpLine1 -= 1;
-            tmpLine2 -= 2;
-            tmpLine3 += 1;
-            tmpCol1 += 1;
-            tmpCol2 += 2;
-            tmpCol3 += 3;
-            break;
-          case'D':
-            tmpLine1 -= 1;
-            tmpLine2 -= 2;
-            tmpLine3 -= 3;
-            tmpCol1 += 1;
-            tmpCol2 -= 1;
-            tmpCol3 -= 2;
-            break;
-          case'R':
-            tmpLine1 += 1;
-            tmpLine2 += 2;
-            tmpLine3 -= 1;
-            tmpCol1 -= 1;
-            tmpCol2 -= 2;
-            tmpCol3 -= 3;
-            break;
-        }
-        if (tmpCol1 > -1 && tmpCol1 < 10 && tmpCol3 > -1 && tmpCol3 < 10
-          && tmpLine2 > -1 && tmpLine2 < 10 && tmpLine3 > -1 && tmpLine3 < 10) {
-          if (!this.matrix[line][col] && !this.matrix[tmpLine3][tmpCol1]
-            && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine2][tmpCol1]
-            && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine3][tmpCol1]
-            && !this.matrix[line][tmpCol2] && !this.matrix[tmpLine3][tmpCol2]
-            && !this.matrix[tmpLine1][tmpCol2] && !this.matrix[tmpLine2][tmpCol2]
-            && !this.matrix[tmpLine2][tmpCol3] && !this.matrix[tmpLine3][tmpCol3]
-            && !this.matrix[line][tmpCol1] && !this.matrix[line][tmpCol3]
-            && !this.matrix[tmpLine1][tmpCol1] && !this.matrix[tmpLine1][tmpCol3]
-            && !this.matrix[tmpLine3][col]) {
-            if (this.direction === 'U' || this.direction === 'D') {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][col] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][col] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.0', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.0', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol2] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol2] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol3] = {name: dropData + '_3.3', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol3] = {name: dropData + '_4.3', direction: this.getRotation(this.direction)};
+          break;
+        case 8:
+          switch (this.direction) {
+            case'U':
+              tmpLine1 += 1;
+              tmpLine2 += 2;
+              tmpLine3 += 3;
+              tmpLine4 += 4;
+              tmpCol1 -= 1;
+              tmpCol2 += 1;
+              tmpCol3 += 2;
+              break;
+            case'L':
+              tmpLine1 -= 1;
+              tmpLine2 -= 2;
+              tmpLine3 += 1;
+              tmpCol1 += 1;
+              tmpCol2 += 2;
+              tmpCol3 += 3;
+              tmpCol4 += 4;
+              break;
+            case'D':
+              tmpLine1 -= 1;
+              tmpLine2 -= 2;
+              tmpLine3 -= 3;
+              tmpLine4 -= 4;
+              tmpCol1 += 1;
+              tmpCol2 -= 1;
+              tmpCol3 -= 2;
+              break;
+            case'R':
+              tmpLine1 += 1;
+              tmpLine2 += 2;
+              tmpLine3 -= 1;
+              tmpCol1 -= 1;
+              tmpCol2 -= 2;
+              tmpCol3 -= 3;
+              tmpCol4 -= 4;
+              break;
+          }
+          if (tmpLine4 > -1 && tmpLine4 < 10 && tmpCol1 > -1 && tmpCol1 < 10
+            && tmpCol3 > -1 && tmpCol3 < 10 && tmpLine2 > -1 && tmpLine2 < 10
+            && tmpLine3 > -1 && tmpLine3 < 10 && tmpCol4 > -1 && tmpCol4 < 10) {
+            if (!this.matrix[line][col] && !this.matrix[tmpLine3][tmpCol1]
+              && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine2][tmpCol1]
+              && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine3][tmpCol1]
+              && !this.matrix[tmpLine3][col] && !this.matrix[tmpLine4][tmpCol1]
+              && !this.matrix[tmpLine4][col] && !this.matrix[line][tmpCol2]
+              && !this.matrix[tmpLine1][tmpCol2] && !this.matrix[tmpLine2][tmpCol2]
+              && !this.matrix[tmpLine3][tmpCol2] && !this.matrix[tmpLine4][tmpCol2]/////////
+              && !this.matrix[tmpLine2][tmpCol3] && !this.matrix[tmpLine3][tmpCol3]
+              && !this.matrix[tmpLine4][tmpCol3] && !this.matrix[line][tmpCol1]
+              && !this.matrix[line][tmpCol3] && !this.matrix[line][tmpCol4]
+              && !this.matrix[tmpLine3][tmpCol4] && !this.matrix[tmpLine1][tmpCol1]
+              && !this.matrix[tmpLine1][tmpCol3] && !this.matrix[tmpLine1][tmpCol4]
+              && !this.matrix[tmpLine2][tmpCol4]) {
+              this.changeNumberOfShips(dropData, '-');
+              if (this.direction === 'U' || this.direction === 'D') {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][col] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][col] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine4][col] = {name: dropData + '_5.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.0', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.0', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine4][tmpCol1] = {name: dropData + '_5.0', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol2] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol2] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine4][tmpCol2] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol3] = {name: dropData + '_3.3', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol3] = {name: dropData + '_4.3', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine4][tmpCol3] = {name: dropData + '_5.3', direction: this.getRotation(this.direction)};
+              } else {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol4] = {name: dropData + '_5.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol2] = {name: dropData + '_3.0', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol3] = {name: dropData + '_4.0', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol4] = {name: dropData + '_5.0', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol4] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol2] = {name: dropData + '_3.3', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol3] = {name: dropData + '_4.3', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol4] = {name: dropData + '_5.3', direction: this.getRotation(this.direction)};
+              }
             } else {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol2] = {name: dropData + '_3.0', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol3] = {name: dropData + '_4.0', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol2] = {name: dropData + '_3.3', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol3] = {name: dropData + '_4.3', direction: this.getRotation(this.direction)};
+              this.output = 'Unable to put this here';
             }
           } else {
             this.output = 'Unable to put this here';
           }
-        } else {
-          this.output = 'Unable to put this here';
-        }
-        break;
-      case 11:
-        switch (this.direction) {
-          case'U':
-            tmpLine1 += 1;
-            tmpLine2 += 2;
-            tmpLine3 += 3;
-            tmpCol1 += 1;
-            tmpCol2 += 2;
-            break;
-          case'L':
-            tmpLine1 -= 1;
-            tmpLine2 -= 2;
-            tmpCol1 += 1;
-            tmpCol2 += 2;
-            tmpCol3 += 3;
-            break;
-          case'D':
-            tmpLine1 -= 1;
-            tmpLine2 -= 2;
-            tmpLine3 -= 3;
-            tmpCol1 -= 1;
-            tmpCol2 -= 2;
-            break;
-          case'R':
-            tmpLine1 += 1;
-            tmpLine2 += 2;
-            tmpCol1 -= 1;
-            tmpCol2 -= 2;
-            tmpCol3 -= 3;
-            break;
-        }
-        if (tmpCol2 > -1 && tmpCol2 < 10 && tmpLine2 > -1 && tmpLine2 < 10
-          && tmpCol3 > -1 && tmpCol3 < 10 && tmpLine3 > -1 && tmpLine3 < 10) {
-          if (!this.matrix[line][col] && !this.matrix[line][tmpCol1]
-            && !this.matrix[line][tmpCol2] && !this.matrix[tmpLine1][tmpCol1]
-            && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine1][col]
-            && !this.matrix[tmpLine1][tmpCol1] && !this.matrix[tmpLine1][tmpCol2]
-            && !this.matrix[tmpLine1][tmpCol3] && !this.matrix[tmpLine2][col]
-            && !this.matrix[tmpLine2][tmpCol1] && !this.matrix[tmpLine3][tmpCol1]) {
-            if (this.direction === 'U' || this.direction === 'D') {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol2] = {name: dropData + '_1.3', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_2.3', direction: this.getRotation(this.direction)};
+          break;
+        case 9:
+          switch (this.direction) {
+            case'U':
+              tmpLine1 += 1;
+              tmpLine2 += 2;
+              tmpLine3 += 3;
+              tmpLine4 += 4;
+              tmpCol1 += 1;
+              tmpCol2 += 2;
+              break;
+            case'L':
+              tmpLine1 -= 1;
+              tmpLine2 -= 2;
+              tmpCol1 += 1;
+              tmpCol2 += 2;
+              tmpCol3 += 3;
+              tmpCol4 += 4;
+              break;
+            case'D':
+              tmpLine1 -= 1;
+              tmpLine2 -= 2;
+              tmpLine3 -= 3;
+              tmpLine4 -= 4;
+              tmpCol1 -= 1;
+              tmpCol2 -= 2;
+              break;
+            case'R':
+              tmpLine1 += 1;
+              tmpLine2 += 2;
+              tmpCol1 -= 1;
+              tmpCol2 -= 2;
+              tmpCol3 -= 3;
+              tmpCol4 -= 4;
+              break;
+          }
+          if (tmpLine4 > -1 && tmpLine4 < 10 && tmpCol2 > -1 && tmpCol2 < 10
+            && tmpLine2 > -1 && tmpLine2 < 10 && tmpCol4 < 10 && tmpCol4 > -1) {
+            if (!this.matrix[line][col] && !this.matrix[line][tmpCol1]
+              && !this.matrix[line][tmpCol2] && !this.matrix[tmpLine1][tmpCol1]
+              && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine1][col]
+              && !this.matrix[tmpLine1][tmpCol1] && !this.matrix[tmpLine1][tmpCol2]
+              && !this.matrix[tmpLine1][tmpCol3] && !this.matrix[tmpLine1][tmpCol4]
+              && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine2][tmpCol1]
+              && !this.matrix[tmpLine3][tmpCol1] && !this.matrix[tmpLine4][tmpCol1]) {
+              this.changeNumberOfShips(dropData, '-');
+              if (this.direction === 'U' || this.direction === 'D') {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine4][tmpCol1] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol2] = {name: dropData + '_1.3', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_2.3', direction: this.getRotation(this.direction)};
+              } else {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol4] = {name: dropData + '_5.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][col] = {name: dropData + '_1.3', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_2.3', direction: this.getRotation(this.direction)};
+              }
             } else {
-              this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
-              this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][col] = {name: dropData + '_1.3', direction: this.getRotation(this.direction)};
-              this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_2.3', direction: this.getRotation(this.direction)};
+              this.output = 'Unable to put this here';
             }
           } else {
             this.output = 'Unable to put this here';
           }
-        } else {
-          this.output = 'Unable to put this here';
-        }
-        break;
+          break;
+        case 10:
+          switch (this.direction) {
+            case'U':
+              tmpLine1 += 1;
+              tmpLine2 += 2;
+              tmpLine3 += 3;
+              tmpCol1 -= 1;
+              tmpCol2 += 1;
+              tmpCol3 += 2;
+              break;
+            case'L':
+              tmpLine1 -= 1;
+              tmpLine2 -= 2;
+              tmpLine3 += 1;
+              tmpCol1 += 1;
+              tmpCol2 += 2;
+              tmpCol3 += 3;
+              break;
+            case'D':
+              tmpLine1 -= 1;
+              tmpLine2 -= 2;
+              tmpLine3 -= 3;
+              tmpCol1 += 1;
+              tmpCol2 -= 1;
+              tmpCol3 -= 2;
+              break;
+            case'R':
+              tmpLine1 += 1;
+              tmpLine2 += 2;
+              tmpLine3 -= 1;
+              tmpCol1 -= 1;
+              tmpCol2 -= 2;
+              tmpCol3 -= 3;
+              break;
+          }
+          if (tmpCol1 > -1 && tmpCol1 < 10 && tmpCol3 > -1 && tmpCol3 < 10
+            && tmpLine2 > -1 && tmpLine2 < 10 && tmpLine3 > -1 && tmpLine3 < 10) {
+            if (!this.matrix[line][col] && !this.matrix[tmpLine3][tmpCol1]
+              && !this.matrix[tmpLine1][col] && !this.matrix[tmpLine2][tmpCol1]
+              && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine3][tmpCol1]
+              && !this.matrix[line][tmpCol2] && !this.matrix[tmpLine3][tmpCol2]
+              && !this.matrix[tmpLine1][tmpCol2] && !this.matrix[tmpLine2][tmpCol2]
+              && !this.matrix[tmpLine2][tmpCol3] && !this.matrix[tmpLine3][tmpCol3]
+              && !this.matrix[line][tmpCol1] && !this.matrix[line][tmpCol3]
+              && !this.matrix[tmpLine1][tmpCol1] && !this.matrix[tmpLine1][tmpCol3]
+              && !this.matrix[tmpLine3][col]) {
+              this.changeNumberOfShips(dropData, '-');
+              if (this.direction === 'U' || this.direction === 'D') {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][col] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][col] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.0', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.0', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol2] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol2] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol3] = {name: dropData + '_3.3', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol3] = {name: dropData + '_4.3', direction: this.getRotation(this.direction)};
+              } else {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol2] = {name: dropData + '_3.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol3] = {name: dropData + '_4.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol2] = {name: dropData + '_3.0', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol3] = {name: dropData + '_4.0', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol2] = {name: dropData + '_3.3', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol3] = {name: dropData + '_4.3', direction: this.getRotation(this.direction)};
+              }
+            } else {
+              this.output = 'Unable to put this here';
+            }
+          } else {
+            this.output = 'Unable to put this here';
+          }
+          break;
+        case 11:
+          switch (this.direction) {
+            case'U':
+              tmpLine1 += 1;
+              tmpLine2 += 2;
+              tmpLine3 += 3;
+              tmpCol1 += 1;
+              tmpCol2 += 2;
+              break;
+            case'L':
+              tmpLine1 -= 1;
+              tmpLine2 -= 2;
+              tmpCol1 += 1;
+              tmpCol2 += 2;
+              tmpCol3 += 3;
+              break;
+            case'D':
+              tmpLine1 -= 1;
+              tmpLine2 -= 2;
+              tmpLine3 -= 3;
+              tmpCol1 -= 1;
+              tmpCol2 -= 2;
+              break;
+            case'R':
+              tmpLine1 += 1;
+              tmpLine2 += 2;
+              tmpCol1 -= 1;
+              tmpCol2 -= 2;
+              tmpCol3 -= 3;
+              break;
+          }
+          if (tmpCol2 > -1 && tmpCol2 < 10 && tmpLine2 > -1 && tmpLine2 < 10
+            && tmpCol3 > -1 && tmpCol3 < 10 && tmpLine3 > -1 && tmpLine3 < 10) {
+            if (!this.matrix[line][col] && !this.matrix[line][tmpCol1]
+              && !this.matrix[line][tmpCol2] && !this.matrix[tmpLine1][tmpCol1]
+              && !this.matrix[tmpLine2][col] && !this.matrix[tmpLine1][col]
+              && !this.matrix[tmpLine1][tmpCol1] && !this.matrix[tmpLine1][tmpCol2]
+              && !this.matrix[tmpLine1][tmpCol3] && !this.matrix[tmpLine2][col]
+              && !this.matrix[tmpLine2][tmpCol1] && !this.matrix[tmpLine3][tmpCol1]) {
+              this.changeNumberOfShips(dropData, '-');
+              if (this.direction === 'U' || this.direction === 'D') {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine3][tmpCol1] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol2] = {name: dropData + '_1.3', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_2.3', direction: this.getRotation(this.direction)};
+              } else {
+                this.matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(this.direction)};
+                this.matrix[line][tmpCol1] = {name: dropData + '_2.1', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][col] = {name: dropData + '_1.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol1] = {name: dropData + '_2.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol2] = {name: dropData + '_3.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine1][tmpCol3] = {name: dropData + '_4.2', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][col] = {name: dropData + '_1.3', direction: this.getRotation(this.direction)};
+                this.matrix[tmpLine2][tmpCol1] = {name: dropData + '_2.3', direction: this.getRotation(this.direction)};
+              }
+            } else {
+              this.output = 'Unable to put this here';
+            }
+          } else {
+            this.output = 'Unable to put this here';
+          }
+          break;
+      }
+    }else{
+      this.output = 'No ship of this model anymore';
     }
     // console.log(this.matrix);
   };
@@ -818,7 +855,10 @@ export class EditorPage implements OnInit, AfterViewInit {
     let tmpCol3 = col;
     let tmpCol4 = col;
     this.matrix[line][col] = 0;
-    switch (this.nameToShape(ship.split('_')[0])) {
+    switch (this.nameToShape(ship.split('_')[0].toLowerCase())) {
+      case 1:
+        this.changeNumberOfShips(ship.split('_')[0][ship.split('_')[0].length-1], '+');
+        break;
       case 2:
         switch (this.direction) {
           case'U':
@@ -835,6 +875,7 @@ export class EditorPage implements OnInit, AfterViewInit {
             break;
         }
         this.matrix[tmpLine1][tmpCol1] = 0;
+        this.changeNumberOfShips(ship.split('_')[0][ship.split('_')[0].length-1], '+');
         break;
       case 3:
         switch (this.direction) {
@@ -862,6 +903,7 @@ export class EditorPage implements OnInit, AfterViewInit {
         this.matrix[tmpLine1][col] = 0;
         this.matrix[line][tmpCol1] = 0;
         this.matrix[tmpLine1][tmpCol1] = 0;
+        this.changeNumberOfShips(ship.split('_')[0][ship.split('_')[0].length-1], '+');
         if (this.direction === 'U' || this.direction === 'D') {
           this.matrix[tmpLine2][col] = 0;
           this.matrix[tmpLine2][tmpCol1] = 0;
@@ -893,6 +935,7 @@ export class EditorPage implements OnInit, AfterViewInit {
             tmpCol3 -= 3;
             break;
         }
+        this.changeNumberOfShips(ship.split('_')[0][ship.split('_')[0].length-1], '+');
         if (this.direction === 'U' || this.direction === 'D') {
           this.matrix[tmpLine1][tmpCol1] = 0;
           this.matrix[tmpLine2][tmpCol2] = 0;
@@ -930,6 +973,7 @@ export class EditorPage implements OnInit, AfterViewInit {
             tmpCol3 -= 3;
             break;
         }
+        this.changeNumberOfShips(ship.split('_')[0][ship.split('_')[0].length-1], '+');
         this.matrix[tmpLine1][col] = 0;
         this.matrix[line][tmpCol1] = 0;
         this.matrix[tmpLine1][tmpCol1] = 0;
@@ -976,6 +1020,7 @@ export class EditorPage implements OnInit, AfterViewInit {
             tmpCol4 -= 4;
             break;
         }
+        this.changeNumberOfShips(ship.split('_')[0][ship.split('_')[0].length-1], '+');
         this.matrix[line][tmpCol1] = 0;
         this.matrix[tmpLine1][col] = 0;
         this.matrix[tmpLine1][tmpCol1] = 0;
@@ -1030,6 +1075,7 @@ export class EditorPage implements OnInit, AfterViewInit {
             tmpCol4 -= 4;
             break;
         }
+        this.changeNumberOfShips(ship.split('_')[0][ship.split('_')[0].length-1], '+');
         this.matrix[tmpLine3][col] = 0;
         this.matrix[tmpLine4][col] = 0;
         if (this.direction === 'U' || this.direction === 'D') {
@@ -1087,6 +1133,7 @@ export class EditorPage implements OnInit, AfterViewInit {
             tmpCol4 -= 4;
             break;
         }
+        this.changeNumberOfShips(ship.split('_')[0][ship.split('_')[0].length-1], '+');
         this.matrix[line][tmpCol2] = 0;
         this.matrix[tmpLine1][col] = 0;
         this.matrix[tmpLine1][tmpCol2] = 0;
@@ -1149,6 +1196,7 @@ export class EditorPage implements OnInit, AfterViewInit {
             tmpCol4 -= 4;
             break;
         }
+        this.changeNumberOfShips(ship.split('_')[0][ship.split('_')[0].length-1], '+');
         this.matrix[tmpLine1][col] = 0;
         this.matrix[line][tmpCol1] = 0;
         this.matrix[tmpLine1][tmpCol1] = 0;
@@ -1200,6 +1248,7 @@ export class EditorPage implements OnInit, AfterViewInit {
             tmpCol3 -= 3;
             break;
         }
+        this.changeNumberOfShips(ship.split('_')[0][ship.split('_')[0].length-1], '+');
         this.matrix[tmpLine1][col] = 0;
         this.matrix[tmpLine1][tmpCol2] = 0;
         this.matrix[tmpLine2][tmpCol2] = 0;
@@ -1250,6 +1299,7 @@ export class EditorPage implements OnInit, AfterViewInit {
             tmpCol3 -= 3;
             break;
         }
+        this.changeNumberOfShips(ship.split('_')[0][ship.split('_')[0].length-1], '+');
         this.matrix[tmpLine1][col] = 0;
         this.matrix[line][tmpCol1] = 0;
         this.matrix[tmpLine1][tmpCol1] = 0;
@@ -1265,6 +1315,6 @@ export class EditorPage implements OnInit, AfterViewInit {
         }
         break;
     }
-    console.log(this.matrix);
+    // console.log(this.matrix);
   };
 }

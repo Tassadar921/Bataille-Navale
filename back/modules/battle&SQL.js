@@ -4,14 +4,15 @@ module.exports.saveDeck = function (username, matrix, race, deckName, con, res){
             throw e;
         }else{
             if(r.length){
-                res.json({message: 'Name already taken'});
+                // console.log(r[0]);
+                if(r[0].owner===username){
+                    res.json({message: 'Overwrite backup ?'});
+                }
+                else {
+                    res.json({message: 'Name already taken'});
+                }
             }else{
                 const json = JSON.stringify(matrix);
-                // for(let i=0; i<matrix.length; i++){
-                //     json.unshift('name'+i + ': {' + matrix[i] + '}')
-                // }
-                console.log(json);
-                console.log(typeof json);
                 con.query("INSERT INTO decks (name, deck, race, owner) VALUES " + "(\'" + deckName + "\', \'" + json + "\', \'" + race + "\', \'" + username + "\')", (err, resp) => {
                     if (err) {
                         throw err;
@@ -43,10 +44,52 @@ module.exports.getMatrix = function (deckName, con, res){
         if (err) {
             throw err;
         }else{
-            // console.log(r[0]);
             const matrix = JSON.parse(r[0].deck);
-            console.log(matrix);
             res.json({output: matrix});
         }
     });
+}
+
+module.exports.overwrite = function (username, matrix, race, deckName, con, res){
+    con.query("DELETE FROM decks WHERE name = ?",[deckName], (err, r) => {
+        if (err) {
+            throw err;
+        }else{
+            const json = JSON.stringify(matrix);
+            con.query("INSERT INTO decks (name, deck, race, owner) VALUES " + "(\'" + deckName + "\', \'" + json + "\', \'" + race + "\', \'" + username + "\')", (err, resp) => {
+                if (err) {
+                    throw err;
+                }else{
+                    res.json({message: 'Overwriten'});
+                }
+            });
+        }
+    });
+}
+
+module.exports.getNumberOfShips = function (race, con, res){
+    const tab = [
+        [1,1,1,1],
+        [1,1,2,1],
+        [2,2,1,1],
+        [3,3,1,2],
+        [2,2,1,1]
+    ]
+    switch(race){
+        case 'Human':
+            res.json({output:tab[0]});
+            break;
+        case 'Vyrkul':
+            res.json({output:tab[1]});
+            break;
+        case 'Arash':
+            res.json({output:tab[2]});
+            break;
+        case 'Enkar':
+            res.json({output:tab[3]});
+            break;
+        case 'Sunari':
+            res.json({output:tab[4]});
+            break
+    }
 }

@@ -121,6 +121,14 @@ function preventDisconnect() {
                 battleSQL.getMatrix(req.body.deckName, con, res);
             });
 
+            app.post('/overwrite', function (req, res) {
+                battleSQL.overwrite(req.body.username, req.body.matrix, req.body.race, req.body.deckName, con, res);
+            });
+
+            app.post('/getNumberOfShips', function (req, res) {
+                battleSQL.getNumberOfShips(req.body.race, con, res);
+            });
+
             app.post('/test', function (req, res) {
                 //test action
             });

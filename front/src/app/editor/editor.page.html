@@ -14,12 +14,12 @@
             <ion-col>
               <ion-row>
                 <ion-item>
-                  <ion-select (ionChange)="reinitMatrix()" placeholder="Select a race" value="human" [(ngModel)]="race">
-                    <ion-select-option value="human">Human</ion-select-option>
-                    <ion-select-option value="vyrkul">Vyrkul Collective</ion-select-option>
-                    <ion-select-option value="arash">Arash Enclave</ion-select-option>
-                    <ion-select-option value="enkar">Enkar Republic</ion-select-option>
-                    <ion-select-option value="sunari">Sunari Matriarchate</ion-select-option>
+                  <ion-select (ionChange)="reinitMatrix()" placeholder="Select a race" value="Human" [(ngModel)]="race">
+                    <ion-select-option value="Human">Human</ion-select-option>
+                    <ion-select-option value="Vyrkul">Vyrkul Collective</ion-select-option>
+                    <ion-select-option value="Arash">Arash Enclave</ion-select-option>
+                    <ion-select-option value="Enkar">Enkar Republic</ion-select-option>
+                    <ion-select-option value="Sunari">Sunari Matriarchate</ion-select-option>
                   </ion-select>
                 </ion-item>
               </ion-row>
@@ -82,6 +82,9 @@
         <ion-grid>
           <ion-row>
             <ion-col>
+              To place
+            </ion-col>
+            <ion-col>
               Spaceship
             </ion-col>
             <ion-col>
@@ -96,17 +99,20 @@
             <div *ngIf="race">
               <ion-row>
                 <ion-col>
-                  <img [src]="'../../assets/pics/spaceships/spaceship_'+ race + el + '.png'"
+                  <ion-title style="font-size:2em;">{{numberOfShips[el-1]}}</ion-title>
+                </ion-col>
+                <ion-col>
+                  <img [src]="'../../assets/pics/spaceships/spaceship_'+ race.toLowerCase() + el + '.png'"
                        [class]="getRotation(direction)"
                        style="height:150px; border: none">
                 </ion-col>
                 <ion-col>
-                  <img [src]="'../../assets/pics/spaceship_schemas/schema_spaceship_'+ race + el + '.png'"
+                  <img [src]="'../../assets/pics/spaceship_schemas/schema_spaceship_'+ race.toLowerCase() + el + '.png'"
                        [class]="getRotation(direction)"
                        style="height:150px; border:none;">
                 </ion-col>
                 <ion-col>
-                  <img [src]="'../../assets/pics/spaceship_pieces/piece_' + race + el + '_1.1.png'"
+                  <img [src]="'../../assets/pics/spaceship_pieces/piece_' + race.toLowerCase() + el + '_1.1.png'"
                        mwlDraggable
                        dropData={{race}}{{el}}
                        [class]="getRotation(direction)"
@@ -138,23 +144,22 @@
               <ion-col>{{el}}</ion-col>
               <div *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
                 <ion-col mwlDroppable (drop)="onDrop($event.dropData, letter, el-1)">
-                  <ion-row *ngIf="matrix[el-1][letterToNum(letter)] && isFirst(matrix[el-1][letterToNum(letter)].name)"
+                  <ion-row *ngIf="matrix[el-1][letterToNum(letter)] && isFirst(matrix[el-1][letterToNum(letter)].name.toLowerCase())"
                            class="container">
                     <!-- ////////////////////////////////       MODIFIER NOM QUAND ON AURA LES CROIX ////////////////////////-->
                     <ion-img
                       alt=""
-                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][letterToNum(letter)].name + '_editor.png'"
+                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][letterToNum(letter)].name.toLowerCase() + '_editor.png'"
                       [class]="matrix[el-1][letterToNum(letter)].direction"
                       class="delete imgInGrid"
                       (click)="deleteSpaceship(matrix[el-1][letterToNum(letter)].name, letter, el-1)">
                     </ion-img>
                   </ion-row>
-                  <ion-row *ngIf="matrix[el-1][letterToNum(letter)] && !isFirst(matrix[el-1][letterToNum(letter)].name)"
+                  <ion-row *ngIf="matrix[el-1][letterToNum(letter)] && !isFirst(matrix[el-1][letterToNum(letter)].name.toLowerCase())"
                            class="container">
-                    <!--                  <ion-row *ngIf="matrix[el-1][letterToNum(letter)]" class="container">-->
                     <ion-img
                       alt=""
-                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][letterToNum(letter)].name + '.png'"
+                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][letterToNum(letter)].name.toLowerCase() + '.png'"
                       [class]="matrix[el-1][letterToNum(letter)].direction"
                       class="imgInGrid">
                     </ion-img>
