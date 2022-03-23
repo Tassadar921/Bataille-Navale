@@ -103,19 +103,19 @@
                 </ion-col>
                 <ion-col>
                   <img [src]="'../../assets/pics/spaceships/spaceship_'+ race.toLowerCase() + el + '.png'"
-                       [class]="getRotation(direction)"
+                       [class]="opMatrix.getRotation(direction)"
                        style="height:150px; border: none">
                 </ion-col>
                 <ion-col>
                   <img [src]="'../../assets/pics/spaceship_schemas/schema_spaceship_'+ race.toLowerCase() + el + '.png'"
-                       [class]="getRotation(direction)"
+                       [class]="opMatrix.getRotation(direction)"
                        style="height:150px; border:none;">
                 </ion-col>
                 <ion-col>
                   <img [src]="'../../assets/pics/spaceship_pieces/piece_' + race.toLowerCase() + el + '_1.1.png'"
                        mwlDraggable
                        dropData={{race}}{{el}}
-                       [class]="getRotation(direction)"
+                       [class]="opMatrix.getRotation(direction)"
                        style="height:70px; width:70px; border: none; margin-top:40px;">
                 </ion-col>
 
@@ -144,23 +144,22 @@
               <ion-col>{{el}}</ion-col>
               <div *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
                 <ion-col mwlDroppable (drop)="onDrop($event.dropData, letter, el-1)">
-                  <ion-row *ngIf="matrix[el-1][letterToNum(letter)] && isFirst(matrix[el-1][letterToNum(letter)].name.toLowerCase())"
+                  <ion-row *ngIf="matrix[el-1][opMatrix.letterToNum(letter)] && isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
                            class="container">
-                    <!-- ////////////////////////////////       MODIFIER NOM QUAND ON AURA LES CROIX ////////////////////////-->
                     <ion-img
                       alt=""
-                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][letterToNum(letter)].name.toLowerCase() + '_editor.png'"
-                      [class]="matrix[el-1][letterToNum(letter)].direction"
-                      class="delete imgInGrid"
-                      (click)="deleteSpaceship(matrix[el-1][letterToNum(letter)].name, letter, el-1)">
+                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '_editor.png'"
+                      [class]="matrix[el-1][opMatrix.letterToNum(letter)].direction"
+                      class="delete imgInGrid">
+<!--                      (click)="deleteSpaceship(matrix[el-1][opMatrix.letterToNum(letter)].name, letter, el-1)">-->
                     </ion-img>
                   </ion-row>
-                  <ion-row *ngIf="matrix[el-1][letterToNum(letter)] && !isFirst(matrix[el-1][letterToNum(letter)].name.toLowerCase())"
+                  <ion-row *ngIf="matrix[el-1][opMatrix.letterToNum(letter)] && !isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
                            class="container">
                     <ion-img
                       alt=""
-                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][letterToNum(letter)].name.toLowerCase() + '.png'"
-                      [class]="matrix[el-1][letterToNum(letter)].direction"
+                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '.png'"
+                      [class]="matrix[el-1][opMatrix.letterToNum(letter)].direction"
                       class="imgInGrid">
                     </ion-img>
                   </ion-row>
