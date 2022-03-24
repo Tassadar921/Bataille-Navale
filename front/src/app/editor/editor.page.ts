@@ -103,7 +103,7 @@ export class EditorPage implements OnInit {
   };
 
   deleteSpaceship = (ship, col, line) => {
-    this.retour = this.opMatrix.editMatrix(this.matrix, ship, col, line, this.direction, this.numberOfShips, this.race,'+');
+    this.retour = this.opMatrix.editMatrix(this.matrix, ship, col, line, this.direction, this.numberOfShips, this.race, '+');
     this.matrix = this.retour.mat;
     this.numberOfShips = this.retour.ships;
     this.output = this.retour.message;

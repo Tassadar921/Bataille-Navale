@@ -1,9 +1,9 @@
 <app-menu></app-menu>
 
 <ion-grid style="width:100%;">
-    <ion-row>
-      <ion-col class="grid">
-        <ion-content>
+  <ion-row>
+    <ion-col class="grid">
+      <ion-content>
         <ion-grid>
           <ion-row style="color:red;">
             <ion-col>
@@ -99,7 +99,7 @@
             <div *ngIf="race">
               <ion-row>
                 <ion-col>
-                  <ion-title style="font-size:2em;">{{numberOfShips[el-1]}}</ion-title>
+                  <ion-title style="font-size:2em;">{{numberOfShips[el - 1]}}</ion-title>
                 </ion-col>
                 <ion-col>
                   <img [src]="'../../assets/pics/spaceships/spaceship_'+ race.toLowerCase() + el + '.png'"
@@ -123,31 +123,32 @@
             </div>
           </div>
         </ion-grid>
-        </ion-content>
-      </ion-col>
-      <ion-col>
-        <ion-grid id="grid">
+      </ion-content>
+    </ion-col>
+    <ion-col>
+      <ion-grid id="grid">
+        <ion-row>
+          <ion-col>\</ion-col>
+          <ion-col>A</ion-col>
+          <ion-col>B</ion-col>
+          <ion-col>C</ion-col>
+          <ion-col>D</ion-col>
+          <ion-col>E</ion-col>
+          <ion-col>F</ion-col>
+          <ion-col>G</ion-col>
+          <ion-col>H</ion-col>
+          <ion-col>I</ion-col>
+          <ion-col>J</ion-col>
+        </ion-row>
+        <div *ngFor="let el of [1,2,3,4,5,6,7,8,9,10]">
           <ion-row>
-            <ion-col>\</ion-col>
-            <ion-col>A</ion-col>
-            <ion-col>B</ion-col>
-            <ion-col>C</ion-col>
-            <ion-col>D</ion-col>
-            <ion-col>E</ion-col>
-            <ion-col>F</ion-col>
-            <ion-col>G</ion-col>
-            <ion-col>H</ion-col>
-            <ion-col>I</ion-col>
-            <ion-col>J</ion-col>
-          </ion-row>
-          <div *ngFor="let el of [1,2,3,4,5,6,7,8,9,10]">
-            <ion-row>
-              <ion-col>{{el}}</ion-col>
-              <div *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
-                <ion-col mwlDroppable (drop)="onDrop($event.dropData, letter, el-1)">
-                  <ion-row *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!= 0">
-                  <ion-row *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!= 0 && isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
-                           class="container">
+            <ion-col>{{el}}</ion-col>
+            <div *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
+              <ion-col mwlDroppable (drop)="onDrop($event.dropData, letter, el-1)">
+                <ion-row *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!= 0">
+                  <ion-row
+                    *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!= 0 && isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
+                    class="container">
                     <ion-img
                       alt=""
                       [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '_editor.png'"
@@ -156,8 +157,9 @@
                       (click)="deleteSpaceship(matrix[el-1][opMatrix.letterToNum(letter)].name, letter, el-1)">
                     </ion-img>
                   </ion-row>
-                  <ion-row *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!= 0 && !isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
-                           class="container">
+                  <ion-row
+                    *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!= 0 && !isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
+                    class="container">
                     <ion-img
                       alt=""
                       [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '.png'"
@@ -165,17 +167,17 @@
                       class="imgInGrid">
                     </ion-img>
                   </ion-row>
-                  </ion-row>
-                  <ion-row *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]== 0">
-                    {{matrix[el-1][opMatrix.letterToNum(letter)]}}
-                  </ion-row>
-                </ion-col>
-              </div>
-            </ion-row>
-          </div>
-        </ion-grid>
-      </ion-col>
-    </ion-row>
+                </ion-row>
+                <ion-row *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]== 0">
+                  {{matrix[el - 1][opMatrix.letterToNum(letter)]}}
+                </ion-row>
+              </ion-col>
+            </div>
+          </ion-row>
+        </div>
+      </ion-grid>
+    </ion-col>
+  </ion-row>
 </ion-grid>
 
 <ion-popover trigger="openPopover" size="auto" alignment="center">

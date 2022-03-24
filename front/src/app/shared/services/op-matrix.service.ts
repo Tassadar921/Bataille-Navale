@@ -5,7 +5,8 @@ import {Injectable} from '@angular/core';
 })
 export class OpMatrixService {
 
-  constructor() {}
+  constructor() {
+  }
 
   nameToShape = (name) => {
     const model = [
@@ -101,8 +102,8 @@ export class OpMatrixService {
     let tmpCol2 = col;
     let tmpCol3 = col;
     let tmpCol4 = col;
-    if(sign==='+'){
-      numberOfShips=this.changeNumberOfShips(numberOfShips, dropData.split('_')[0][dropData.split('_')[0].length-1], sign);
+    if (sign === '+') {
+      numberOfShips = this.changeNumberOfShips(numberOfShips, dropData.split('_')[0][dropData.split('_')[0].length - 1], sign);
       dropData = dropData.split('_')[0];
       matrix[line][col] = 0;
     }
@@ -110,7 +111,7 @@ export class OpMatrixService {
       case 1:
         if (!matrix[line][col]) {
           matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(direction)};
-          numberOfShips=this.changeNumberOfShips(numberOfShips, dropData, sign);
+          numberOfShips = this.changeNumberOfShips(numberOfShips, dropData, sign);
         } else {
           output = 'Unable to put this here';
         }
@@ -130,7 +131,7 @@ export class OpMatrixService {
             tmpCol1 -= 1;
             break;
         }
-        if(sign==='-') {
+        if (sign === '-') {
           if (tmpCol1 > -1 && tmpCol1 < 10 && tmpLine1 > -1 && tmpLine1 < 10) {
             if (!matrix[line][col] && !matrix[tmpLine1][tmpCol1]) {
               matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(direction)};
@@ -142,7 +143,7 @@ export class OpMatrixService {
           } else {
             output = 'Unable to put this here';
           }
-        }else{
+        } else {
           matrix[tmpLine1][tmpCol1] = 0;
         }
         break;
@@ -169,7 +170,7 @@ export class OpMatrixService {
             tmpCol2 -= 2;
             break;
         }
-        if(sign==='-') {
+        if (sign === '-') {
           if (tmpCol1 > -1 && tmpCol1 < 10 && tmpLine1 > -1 && tmpLine1 < 10
             && tmpCol2 > -1 && tmpCol2 < 10 && tmpLine2 > -1 && tmpLine2 < 10) {
             if (!matrix[line][col] && !matrix[tmpLine1][tmpCol2]
@@ -198,7 +199,7 @@ export class OpMatrixService {
           } else {
             output = 'Unable to put this here';
           }
-        }else{
+        } else {
           matrix[line][tmpCol1] = 0;
           matrix[tmpLine1][col] = 0;
           matrix[tmpLine1][tmpCol1] = 0;
@@ -234,7 +235,7 @@ export class OpMatrixService {
             tmpCol3 -= 3;
             break;
         }
-        if(sign==='-') {
+        if (sign === '-') {
           if (tmpLine3 > -1 && tmpLine3 < 10 && tmpCol3 > -1 && tmpCol3 < 10) {
             if (!matrix[line][col] && !matrix[tmpLine1][tmpCol1]
               && !matrix[tmpLine2][tmpCol2] && !matrix[tmpLine3][tmpCol3]) {
@@ -256,7 +257,7 @@ export class OpMatrixService {
           } else {
             output = 'Unable to put this here';
           }
-        }else{
+        } else {
           if (direction === 'U' || direction === 'D') {
             matrix[tmpLine1][tmpCol1] = 0;
             matrix[tmpLine2][tmpCol2] = 0;
@@ -295,7 +296,7 @@ export class OpMatrixService {
             tmpCol3 -= 3;
             break;
         }
-        if(sign==='-') {
+        if (sign === '-') {
           if (tmpLine3 > -1 && tmpLine3 < 10 && tmpCol3 > -1 && tmpCol3 < 10 && tmpCol1 > -1
             && tmpCol1 < 10 && tmpLine1 > -1 && tmpLine1 < 10) {
             if (!matrix[line][col] && !matrix[line][tmpCol1]
@@ -330,7 +331,7 @@ export class OpMatrixService {
           } else {
             output = 'Unable to put this here';
           }
-        }else{
+        } else {
           matrix[line][tmpCol1] = 0;
           matrix[tmpLine1][col] = 0;
           matrix[tmpLine1][tmpCol1] = 0;
@@ -378,7 +379,7 @@ export class OpMatrixService {
             tmpCol4 -= 4;
             break;
         }
-        if(sign==='-') {
+        if (sign === '-') {
           if (tmpCol1 > -1 && tmpCol1 < 10 && tmpLine1 > -1 && tmpLine1 < 10
             && tmpCol4 > -1 && tmpCol4 < 10 && tmpLine4 > -1 && tmpLine4 < 10) {
             if (!matrix[line][col] && !matrix[line][tmpCol1]
@@ -419,7 +420,7 @@ export class OpMatrixService {
           } else {
             output = 'Unable to put this here';
           }
-        }else{
+        } else {
           matrix[line][tmpCol1] = 0;
           matrix[tmpLine1][col] = 0;
           matrix[tmpLine1][tmpCol1] = 0;
@@ -475,7 +476,7 @@ export class OpMatrixService {
             tmpCol4 -= 4;
             break;
         }
-        if(sign==='-') {
+        if (sign === '-') {
           if (tmpLine1 > -1 && tmpLine1 < 10 && tmpLine4 > -1 && tmpLine4 < 10
             && tmpLine2 > -1 && tmpLine2 < 10 && tmpCol2 > -1 && tmpCol2 < 10
             && tmpCol1 > -1 && tmpCol1 < 10 && tmpCol4 > -1 && tmpCol4 < 10) {
@@ -516,7 +517,7 @@ export class OpMatrixService {
           } else {
             output = 'Unable to put this here';
           }
-        }else{
+        } else {
           if (direction === 'U' || direction === 'D') {
             matrix[tmpLine1][col] = 0;
             matrix[tmpLine2][col] = 0;
@@ -577,7 +578,7 @@ export class OpMatrixService {
             tmpCol4 -= 4;
             break;
         }
-        if(sign==='-') {
+        if (sign === '-') {
           if (tmpLine4 > -1 && tmpLine4 < 10 && tmpCol1 > -1 && tmpCol1 < 10
             && tmpCol3 > -1 && tmpCol3 < 10 && tmpLine2 > -1 && tmpLine2 < 10
             && tmpLine3 > -1 && tmpLine3 < 10 && tmpCol4 > -1 && tmpCol4 < 10) {
@@ -636,7 +637,7 @@ export class OpMatrixService {
           } else {
             output = 'Unable to put this here';
           }
-        }else{
+        } else {
           matrix[line][tmpCol2] = 0;
           matrix[tmpLine1][col] = 0;
           matrix[tmpLine1][tmpCol2] = 0;
@@ -701,7 +702,7 @@ export class OpMatrixService {
             tmpCol4 -= 4;
             break;
         }
-        if(sign==='-') {
+        if (sign === '-') {
           if (tmpLine4 > -1 && tmpLine4 < 10 && tmpCol2 > -1 && tmpCol2 < 10
             && tmpLine2 > -1 && tmpLine2 < 10 && tmpCol4 < 10 && tmpCol4 > -1) {
             if (!matrix[line][col] && !matrix[line][tmpCol1]
@@ -739,7 +740,7 @@ export class OpMatrixService {
           } else {
             output = 'Unable to put this here';
           }
-        }else{
+        } else {
           matrix[line][tmpCol1] = 0;
           matrix[tmpLine1][col] = 0;
           matrix[tmpLine1][tmpCol1] = 0;
@@ -791,7 +792,7 @@ export class OpMatrixService {
             tmpCol3 -= 3;
             break;
         }
-        if(sign==='-') {
+        if (sign === '-') {
           if (tmpCol1 > -1 && tmpCol1 < 10 && tmpCol3 > -1 && tmpCol3 < 10
             && tmpLine2 > -1 && tmpLine2 < 10 && tmpLine3 > -1 && tmpLine3 < 10) {
             if (!matrix[line][col] && !matrix[tmpLine3][tmpCol1]
@@ -837,7 +838,7 @@ export class OpMatrixService {
           } else {
             output = 'Unable to put this here';
           }
-        }else{
+        } else {
           matrix[line][tmpCol2] = 0;
           matrix[tmpLine1][col] = 0;
           matrix[tmpLine1][tmpCol2] = 0;
@@ -889,7 +890,7 @@ export class OpMatrixService {
             tmpCol3 -= 3;
             break;
         }
-        if(sign==='-') {
+        if (sign === '-') {
           if (tmpCol2 > -1 && tmpCol2 < 10 && tmpLine2 > -1 && tmpLine2 < 10
             && tmpCol3 > -1 && tmpCol3 < 10 && tmpLine3 > -1 && tmpLine3 < 10) {
             if (!matrix[line][col] && !matrix[line][tmpCol1]
@@ -924,7 +925,7 @@ export class OpMatrixService {
           } else {
             output = 'Unable to put this here';
           }
-        }else{
+        } else {
           matrix[tmpLine1][col] = 0;
           matrix[line][tmpCol1] = 0;
           matrix[tmpLine1][tmpCol1] = 0;
