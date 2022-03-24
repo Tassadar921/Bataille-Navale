@@ -3,6 +3,11 @@
   <ion-row>
     <ion-searchbar type='text' [(ngModel)]="filter"  (ionChange)="search(0,0, filter)" style="text-align:center;"></ion-searchbar>
   </ion-row>
+    <ion-row style="text-align:center;">
+      <ion-col>
+        {{output}}
+      </ion-col>
+    </ion-row>
   <ion-row style="text-align:center;">
     <ion-col>
       <ion-button (click)="previousPage()">
@@ -19,6 +24,7 @@
     </ion-col>
   </ion-row>
   <ion-row>
+    <ion-col></ion-col>
     <ion-col>
       <ion-title style="text-align:center; text-decoration:underline">Name</ion-title>
     </ion-col>
@@ -31,6 +37,9 @@
   <div *ngFor="let line of displayDecks">
     <div class="item">
       <ion-row>
+        <ion-col>
+          <ion-button color="danger" (click)="deleteFromDatabase(line.name)">Delete</ion-button>
+        </ion-col>
         <ion-col>
           {{line.name}}
         </ion-col>

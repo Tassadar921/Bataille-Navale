@@ -67,6 +67,16 @@ module.exports.overwrite = function (username, matrix, race, deckName, con, res)
     });
 }
 
+module.exports.deleteFromDatabase = function (deckName, con, res){
+    con.query("DELETE FROM decks WHERE name = ?",[deckName], (err, r) => {
+        if (err) {
+            throw err;
+        }else{
+            res.json({message: 'Deck successfully deleted'});
+        }
+    });
+}
+
 module.exports.getNumberOfShips = function (race, con, res){
     const tab = [
         [1,1,1,1],

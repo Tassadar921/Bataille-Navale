@@ -18,15 +18,16 @@ export class DeckSelectionComponent implements OnInit, AfterViewInit {
   public output;
 
   private p;
+  private retour;
 
   constructor(
     private http: HttpService,
     private loginServ: LoginService,
   ) {}
 
-  ngOnInit() {
-    this.p = this.loginServ.setPlatform();
-    this.decks = this.http.getDeckNames();
+  async ngOnInit() {
+    this.p = await this.loginServ.setPlatform();
+    this.decks = await this.http.getDeckNames();
   }
 
   async ngAfterViewInit() {
@@ -93,6 +94,13 @@ export class DeckSelectionComponent implements OnInit, AfterViewInit {
     this.matrix = await this.http.getMatrix(deck);
     console.log(this.matrix);
     this.output=deck + ' Selected';
+  };
+
+  deleteFromDatabase = async (name) => {
+    this.retour = await this.http.deleteFromDatabase(name);
+    this.output = this.retour.message;
+    this.decks = await this.http.getDeckNames();
+    await this.displayDecksFunction(0, this.filter);
   };
 
 }

@@ -118,7 +118,6 @@
                        [class]="opMatrix.getRotation(direction)"
                        style="height:70px; width:70px; border: none; margin-top:40px;">
                 </ion-col>
-
               </ion-row>
             </div>
           </div>
@@ -145,9 +144,8 @@
             <ion-col>{{el}}</ion-col>
             <div *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
               <ion-col mwlDroppable (drop)="onDrop($event.dropData, letter, el-1)">
-                <ion-row *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!= 0">
                   <ion-row
-                    *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!= 0 && isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
+                    *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!== 0 && isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
                     class="container">
                     <ion-img
                       alt=""
@@ -158,7 +156,7 @@
                     </ion-img>
                   </ion-row>
                   <ion-row
-                    *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!= 0 && !isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
+                    *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!== 0 && !isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
                     class="container">
                     <ion-img
                       alt=""
@@ -167,10 +165,6 @@
                       class="imgInGrid">
                     </ion-img>
                   </ion-row>
-                </ion-row>
-                <ion-row *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]== 0">
-                  {{matrix[el - 1][opMatrix.letterToNum(letter)]}}
-                </ion-row>
               </ion-col>
             </div>
           </ion-row>

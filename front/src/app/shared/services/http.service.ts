@@ -216,4 +216,12 @@ export class HttpService {
     });
     return this.retour.output;
   };
+
+  deleteFromDatabase = async (name) => {
+    const data = {deckName: name};
+    await this.http.post<string>(environment.urlBack + 'deleteFromDatabase', data).toPromise().then(response => {
+      this.retour = response;
+    });
+    return this.retour;
+  };
 }

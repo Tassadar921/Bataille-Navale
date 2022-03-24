@@ -129,6 +129,10 @@ function preventDisconnect() {
                 battleSQL.getNumberOfShips(req.body.race, con, res);
             });
 
+            app.post('/deleteFromDatabase', function (req, res) {
+                battleSQL.deleteFromDatabase(req.body.deckName, con, res);
+            });
+
             app.post('/test', function (req, res) {
                 //test action
             });
