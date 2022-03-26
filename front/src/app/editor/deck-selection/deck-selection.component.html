@@ -64,7 +64,11 @@
       </ion-button>
     </ion-col>
     <ion-col>
-      {{decks.length}}<br><ion-icon name="boat"></ion-icon>
+      <ion-row *ngIf="decks">
+        <ion-col>{{decks.length}}
+        </ion-col>
+      </ion-row>
+      <ion-icon name="boat"></ion-icon>
     </ion-col>
     <ion-col>
       <ion-button (click)="nextPage()">

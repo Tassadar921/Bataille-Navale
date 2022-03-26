@@ -9,6 +9,7 @@ import { RoomPageRoutingModule } from './room-routing.module';
 import { RoomPage } from './room.page';
 
 import {MenuComponent} from '../shared/menu/menu/menu.component';
+import {DeckSelectionComponent} from '../editor/deck-selection/deck-selection.component';
 
 @NgModule({
   imports: [
@@ -17,6 +18,6 @@ import {MenuComponent} from '../shared/menu/menu/menu.component';
     IonicModule,
     RoomPageRoutingModule
   ],
-  declarations: [RoomPage, MenuComponent]
+  declarations: [RoomPage, MenuComponent, DeckSelectionComponent]
 })
 export class RoomPageModule {}

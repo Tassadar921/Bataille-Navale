@@ -14,7 +14,7 @@ export class DeckSelectionComponent implements OnInit, AfterViewInit {
   public nbPages;
   public filter = '';
   public displayDecks;
-  public matrix = [];
+  public matrix;
   public output;
 
   private p;
@@ -92,7 +92,6 @@ export class DeckSelectionComponent implements OnInit, AfterViewInit {
 
   select = async (deck) => {
     this.matrix = await this.http.getMatrix(deck);
-    console.log(this.matrix);
     this.output=deck + ' Selected';
   };
 

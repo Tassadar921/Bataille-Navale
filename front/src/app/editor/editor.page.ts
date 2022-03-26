@@ -37,7 +37,9 @@ export class EditorPage implements OnInit {
   }
 
   closeModal = () => {
-    this.matrix = this.deckSelection.matrix;
+    if(this.deckSelection.matrix) {
+      this.matrix = this.deckSelection.matrix;
+    }
   };
 
   isFirst = (name) => name.includes('1.1');
