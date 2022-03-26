@@ -1,4 +1,10 @@
 const app = require('express')();
+const http = require('http').Server(app)
+const io = require('socket.io')(http, {
+    cors: {
+        origins : ['http://localhost:8100']
+    }
+});
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const methodOverride = require('method-override');
@@ -18,12 +24,13 @@ const session = require("express-session")({
 const account = require('./modules/checkingAccounts.js');
 const mail = require('./modules/sendMail');
 const battleSQL = require ('./modules/battle&SQL');
+const socketFile = require('./modules/socket');
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(methodOverride());
-app.use(cors());
 app.use(session);
+app.use(cors({origin: true, credentials: true}));
 
 if (app.get('env') === 'production') {
     app.set('trust proxy', 1);
@@ -43,7 +50,7 @@ function preventDisconnect() {
             console.log('error when connecting to db:', err);
             setTimeout(preventDisconnect, 5000);
         } else {
-            console.log('Connexion effectuée');
+            console.log('Connexion base de donnée effectuée');
 
             app.post('/signUp', function (req, res) {
                 account.signUp(req.body.name, req.body.password, req.body.mail, req.session.id, con, res);
@@ -136,6 +143,44 @@ function preventDisconnect() {
             app.post('/test', function (req, res) {
                 //test action
             });
+
+            let intoRoom = [];
+            let rooms = [];
+
+            io.on('connection', (socket) => {
+
+                console.log('Somebody connected');
+
+                socket.on('enterRoom', () => {
+                    intoRoom = socketFile.enterRoom(intoRoom, socket);
+                    console.log(intoRoom);
+                });
+
+                socket.on('notReadyAnymore', () => {
+                    intoRoom = socketFile.ready(intoRoom, socket, false);
+                    console.log(intoRoom);
+                });
+
+                socket.on('disconnect', () => {
+                    intoRoom = socketFile.disconnect(intoRoom, socket);
+                    console.log(intoRoom);
+                })
+
+                socket.on('ready', () => {
+                    intoRoom = socketFile.ready(intoRoom, socket, true);
+                    console.log(intoRoom);
+                    let sendToRoom = socketFile.checkReady(intoRoom);
+                    if(sendToRoom.fill) {
+                        console.log('ici');
+                        socket.to(sendToRoom.p1.id).emit('toGame');
+                        console.log(intoRoom);
+                        console.log('là');
+                        socket.to(sendToRoom.p2.id).emit('toGame');
+                        console.log(intoRoom);
+                        console.log('bouh');
+                    }
+                });
+            });
         }
     });
 
@@ -151,6 +196,6 @@ function preventDisconnect() {
 
 preventDisconnect();
 
-if (app.listen(process.env.PORT || 8080)) {
+http.listen(8080, () => {
     console.log('Serveur lancé sur le port 8080');
-}
+})

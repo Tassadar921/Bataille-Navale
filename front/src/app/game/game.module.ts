@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { RoomPageRoutingModule } from './room-routing.module';
+import { GamePageRoutingModule } from './game-routing.module';
 
-import { RoomPage } from './room.page';
+import { GamePage } from './game.page';
 
 import {ComponentsModule} from '../shared/components/components.module';
 
@@ -18,10 +18,10 @@ const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
     CommonModule,
     FormsModule,
     IonicModule,
-    RoomPageRoutingModule,
+    GamePageRoutingModule,
     ComponentsModule,
     SocketIoModule.forRoot(config)
   ],
-  declarations: [RoomPage]
+  declarations: [GamePage]
 })
-export class RoomPageModule {}
+export class GamePageModule {}

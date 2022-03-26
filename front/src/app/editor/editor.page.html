@@ -144,27 +144,26 @@
             <ion-col>{{el}}</ion-col>
             <div *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
               <ion-col mwlDroppable (drop)="onDrop($event.dropData, letter, el-1)">
-                  <ion-row
-                    *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!== 0 && isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
-                    class="container">
-                    <ion-img
-                      alt=""
-                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '_editor.png'"
-                      [class]="matrix[el-1][opMatrix.letterToNum(letter)].direction"
-                      class="delete imgInGrid"
-                      (click)="deleteSpaceship(matrix[el-1][opMatrix.letterToNum(letter)].name, letter, el-1)">
-                    </ion-img>
-                  </ion-row>
-                  <ion-row
-                    *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!== 0 && !isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
-                    class="container">
-                    <ion-img
-                      alt=""
-                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '.png'"
-                      [class]="matrix[el-1][opMatrix.letterToNum(letter)].direction"
-                      class="imgInGrid">
-                    </ion-img>
-                  </ion-row>
+                <ion-row
+                  *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!== 0 && isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
+                  class="container">
+                  <ion-img
+                    alt=""
+                    [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '_editor.png'"
+                    [class]="matrix[el-1][opMatrix.letterToNum(letter)].direction"
+                    class="delete imgInGrid"
+                    (click)="deleteSpaceship(matrix[el-1][opMatrix.letterToNum(letter)].name, letter, el-1)">
+                  </ion-img>
+                </ion-row>
+                <ion-row
+                  *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!== 0 && !isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())">
+                  <ion-img
+                    alt=""
+                    [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '.png'"
+                    [class]="matrix[el-1][opMatrix.letterToNum(letter)].direction"
+                    class="imgInGrid">
+                  </ion-img>
+                </ion-row>
               </ion-col>
             </div>
           </ion-row>

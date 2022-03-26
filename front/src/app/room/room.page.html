@@ -4,15 +4,17 @@
   <ion-row>
     <ion-col>
       <ion-grid style="height:780px">
-      <ion-row>
-        <ion-col>
-          <ion-button color="secondary" shape="round" id="trigger-button" size="large">Edit</ion-button>
-        </ion-col>
-        <ion-col>
-          <ion-button color="danger" shape="round" (click)="switchReady()" *ngIf="!ready" size="large">Not ready</ion-button>
-          <ion-button color="success" shape="round" (click)="switchReady()" *ngIf="ready" size="large">Ready</ion-button>
-        </ion-col>
-      </ion-row>
+        <ion-row>
+          <ion-col style="border:none">
+            <ion-button color="secondary" shape="round" id="trigger-button" size="large">Edit</ion-button>
+          </ion-col>
+          <ion-col style="border:none">
+            <ion-button color="danger" shape="round" (click)="switchReady()" *ngIf="!ready" size="large">Not ready
+            </ion-button>
+            <ion-button color="success" shape="round" (click)="switchReady()" *ngIf="ready" size="large">Ready
+            </ion-button>
+          </ion-col>
+        </ion-row>
       </ion-grid>
     </ion-col>
     <ion-col>
@@ -30,20 +32,21 @@
           <ion-col>I</ion-col>
           <ion-col>J</ion-col>
         </ion-row>
-          <ion-row *ngFor="let el of [1,2,3,4,5,6,7,8,9,10]">
+        <div *ngFor="let el of [1,2,3,4,5,6,7,8,9,10]">
+          <ion-row>
             <ion-col>{{el}}</ion-col>
             <ion-col *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
-              <ion-row
-                *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!== 0">
+              <div *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!== 0">
                 <ion-img
                   alt=""
                   [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '.png'"
                   [class]="matrix[el-1][opMatrix.letterToNum(letter)].direction"
                   class="imgInGrid">
                 </ion-img>
-              </ion-row>
+              </div>
             </ion-col>
           </ion-row>
+        </div>
       </ion-grid>
     </ion-col>
   </ion-row>

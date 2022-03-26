@@ -50,6 +50,7 @@ export class HttpService {
   };
 
   ////////////////////////////// ACCOUNTS //////////////////////////////
+
   signUp = async (username, pass, email) => {
     const data = {
       name: username,
