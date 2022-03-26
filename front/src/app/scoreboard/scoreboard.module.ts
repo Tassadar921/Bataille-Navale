@@ -8,15 +8,16 @@ import { ScoreboardPageRoutingModule } from './scoreboard-routing.module';
 
 import { ScoreboardPage } from './scoreboard.page';
 
-import {MenuComponent} from '../shared/menu/menu/menu.component';
+import {ComponentsModule} from '../shared/components/components.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    ScoreboardPageRoutingModule
+    ScoreboardPageRoutingModule,
+    ComponentsModule
   ],
-  declarations: [ScoreboardPage, MenuComponent]
+  declarations: [ScoreboardPage]
 })
 export class ScoreboardPageModule {}

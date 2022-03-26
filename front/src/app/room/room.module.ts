@@ -8,16 +8,18 @@ import { RoomPageRoutingModule } from './room-routing.module';
 
 import { RoomPage } from './room.page';
 
-import {MenuComponent} from '../shared/menu/menu/menu.component';
 import {DeckSelectionComponent} from '../editor/deck-selection/deck-selection.component';
+
+import {ComponentsModule} from '../shared/components/components.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RoomPageRoutingModule
+    RoomPageRoutingModule,
+    ComponentsModule
   ],
-  declarations: [RoomPage, MenuComponent, DeckSelectionComponent]
+  declarations: [RoomPage, DeckSelectionComponent]
 })
 export class RoomPageModule {}

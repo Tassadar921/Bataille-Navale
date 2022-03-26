@@ -101,26 +101,27 @@ module.exports.resetPassword = function (mail, token, con, res) {
         if (err) {
             throw err
         } else {
-            mailOptions.to = result[0].email;
-            mailOptions.text =
-                'Hello ' + result[0].username + ', here\'s the link to reset your password : ' + urlFront +
-                'reset-password?' +
-                'token=' + token +
-                '&mail=' + result[0].email +
-                '&name=' + result[0].username;
-            mailOptions.subject = 'Reset';
+            if (res) {
+                mailOptions.to = result[0].email;
+                mailOptions.text =
+                    'Hello ' + result[0].username + ', here\'s the link to reset your password : ' + urlFront +
+                    'reset-password?' +
+                    'token=' + token +
+                    '&mail=' + result[0].email +
+                    '&name=' + result[0].username;
+                mailOptions.subject = 'Reset';
 
-            transporter.sendMail(mailOptions, function (error) {
-                if (error) {
-                    res.json({message: 'Error: Invalid email address', output: 0});
-                } else {
-                    res.json({message: 'Check your mails (maybe in the spams)', output: 1});
-                }
-            });
+                transporter.sendMail(mailOptions, function (error) {
+                    if (error) {
+                        res.json({message: 'Error: Invalid email address', output: 0});
+                    } else {
+                        res.json({message: 'Check your mails (maybe in the spams)', output: 1});
+                    }
+                });
 
-        }
-        if (mailOptions.to === '') {
-            res.json({message: 'Email missing from database', output: 0});
+            }else{
+                res.json({message: 'Email missing from database', output: 0});
+            }
         }
     });
 }

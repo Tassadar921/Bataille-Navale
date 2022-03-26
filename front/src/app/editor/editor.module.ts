@@ -8,10 +8,11 @@ import { EditorPageRoutingModule } from './editor-routing.module';
 
 import { EditorPage } from './editor.page';
 
-import {MenuComponent} from '../shared/menu/menu/menu.component';
 import {DeckSelectionComponent} from './deck-selection/deck-selection.component';
 
 import {DragAndDropModule} from 'angular-draggable-droppable';
+
+import {ComponentsModule} from '../shared/components/components.module';
 
 @NgModule({
   imports: [
@@ -19,8 +20,9 @@ import {DragAndDropModule} from 'angular-draggable-droppable';
     FormsModule,
     IonicModule,
     EditorPageRoutingModule,
-    DragAndDropModule
+    DragAndDropModule,
+    ComponentsModule
   ],
-  declarations: [EditorPage, MenuComponent, DeckSelectionComponent]
+  declarations: [EditorPage, DeckSelectionComponent]
 })
 export class EditorPageModule {}

@@ -8,19 +8,20 @@ import { FriendsPageRoutingModule } from './friends-routing.module';
 
 import { FriendsPage } from './friends.page';
 
-import { MenuComponent} from '../shared/menu/menu/menu.component';
-
 import { SeeFriendsComponent } from './see-friends/see-friends.component';
 import { AddFriendComponent } from './add-friend/add-friend.component';
 import { DemandsComponent } from './demands/demands.component';
+
+import {ComponentsModule} from '../shared/components/components.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    FriendsPageRoutingModule
+    FriendsPageRoutingModule,
+    ComponentsModule
   ],
-  declarations: [FriendsPage, MenuComponent, SeeFriendsComponent, AddFriendComponent, DemandsComponent]
+  declarations: [FriendsPage, SeeFriendsComponent, AddFriendComponent, DemandsComponent]
 })
 export class FriendsPageModule {}
