@@ -8,8 +8,6 @@ import { RoomPageRoutingModule } from './room-routing.module';
 
 import { RoomPage } from './room.page';
 
-import {DeckSelectionComponent} from '../editor/deck-selection/deck-selection.component';
-
 import {ComponentsModule} from '../shared/components/components.module';
 
 @NgModule({
@@ -20,6 +18,6 @@ import {ComponentsModule} from '../shared/components/components.module';
     RoomPageRoutingModule,
     ComponentsModule
   ],
-  declarations: [RoomPage, DeckSelectionComponent]
+  declarations: [RoomPage]
 })
 export class RoomPageModule {}

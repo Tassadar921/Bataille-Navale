@@ -101,7 +101,7 @@ module.exports.resetPassword = function (mail, token, con, res) {
         if (err) {
             throw err
         } else {
-            if (res) {
+            if (result.length) {
                 mailOptions.to = result[0].email;
                 mailOptions.text =
                     'Hello ' + result[0].username + ', here\'s the link to reset your password : ' + urlFront +

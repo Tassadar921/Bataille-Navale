@@ -1,6 +1,6 @@
 <ion-grid>
   <ion-row>
-    <ion-searchbar type='text' [(ngModel)]="filter"  (ionChange)="search(0,0, filter)" style="text-align:center;"></ion-searchbar>
+    <ion-searchbar type='text'  (ionChange)="search(0,0, $event.target)" style="text-align:center;"></ion-searchbar>
   </ion-row>
   <ion-row style="text-align:center;">
     <ion-col>

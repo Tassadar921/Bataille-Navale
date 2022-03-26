@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {HttpService} from '../../shared/services/http.service';
-import {LoginService} from '../../shared/services/login.service';
+import {HttpService} from '../../services/http.service';
+import {LoginService} from '../../services/login.service';
 
 @Component({
   selector: 'app-deck-selection',
@@ -60,6 +60,7 @@ export class DeckSelectionComponent implements OnInit, AfterViewInit {
   };
 
   search = async (n, start, filter) => {
+    this.filter = filter.value;
     this.count = 0;
     await this.displayDecksFunction(start, filter);
   };

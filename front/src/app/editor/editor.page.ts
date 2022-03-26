@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {DroppableDirective} from 'angular-draggable-droppable';
 import {HttpService} from '../shared/services/http.service';
-import {DeckSelectionComponent} from './deck-selection/deck-selection.component';
+import {DeckSelectionComponent} from '../shared/components/deck-selection/deck-selection.component';
 import {ActionSheetController} from '@ionic/angular';
 import {OpMatrixService} from '../shared/services/op-matrix.service';
 
@@ -12,7 +12,6 @@ import {OpMatrixService} from '../shared/services/op-matrix.service';
 })
 export class EditorPage implements OnInit {
 
-  @ViewChild(DroppableDirective, {read: ElementRef, static: true})
   @ViewChild(DeckSelectionComponent) deckSelection: DeckSelectionComponent;
 
   public matrix = [];

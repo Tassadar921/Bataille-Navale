@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from '../shared/services/http.service';
 import {OpMatrixService} from '../shared/services/op-matrix.service';
-import {DeckSelectionComponent} from '../editor/deck-selection/deck-selection.component';
+import {DeckSelectionComponent} from '../shared/components/deck-selection/deck-selection.component';
 
 @Component({
   selector: 'app-room',

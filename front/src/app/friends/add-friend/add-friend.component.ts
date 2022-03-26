@@ -15,11 +15,11 @@ export class AddFriendComponent implements OnInit {
   public output;
   public nbPages;
   public filter = '';
+  public count = 0;
+  public notFriends = [];
 
   private filteredNumber = 0;
-  private count = 0;
   private p;
-  private notFriends = [];
 
   constructor(
     private http: HttpClient,
@@ -60,7 +60,8 @@ export class AddFriendComponent implements OnInit {
     await this.fillNotFriend(this.count, start);
   };
 
-  search = async (n, start) => {
+  search = async (n, start, filter) => {
+    this.filter=filter.value;
     this.count = 0;
     await this.fillNotFriend(n, start);
   };

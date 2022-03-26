@@ -4,7 +4,6 @@ module.exports.saveDeck = function (username, matrix, race, deckName, con, res){
             throw e;
         }else{
             if(r.length){
-                // console.log(r[0]);
                 if(r[0].owner===username){
                     res.json({message: 'Overwrite backup ?'});
                 }
@@ -26,7 +25,7 @@ module.exports.saveDeck = function (username, matrix, race, deckName, con, res){
 }
 
 module.exports.getDeckNames = function (username, con, res){
-    con.query("SELECT name, race FROM decks WHERE owner = ? ORDER BY name DESC",[username], (err, r) => {
+    con.query("SELECT name, race FROM decks WHERE owner = ? ORDER BY name ASC",[username], (err, r) => {
         if (err) {
             throw err;
         }else{
@@ -40,7 +39,7 @@ module.exports.getDeckNames = function (username, con, res){
 }
 
 module.exports.getMatrix = function (deckName, con, res){
-    con.query("SELECT deck FROM decks WHERE name = ? ORDER BY name DESC",[deckName], (err, r) => {
+    con.query("SELECT deck FROM decks WHERE name = ?",[deckName], (err, r) => {
         if (err) {
             throw err;
         }else{

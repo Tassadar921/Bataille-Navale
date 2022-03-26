@@ -89,7 +89,7 @@ export class HomePage implements OnInit {
       this.retour = await this.httpService.login(name, password);
       this.output = this.retour.message;
       if (this.retour.co === true) {
-        this.login(name);
+        this.login(this.retour.nickname);
       }
     } else {
       if (!name) {

@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {StorageService} from './storage.service';
 
@@ -9,6 +8,8 @@ import {StorageService} from './storage.service';
 export class HttpService {
 
   private retour;
+  private urlBack = 'http://localhost:8080/';
+  // private urlBack = 'http://loginmtg.tassadar.ovh:8080/';
 
   constructor(
     private storage: StorageService,
@@ -22,7 +23,7 @@ export class HttpService {
       token: tok,
       mail: email,
     };
-    await this.http.post<string>(environment.urlBack + 'checkToken', token).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'checkToken', token).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour;
@@ -34,7 +35,7 @@ export class HttpService {
       name: username,
       password: pass
     };
-    await this.http.post<string>(environment.urlBack + 'mailToken', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'mailToken', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour;
@@ -42,7 +43,7 @@ export class HttpService {
 
   sendResetPassword = async (email) => {
     const data = {mail: email};
-    await this.http.post<string>(environment.urlBack + 'sendResetPassword', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'sendResetPassword', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour.message;
@@ -55,7 +56,7 @@ export class HttpService {
       password: pass,
       mail: email
     };
-    await this.http.post<string>(environment.urlBack + 'signUp', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'signUp', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour;
@@ -66,7 +67,7 @@ export class HttpService {
       name: username,
       password: pass,
     };
-    await this.http.post<string>(environment.urlBack + 'login', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'login', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour;
@@ -77,7 +78,7 @@ export class HttpService {
       id: userId,
       password: pass
     };
-    await this.http.post<string>(environment.urlBack + 'resetPassword', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'resetPassword', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour;
@@ -85,7 +86,7 @@ export class HttpService {
 
   getUserIdByUsername = async (username) => {
     const data = {name: username};
-    await this.http.post<string>(environment.urlBack + 'getUserIdByUsername', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'getUserIdByUsername', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour;
@@ -93,7 +94,7 @@ export class HttpService {
 
   getUserDemandsReceivedLength = async () => {
     const data = {name: await this.storage.getNickname()};
-    await this.http.post<Array<string>>(environment.urlBack + 'getUserDemandsReceived', data).toPromise().then(res => {
+    await this.http.post<Array<string>>(this.urlBack + 'getUserDemandsReceived', data).toPromise().then(res => {
       this.retour = res;
     });
     return this.retour.demands.length;
@@ -101,7 +102,7 @@ export class HttpService {
 
   getUserFriends = async () => {
     const data = {name: await this.storage.getNickname()};
-    await this.http.post<Array<string>>(environment.urlBack + 'getUserFriends', data).toPromise().then(res => {
+    await this.http.post<Array<string>>(this.urlBack + 'getUserFriends', data).toPromise().then(res => {
       this.retour = res;
     });
     return this.retour.links;
@@ -109,7 +110,7 @@ export class HttpService {
 
   getUserListExceptOne = async () => {
     const data = {name: await this.storage.getNickname()};
-    await this.http.post<Array<string>>(environment.urlBack + 'getUserListExceptOne', data).toPromise().then(res => {
+    await this.http.post<Array<string>>(this.urlBack + 'getUserListExceptOne', data).toPromise().then(res => {
       this.retour = res;
     });
     return this.retour.output;
@@ -117,7 +118,7 @@ export class HttpService {
 
   getUserDemandsSent = async () => {
     const data = {name: await this.storage.getNickname()};
-    await this.http.post<Array<string>>(environment.urlBack + 'getUserDemandsSent', data).toPromise().then(res => {
+    await this.http.post<Array<string>>(this.urlBack + 'getUserDemandsSent', data).toPromise().then(res => {
       this.retour = res;
     });
     return this.retour.demands;
@@ -125,7 +126,7 @@ export class HttpService {
 
   getUserDemandsReceived = async () => {
     const data = {name: await this.storage.getNickname()};
-    await this.http.post<Array<string>>(environment.urlBack + 'getUserDemandsReceived', data).toPromise().then(res => {
+    await this.http.post<Array<string>>(this.urlBack + 'getUserDemandsReceived', data).toPromise().then(res => {
       this.retour = res;
     });
     return this.retour.demands;
@@ -133,7 +134,7 @@ export class HttpService {
 
   askFriend = async (username) => {
     const data = {from: await this.storage.getNickname(), to: username};
-    await this.http.post<Array<string>>(environment.urlBack + 'askFriend', data).toPromise().then(response => {
+    await this.http.post<Array<string>>(this.urlBack + 'askFriend', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour.message;
@@ -143,7 +144,7 @@ export class HttpService {
     const data = {user1: await this.storage.getNickname(), user2: username};
     this.retour = await this.deleteDemand(await this.storage.getNickname(), username);
     this.retour = await this.deleteDemand(username, await this.storage.getNickname());
-    await this.http.post<string>(environment.urlBack + 'addFriend', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'addFriend', data).toPromise().then(response => {
       this.retour = response;
     });
 
@@ -152,7 +153,7 @@ export class HttpService {
 
   deleteFriendship = async (username) => {
     const data = {username1: username, username2: this.storage.getNickname()};
-    await this.http.post<string>(environment.urlBack + 'deleteFriendship', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'deleteFriendship', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour.message;
@@ -162,7 +163,7 @@ export class HttpService {
     console.log('sender : ', send);
     console.log('receiver : ', receive);
     const data = {sender: send, receiver: receive};
-    await this.http.post<string>(environment.urlBack + 'deleteDemand', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'deleteDemand', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour.message;
@@ -170,7 +171,7 @@ export class HttpService {
 
   lastConnected = async () => {
     const data = {name: await this.storage.getNickname()};
-    await this.http.post<string>(environment.urlBack + 'lastConnected', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'lastConnected', data).toPromise().then(response => {
       this.retour = response;
     });
   };
@@ -179,7 +180,7 @@ export class HttpService {
 
   saveDeck = async (tab, faction, name) => {
     const data = {username: await this.storage.getNickname(), matrix: tab, race: faction, deckName: name};
-    await this.http.post<string>(environment.urlBack + 'saveDeck', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'saveDeck', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour;
@@ -187,7 +188,7 @@ export class HttpService {
 
   getDeckNames = async () => {
     const data = {username: await this.storage.getNickname()};
-    await this.http.post<string>(environment.urlBack + 'getDeckNames', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'getDeckNames', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour.output;
@@ -195,7 +196,7 @@ export class HttpService {
 
   getMatrix = async (name) => {
     const data = {deckName: name};
-    await this.http.post<string>(environment.urlBack + 'getMatrix', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'getMatrix', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour.output;
@@ -203,7 +204,7 @@ export class HttpService {
 
   overwrite = async (tab, faction, name) => {
     const data = {username: await this.storage.getNickname(), matrix: tab, race: faction, deckName: name};
-    await this.http.post<string>(environment.urlBack + 'overwrite', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'overwrite', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour;
@@ -211,7 +212,7 @@ export class HttpService {
 
   getNumberOfShips = async (faction) => {
     const data = {race: faction};
-    await this.http.post<string>(environment.urlBack + 'getNumberOfShips', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'getNumberOfShips', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour.output;
@@ -219,7 +220,7 @@ export class HttpService {
 
   deleteFromDatabase = async (name) => {
     const data = {deckName: name};
-    await this.http.post<string>(environment.urlBack + 'deleteFromDatabase', data).toPromise().then(response => {
+    await this.http.post<string>(this.urlBack + 'deleteFromDatabase', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour;

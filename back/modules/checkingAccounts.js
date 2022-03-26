@@ -25,7 +25,7 @@ module.exports.login= function (name, password, req, con, res){
   let state='';
   let exists=false;
   let connected=false;
-  con.query('SELECT password FROM users WHERE username = ? OR email = ?', [name, name],(err, result)=>{
+  con.query('SELECT username, password FROM users WHERE username = ? OR email = ?', [name, name],(err, result)=>{
     if(err){
       throw err;
     }else{
@@ -46,7 +46,7 @@ module.exports.login= function (name, password, req, con, res){
         state='Account not found';
       }
     }
-    res.json({message: state, co: connected});
+    res.json({message: state, co: connected, nickname: result[0].username});
   });
 }
 

@@ -8,8 +8,6 @@ import { EditorPageRoutingModule } from './editor-routing.module';
 
 import { EditorPage } from './editor.page';
 
-import {DeckSelectionComponent} from './deck-selection/deck-selection.component';
-
 import {DragAndDropModule} from 'angular-draggable-droppable';
 
 import {ComponentsModule} from '../shared/components/components.module';
@@ -23,6 +21,6 @@ import {ComponentsModule} from '../shared/components/components.module';
     DragAndDropModule,
     ComponentsModule
   ],
-  declarations: [EditorPage, DeckSelectionComponent]
+  declarations: [EditorPage]
 })
 export class EditorPageModule {}

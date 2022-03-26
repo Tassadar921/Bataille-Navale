@@ -59,6 +59,7 @@ export class SeeFriendsComponent implements OnInit {
   };
 
   search = async (n, start, filter) => {
+    this.filter = filter.value;
     this.count = 0;
     await this.displayFriendsFunction(n, start, filter);
   };
