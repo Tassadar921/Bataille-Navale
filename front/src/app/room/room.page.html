@@ -6,13 +6,18 @@
       <ion-grid style="height:780px">
         <ion-row>
           <ion-col style="border:none">
-            <ion-button color="secondary" shape="round" id="trigger-button" size="large">Edit</ion-button>
+            <ion-button color="secondary" shape="round" id="trigger-button" size="large">Load</ion-button>
           </ion-col>
           <ion-col style="border:none">
             <ion-button color="danger" shape="round" (click)="switchReady()" *ngIf="!ready" size="large">Not ready
             </ion-button>
             <ion-button color="success" shape="round" (click)="switchReady()" *ngIf="ready" size="large">Ready
             </ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="border:none;">
+            {{output}}
           </ion-col>
         </ion-row>
       </ion-grid>

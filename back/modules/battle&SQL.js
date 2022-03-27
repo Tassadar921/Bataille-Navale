@@ -39,12 +39,11 @@ module.exports.getDeckNames = function (username, con, res){
 }
 
 module.exports.getMatrix = function (deckName, con, res){
-    con.query("SELECT deck FROM decks WHERE name = ?",[deckName], (err, r) => {
+    con.query("SELECT deck, race FROM decks WHERE name = ?",[deckName], (err, r) => {
         if (err) {
             throw err;
         }else{
-            const matrix = JSON.parse(r[0].deck);
-            res.json({output: matrix});
+            res.json({matrix: JSON.parse(r[0].deck), race:r[0].race});
         }
     });
 }

@@ -17,7 +17,9 @@ export class RoomPage implements OnInit, OnDestroy {
 
   public matrix = [];
   public ready = false;
+  public output;
 
+  private race;
   private retour;
 
   constructor(
@@ -26,15 +28,17 @@ export class RoomPage implements OnInit, OnDestroy {
     private socket: Socket,
     private storage: StorageService,
     private router: Router,
-  ) { }
+  ) {
+    this.ready = false;
+  }
 
   async ngOnInit() {
+    this.ready = false;
     this.matrix = this.opMatrix.reinitMatrix();
     this.socket.connect();
     this.socket.emit('enterRoom');
     this.socket.on('toGame', () => {
-      console.log('redirect');
-      this.router.navigateByUrl('/game');
+      this.router.navigateByUrl('/game?race=' + this.race + '&matrix=' + JSON.stringify(this.matrix));
     });
   }
 
@@ -44,11 +48,16 @@ export class RoomPage implements OnInit, OnDestroy {
 
   switchReady = async () => {
     if(this.ready) {
+      this.ready = !this.ready;
       this.socket.emit('notReadyAnymore', await this.storage.getNickname());
     }else{
-      this.socket.emit('ready', await this.storage.getNickname());
+      if(this.race) {
+        this.ready = !this.ready;
+        this.socket.emit('ready', await this.storage.getNickname());
+      }else{
+        this.output='Select a template first';
+      }
     }
-    this.ready = !this.ready;
   };
 
   getMatrix = async (name) => {
@@ -58,7 +67,9 @@ export class RoomPage implements OnInit, OnDestroy {
 
   closeModal = () => {
     if(this.deckSelection.matrix) {
+      this.output='';
       this.matrix = this.deckSelection.matrix;
+      this.race = this.deckSelection.race;
     }
   };
 }

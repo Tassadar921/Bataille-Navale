@@ -16,6 +16,7 @@ export class DeckSelectionComponent implements OnInit, AfterViewInit {
   public displayDecks;
   public matrix;
   public output;
+  public race;
 
   private p;
   private retour;
@@ -92,8 +93,10 @@ export class DeckSelectionComponent implements OnInit, AfterViewInit {
   };
 
   select = async (deck) => {
-    this.matrix = await this.http.getMatrix(deck);
-    this.output=deck + ' Selected';
+    this.retour = await this.http.getMatrix(deck);
+    this.matrix = this.retour.matrix;
+    this.race = this.retour.race;
+    this.output = deck + ' Selected';
   };
 
   deleteFromDatabase = async (name) => {

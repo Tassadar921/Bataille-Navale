@@ -146,6 +146,7 @@ function preventDisconnect() {
 
             let intoRoom = [];
             let rooms = [];
+            let tmp = '';
 
             io.on('connection', (socket) => {
 
@@ -166,19 +167,29 @@ function preventDisconnect() {
                     console.log(intoRoom);
                 })
 
-                socket.on('ready', () => {
+                socket.on('ready', async () => {
                     intoRoom = socketFile.ready(intoRoom, socket, true);
                     console.log(intoRoom);
                     let sendToRoom = socketFile.checkReady(intoRoom);
                     if(sendToRoom.fill) {
-                        console.log('ici');
-                        socket.to(sendToRoom.p1.id).emit('toGame');
-                        console.log(intoRoom);
-                        console.log('là');
+                        socket.emit('toGame');
                         socket.to(sendToRoom.p2.id).emit('toGame');
-                        console.log(intoRoom);
-                        console.log('bouh');
                     }
+                });
+
+                socket.on('enterGame', (data) => {
+                    data.id = socket.id;
+                    console.log('ENTER GAME : ', tmp);
+                    if(!tmp){
+                        console.log('ici');
+                        tmp = data;
+                    }else{
+                        console.log('là');
+                        rooms.push({p1: tmp, p2:data});
+                        tmp = '';
+                    }
+                    console.log('rooms : ', rooms);
+                    // this.
                 });
             });
         }

@@ -152,7 +152,7 @@
                     [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '_editor.png'"
                     [class]="matrix[el-1][opMatrix.letterToNum(letter)].direction"
                     class="delete imgInGrid"
-                    (click)="deleteSpaceship(matrix[el-1][opMatrix.letterToNum(letter)].name, letter, el-1)">
+                    (click)="deleteSpaceship(matrix[el-1][opMatrix.letterToNum(letter)].name, letter, el-1, matrix[el-1][opMatrix.letterToNum(letter)].direction)">
                   </ion-img>
                 </ion-row>
                 <ion-row

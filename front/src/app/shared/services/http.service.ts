@@ -200,7 +200,7 @@ export class HttpService {
     await this.http.post<string>(this.urlBack + 'getMatrix', data).toPromise().then(response => {
       this.retour = response;
     });
-    return this.retour.output;
+    return this.retour;
   };
 
   overwrite = async (tab, faction, name) => {

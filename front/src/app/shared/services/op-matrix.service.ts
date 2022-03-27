@@ -78,6 +78,19 @@ export class OpMatrixService {
     }
   };
 
+  getDirection = (rotation) => {
+    switch(rotation) {
+      case '':
+        return 'U';
+      case 'right':
+        return 'R';
+      case'down':
+        return 'D';
+      case 'left':
+        return 'L';
+    }
+};
+
   changeNumberOfShips = (numberOfShips, data, sign) => {
     const num = data[data.length - 1];
     switch (sign) {
@@ -109,11 +122,13 @@ export class OpMatrixService {
     }
     switch (this.nameToShape(dropData.toLowerCase())) {
       case 1:
-        if (!matrix[line][col]) {
-          matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(direction)};
-          numberOfShips = this.changeNumberOfShips(numberOfShips, dropData, sign);
-        } else {
-          output = 'Unable to put this here';
+        if(sign==='-') {
+          if (!matrix[line][col]) {
+            matrix[line][col] = {name: dropData + '_1.1', direction: this.getRotation(direction)};
+            numberOfShips = this.changeNumberOfShips(numberOfShips, dropData, sign);
+          } else {
+            output = 'Unable to put this here';
+          }
         }
         break;
       case 2:
