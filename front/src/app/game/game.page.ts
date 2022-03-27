@@ -29,6 +29,9 @@ export class GamePage implements OnInit, OnDestroy {
       this.race = params.race;
     });
     this.socket.emit('enterGame', {name: await this.storage.getNickname(), matrix: this.matrix, race: this.race});
+    this.socket.on('beginGame', (data)=> {
+      console.log(data);
+    });
   }
 
   ngOnDestroy() {

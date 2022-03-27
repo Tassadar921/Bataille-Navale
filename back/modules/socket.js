@@ -39,3 +39,12 @@ module.exports.checkReady = function (users) {
         return {fill:false};
     }
 }
+
+module.exports.findRoom = function (rooms, id) {
+    for(let i=0;i<rooms.length; i++){
+        if(rooms[i].p1.id===id || rooms[i].p1.id===id){
+            return i;
+        }
+    }
+    return -1;
+}

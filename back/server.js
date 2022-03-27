@@ -1,8 +1,8 @@
 const app = require('express')();
-const http = require('http').Server(app)
+const http = require('http').Server(app);
 const io = require('socket.io')(http, {
     cors: {
-        origins : ['http://localhost:8100']
+        origins: ['http://localhost:8100']
     }
 });
 const bodyParser = require('body-parser');
@@ -11,8 +11,8 @@ const methodOverride = require('method-override');
 const cors = require('cors');
 const mysql = require('mysql');
 
-const session = require("express-session")({
-    secret: "eb8fcc253281389225b4f7872f2336918ddc7f689e1fc41b64d5c4f378cdc438",
+const session = require('express-session')({
+    secret: 'eb8fcc253281389225b4f7872f2336918ddc7f689e1fc41b64d5c4f378cdc438',
     resave: true,
     saveUninitialized: true,
     cookie: {
@@ -23,7 +23,7 @@ const session = require("express-session")({
 
 const account = require('./modules/checkingAccounts.js');
 const mail = require('./modules/sendMail');
-const battleSQL = require ('./modules/battle&SQL');
+const battleSQL = require('./modules/battle&SQL');
 const socketFile = require('./modules/socket');
 
 app.use(logger('dev'));
@@ -140,10 +140,6 @@ function preventDisconnect() {
                 battleSQL.deleteFromDatabase(req.body.deckName, con, res);
             });
 
-            app.post('/test', function (req, res) {
-                //test action
-            });
-
             let intoRoom = [];
             let rooms = [];
             let tmp = '';
@@ -165,13 +161,13 @@ function preventDisconnect() {
                 socket.on('disconnect', () => {
                     intoRoom = socketFile.disconnect(intoRoom, socket);
                     console.log(intoRoom);
-                })
+                });
 
                 socket.on('ready', async () => {
                     intoRoom = socketFile.ready(intoRoom, socket, true);
                     console.log(intoRoom);
                     let sendToRoom = socketFile.checkReady(intoRoom);
-                    if(sendToRoom.fill) {
+                    if (sendToRoom.fill) {
                         socket.emit('toGame');
                         socket.to(sendToRoom.p2.id).emit('toGame');
                     }
@@ -179,17 +175,22 @@ function preventDisconnect() {
 
                 socket.on('enterGame', (data) => {
                     data.id = socket.id;
-                    console.log('ENTER GAME : ', tmp);
-                    if(!tmp){
-                        console.log('ici');
+                    console.log('data id : ', data.id);
+                    console.log('socket id : ', socket.id);
+                    if (!tmp) {
                         tmp = data;
-                    }else{
-                        console.log('là');
-                        rooms.push({p1: tmp, p2:data});
+                    } else {
+                        rooms.push({p1: tmp, p2: data});
                         tmp = '';
                     }
                     console.log('rooms : ', rooms);
-                    // this.
+                    console.log('id : ', socket.id);
+                    console.log(socketFile.findRoom(rooms, socket.id));
+                    if (socketFile.findRoom(rooms, socket.id)!==-1) {
+                        console.log('emit');
+                        socket.emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p1.name});
+                        socket.to(rooms[socketFile.findRoom(rooms, socket.id)].p1.id).emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p2.name});
+                    }
                 });
             });
         }
@@ -209,4 +210,4 @@ preventDisconnect();
 
 http.listen(8080, () => {
     console.log('Serveur lancé sur le port 8080');
-})
+});
