@@ -3,6 +3,12 @@
 <ion-grid style="width:100%;">
   <ion-row>
     <ion-col>
+      <ion-progress-bar type="indeterminate" *ngIf="ready"></ion-progress-bar>
+      <ion-progress-bar *ngIf="!ready"></ion-progress-bar>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
       <ion-grid style="height:780px">
         <ion-row>
           <ion-col style="border:none">

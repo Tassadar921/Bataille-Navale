@@ -158,7 +158,7 @@ function preventDisconnect() {
                     console.log(intoRoom);
                 });
 
-                socket.on('disconnect', () => {
+                socket.on('leaveRoom', () => {
                     intoRoom = socketFile.disconnect(intoRoom, socket);
                     console.log(intoRoom);
                 });
@@ -188,8 +188,8 @@ function preventDisconnect() {
                     console.log(socketFile.findRoom(rooms, socket.id));
                     if (socketFile.findRoom(rooms, socket.id)!==-1) {
                         console.log('emit');
-                        socket.emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p1.name});
-                        socket.to(rooms[socketFile.findRoom(rooms, socket.id)].p1.id).emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p2.name});
+                        socket.emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p1.name, race: rooms[socketFile.findRoom(rooms, socket.id)].p1.race});
+                        socket.to(rooms[socketFile.findRoom(rooms, socket.id)].p1.id).emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p2.name, race: rooms[socketFile.findRoom(rooms, socket.id)].p2.race});
                     }
                 });
             });

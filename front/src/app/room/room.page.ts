@@ -43,7 +43,7 @@ export class RoomPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.socket.emit('disconnect');
+    this.socket.emit('leaveRoom');
   }
 
   switchReady = async () => {

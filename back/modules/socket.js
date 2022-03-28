@@ -42,7 +42,7 @@ module.exports.checkReady = function (users) {
 
 module.exports.findRoom = function (rooms, id) {
     for(let i=0;i<rooms.length; i++){
-        if(rooms[i].p1.id===id || rooms[i].p1.id===id){
+        if(rooms[i].p1.id===id || rooms[i].p2.id===id){
             return i;
         }
     }
