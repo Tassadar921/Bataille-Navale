@@ -1,17 +1,18 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from '../shared/services/http.service';
 import {OpMatrixService} from '../shared/services/op-matrix.service';
 import {DeckSelectionComponent} from '../shared/components/deck-selection/deck-selection.component';
 import {Socket} from 'ngx-socket-io';
 import {StorageService} from '../shared/services/storage.service';
 import {Router} from '@angular/router';
+import {ViewDidLeave, ViewWillLeave} from '@ionic/angular';
 
 @Component({
   selector: 'app-room',
   templateUrl: './room.page.html',
   styleUrls: ['./room.page.scss'],
 })
-export class RoomPage implements OnInit, OnDestroy {
+export class RoomPage implements OnInit, ViewWillLeave{
 
   @ViewChild(DeckSelectionComponent) deckSelection: DeckSelectionComponent;
 
@@ -40,10 +41,13 @@ export class RoomPage implements OnInit, OnDestroy {
     this.socket.on('toGame', () => {
       this.router.navigateByUrl('/game?race=' + this.race + '&matrix=' + JSON.stringify(this.matrix));
     });
+    this.socket.emit('test', 'début');
+    console.log('trigger');
   }
 
-  ngOnDestroy() {
-    this.socket.emit('leaveRoom');
+  ionViewWillLeave() {
+    console.log('///////////////////////////////////////////////////////');
+    this.socket.emit('test', 'fin');
   }
 
   switchReady = async () => {

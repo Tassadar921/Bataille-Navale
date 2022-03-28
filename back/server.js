@@ -148,6 +148,12 @@ function preventDisconnect() {
 
                 console.log('Somebody connected');
 
+                socket.on('disconnect', () => {
+                    let retour = socketFile.destroy(intoRoom, rooms, socket.id, socket);
+                    intoRoom = retour.waiting;
+                    rooms = retour.games;
+                });
+
                 socket.on('enterRoom', () => {
                     intoRoom = socketFile.enterRoom(intoRoom, socket);
                     console.log(intoRoom);
@@ -159,8 +165,10 @@ function preventDisconnect() {
                 });
 
                 socket.on('leaveRoom', () => {
+                    console.log(socket.id + '  is leaving');
+                    console.log('before : ', intoRoom);
                     intoRoom = socketFile.disconnect(intoRoom, socket);
-                    console.log(intoRoom);
+                    console.log('leave room : ', intoRoom);
                 });
 
                 socket.on('ready', async () => {
@@ -175,8 +183,6 @@ function preventDisconnect() {
 
                 socket.on('enterGame', (data) => {
                     data.id = socket.id;
-                    console.log('data id : ', data.id);
-                    console.log('socket id : ', socket.id);
                     if (!tmp) {
                         tmp = data;
                     } else {
@@ -184,13 +190,14 @@ function preventDisconnect() {
                         tmp = '';
                     }
                     console.log('rooms : ', rooms);
-                    console.log('id : ', socket.id);
-                    console.log(socketFile.findRoom(rooms, socket.id));
                     if (socketFile.findRoom(rooms, socket.id)!==-1) {
-                        console.log('emit');
                         socket.emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p1.name, race: rooms[socketFile.findRoom(rooms, socket.id)].p1.race});
                         socket.to(rooms[socketFile.findRoom(rooms, socket.id)].p1.id).emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p2.name, race: rooms[socketFile.findRoom(rooms, socket.id)].p2.race});
                     }
+                });
+
+                socket.on('test', (message) => {
+                   console.log(message + ' TEST');
                 });
             });
         }

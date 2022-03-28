@@ -48,3 +48,21 @@ module.exports.findRoom = function (rooms, id) {
     }
     return -1;
 }
+
+module.exports.destroy = function (intoRoom, rooms, id, socket){
+    for(let i=0;i<intoRoom.length;i++){
+        if(intoRoom[i].id === id){
+            intoRoom.splice(i,1);
+            return {waiting: intoRoom, games: rooms};
+        }
+    }
+    for(let i=0;i<rooms.length;i++){
+        if(rooms[i].p1.id===id || rooms[i].p2.id===id){
+            socket.emit('crash');
+            socket.to(rooms[i].p1.id).emit('crash');
+            socket.to(rooms[i].p2.id).emit('crash');
+            rooms.splice(i,1);
+            return {waiting: intoRoom, games: rooms};
+        }
+    }
+}
