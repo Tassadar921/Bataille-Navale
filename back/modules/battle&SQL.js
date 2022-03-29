@@ -1,3 +1,14 @@
+const Weapon = require("../classes/weapon");
+
+const weapons = [
+    {race : "Human", data:[new Weapon("Normal",999),new Weapon("SelfDestruct",2), new Weapon("IEM",1),new Weapon("VLaser",1),new Weapon("HBomb",1)]},
+    {race : "Vyrkul", data :[new Weapon("Normal",999),new Weapon("Sonar",2),new Weapon("FragBomb",3),new Weapon("Invincibility",1),new Weapon("HLaser",1)]},
+    {race : "Arash", data : [new Weapon("TirSup",999),new Weapon("Bait",1),new Weapon("Radar",2),new Weapon("ThermicShield",3),new Weapon("FireRing",3)]},
+    {race : "Enkar", data : [new Weapon("Normal",999),new Weapon("Immune",1),new Weapon("SelfDestruct",2),new Weapon("Thief",1),new Weapon("Torpedo",2)]},
+    {race : "Sunari", data : [new Weapon("TirSup",999),new Weapon("BadShooter",1),new Weapon("HLaser",1),new Weapon("VLaser",1),new Weapon("HBomb",1)]}
+];
+
+
 module.exports.saveDeck = function (username, matrix, race, deckName, con, res){
     con.query('SELECT owner FROM decks WHERE name = ?', [deckName], (e, r) =>{
         if(e){
@@ -100,4 +111,14 @@ module.exports.getNumberOfShips = function (race, con, res){
             res.json({output:tab[4]});
             break
     }
+}
+
+
+module.exports.getWeapons=function(race){
+    for(const line of weapons){
+        if(line.race===race){
+            return line.data
+        }
+    }
+    return -1;
 }
