@@ -8,6 +8,8 @@ import { GamePageRoutingModule } from './game-routing.module';
 
 import { GamePage } from './game.page';
 
+import {DragAndDropModule} from 'angular-draggable-droppable';
+
 import {ComponentsModule} from '../shared/components/components.module';
 import {DisconnectedComponent} from './disconnected/disconnected.component';
 
@@ -21,6 +23,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
     IonicModule,
     GamePageRoutingModule,
     ComponentsModule,
+    DragAndDropModule,
     SocketIoModule.forRoot(config)
   ],
   declarations: [GamePage, DisconnectedComponent]

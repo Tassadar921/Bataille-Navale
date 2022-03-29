@@ -27,3 +27,24 @@ ion-col{
 .left{
   transform: rotate(270deg);
 }
+
+.weapon{
+  width:50px;
+}
+
+[mwlDraggable] {
+  display: inline;
+  z-index: 2;
+  cursor: move;
+  border: 1px white solid;
+  width:auto;
+  height:auto;
+}
+
+[mwlDroppable] {
+  color: white;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

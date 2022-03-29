@@ -1,11 +1,9 @@
 module.exports.leaveRoom = function (intoRoom, socket) {
-    console.log('avant : ', intoRoom);
     for(let i=0;i<intoRoom.length;i++) {
         if(intoRoom[i].id === socket.id) {
             intoRoom.splice(i, 1);
         }
     }
-    console.log('après : ', intoRoom);
     return intoRoom;
 };
 
@@ -63,8 +61,6 @@ module.exports.findRoom = function (rooms, id) {
 }
 
 module.exports.destroy = function (intoRoom, rooms, id, socket){
-    console.log('rooms : ', rooms);
-    console.log('id à destroy : ', id);
 
     for(let i=0;i<intoRoom.length;i++){
         if(intoRoom[i].id === id){
@@ -73,7 +69,6 @@ module.exports.destroy = function (intoRoom, rooms, id, socket){
     }
     for(let i=0;i<rooms.length;i++){
         if(rooms[i].id1===id || rooms[i].id2===id){
-            console.log('ON EST LA');
             socket.emit('destroy');
             socket.to(rooms[i].id1).emit('destroy');
             socket.to(rooms[i].id2).emit('destroy');

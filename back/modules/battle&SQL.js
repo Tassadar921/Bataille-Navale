@@ -1,11 +1,11 @@
 const Weapon = require("../classes/weapon");
 
 const weapons = [
-    {race : "Human", data:[new Weapon("Normal",999),new Weapon("SelfDestruct",2), new Weapon("IEM",1),new Weapon("VLaser",1),new Weapon("HBomb",1)]},
-    {race : "Vyrkul", data :[new Weapon("Normal",999),new Weapon("Sonar",2),new Weapon("FragBomb",3),new Weapon("Invincibility",1),new Weapon("HLaser",1)]},
-    {race : "Arash", data : [new Weapon("TirSup",999),new Weapon("Bait",1),new Weapon("Radar",2),new Weapon("ThermicShield",3),new Weapon("FireRing",3)]},
-    {race : "Enkar", data : [new Weapon("Normal",999),new Weapon("Immune",1),new Weapon("SelfDestruct",2),new Weapon("Thief",1),new Weapon("Torpedo",2)]},
-    {race : "Sunari", data : [new Weapon("TirSup",999),new Weapon("BadShooter",1),new Weapon("HLaser",1),new Weapon("VLaser",1),new Weapon("HBomb",1)]}
+    {race : "Human", data:[new Weapon("normal",999),new Weapon("selfDestruct",2), new Weapon("IEM",1),new Weapon("VLaser",1),new Weapon("HBomb",1)]},
+    {race : "Vyrkul", data :[new Weapon("normal",999),new Weapon("sonar",2),new Weapon("fragBomb",3),new Weapon("invincibility",1),new Weapon("HLaser",1)]},
+    {race : "Arash", data : [new Weapon("tirSup",999),new Weapon("bait",1),new Weapon("radar",2),new Weapon("thermicShield",3),new Weapon("fireRing",3)]},
+    {race : "Enkar", data : [new Weapon("normal",999),new Weapon("immune",1),new Weapon("selfDestruct",2),new Weapon("thief",1),new Weapon("torpedo",2)]},
+    {race : "Sunari", data : [new Weapon("tirSup",999),new Weapon("badShooter",1),new Weapon("HLaser",1),new Weapon("VLaser",1),new Weapon("HBomb",1)]}
 ];
 
 
@@ -114,11 +114,46 @@ module.exports.getNumberOfShips = function (race, con, res){
 }
 
 
-module.exports.getWeapons=function(race, res){
+module.exports.getWeapons = function (race, res){
     for(const line of weapons){
         if(line.race===race){
             res.json({output: line.data});
+            return 1;
         }
     }
     res.json({output:'erreur'});
+    return -1;
+}
+
+module.exports.initCountShips = function (matrix, res){
+    console.log(matrix);
+    let spaceship1 = 0;
+    let spaceship2 = 0;
+    let spaceship3 = 0;
+    let spaceship4 = 0;
+    for(let line of matrix){
+        for(let col of line){
+            if(col) {
+                if (col.name.includes('1.1')) {
+                    switch (Number(col.name.split('_')[0][col.name.split('_')[0].length - 1])){
+                        case 1:
+                            spaceship1++;
+                            break;
+                        case 2:
+                            spaceship2++;
+                            break;
+                        case 3:
+                            spaceship3++;
+                            break;
+                        case 4:
+                            spaceship4++;
+                            break;
+                    }
+                }
+            }
+        }
+    }
+    const out = {ship1: spaceship1, ship2:spaceship2, ship3: spaceship3, ship4: spaceship4}
+    res.json({output: out});
+    return 1;
 }

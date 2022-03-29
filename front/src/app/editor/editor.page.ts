@@ -1,5 +1,4 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {DroppableDirective} from 'angular-draggable-droppable';
 import {HttpService} from '../shared/services/http.service';
 import {DeckSelectionComponent} from '../shared/components/deck-selection/deck-selection.component';
 import {ActionSheetController} from '@ionic/angular';
@@ -65,6 +64,7 @@ export class EditorPage implements OnInit {
   };
 
   save = async () => {
+    console.log(this.matrix);
     if (this.deckName) {
       this.retour = await this.http.saveDeck(this.matrix, this.race, this.deckName);
       if (this.retour.message === 'Overwrite backup ?') {

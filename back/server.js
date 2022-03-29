@@ -27,6 +27,7 @@ const account = require('./modules/checkingAccounts.js');
 const mail = require('./modules/sendMail');
 const battleSQL = require('./modules/battle&SQL');
 const socketFile = require('./modules/socket');
+const game = require('./modules/game');
 const User = require('./classes/user')
 const Room = require('./classes/room');
 
@@ -203,8 +204,6 @@ function preventDisconnect() {
                     if (!tmp) {
                         tmp = intoRoom[socketFile.findUser(socket.id, intoRoom)];
                     } else {
-                        console.log('CREATE ROOM');
-                        console.log('intoRoom : ', intoRoom);
                         if(intoRoom[0] && intoRoom[1]) {
                             rooms.push(new Room(tmp, intoRoom[socketFile.findUser(socket.id, intoRoom)]));
                             tmp = '';
@@ -217,16 +216,37 @@ function preventDisconnect() {
                                 ennemyName: room.name1,
                                 ennemyRace: room.race1,
                                 myRace: room.race2,
-                                myMatrix: room.matrix2
+                                myMatrix: room.matrix2,
+                                myTurn: room.isMyTurn(socket.id)
                             });
                             socket.to(room.id1).emit('initGame', {
                                 ennemyName: room.name2,
                                 ennemyRace: room.race2,
                                 myRace: room.race1,
-                                myMatrix: room.matrix1
+                                myMatrix: room.matrix1,
+                                myTurn: room.isMyTurn(room.id1)
+                            });
+                        }else{
+                            socket.emit('initGame', {
+                                ennemyName: room.name2,
+                                ennemyRace: room.race2,
+                                myRace: room.race1,
+                                myMatrix: room.matrix1,
+                                myTurn: room.isMyTurn(socket.id)
+                            });
+                            socket.to(room.id1).emit('initGame', {
+                                ennemyName: room.name1,
+                                ennemyRace: room.race1,
+                                myRace: room.race2,
+                                myMatrix: room.matrix2,
+                                myTurn: room.isMyTurn(room.id1)
                             });
                         }
                     }
+                });
+
+                socket.on('testMatrix', (matrix)=> {
+                    battleSQL.initCountShips(matrix);
                 });
 
                 socket.on('debug', () => {
@@ -238,6 +258,18 @@ function preventDisconnect() {
 
                 app.post('/getWeapons', function (req, res) {
                     battleSQL.getWeapons(req.body.race, res);
+                });
+
+                app.post('/initCountMyShips', function (req, res) {
+                    battleSQL.initCountShips(req.body.matrix, res);
+                });
+
+                app.post('/initCountMyShips', function (req, res) {
+                    battleSQL.initCountShips(req.body.matrix, res);
+                });
+
+                app.post('/turn', function (req, res) {
+                    // game.turn(req.body.weapon, req.body.matrix, res);
                 });
             });
         }

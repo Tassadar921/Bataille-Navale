@@ -18,10 +18,13 @@ export class GamePage implements OnInit, ViewWillEnter {
   public myMatrix = [];
   public myRace;
   public myWeapons;
+  public myCount = [];
   public ennemyName;
   public ennemyMatrix = [];
   public ennemyRace;
   public ennemyWeapons;
+  public ennemyCount = [];
+  public isMyTurn;
 
   constructor(
     private getVarInURL: ActivatedRoute,
@@ -54,12 +57,19 @@ export class GamePage implements OnInit, ViewWillEnter {
       this.ennemyMatrix = this.opMatrix.reinitMatrix();
       this.ennemyName = data.ennemyName;
       this.ennemyRace = data.ennemyRace;
+      this.isMyTurn = data.myTurn;
       this.myWeapons = await this.http.getWeapons(this.myRace);
       this.ennemyWeapons = await this.http.getWeapons(this.ennemyRace);
-      console.log('a');
-      console.log(this.myWeapons);
-      console.log(this.ennemyWeapons);
+      this.myCount = await this.http.initCountMyShips(this.myMatrix);
     });
   }
+
+  dropInMyMatrix = (data, line, col) => {
+    this.socket.emit('testMatrix', this.myMatrix);
+  };
+
+  dropInEnnemyMatrix = (data, line, col) => {
+    console.log(col+line, 'drop into ennemy matrix : ', data);
+  };
 
 }

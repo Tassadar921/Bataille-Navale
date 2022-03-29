@@ -8,6 +8,8 @@ class Room {
     race2;
     id2;
 
+    turn;
+
     constructor(p1, p2) {
         this.name1 = p1.name;
         this.matrix1 = p1.matrix;
@@ -17,6 +19,8 @@ class Room {
         this.race2 = p2.race;
         this.id1 = p1.id;
         this.id2 = p2.id;
+
+        this.turn=Math.floor(Math.random()*2+1);
     }
 
     setId1(id){
@@ -29,6 +33,22 @@ class Room {
 
     isHere(id){
         return this.id1 === id || this.id2 === id;
+    }
+
+    isMyTurn(id){
+        if((id===this.id1 && this.turn===1)||(id===this.id2 && this.turn===2)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    played(){
+        if(this.turn===1){
+            this.turn++;
+        }else{
+            this.turn--;
+        }
     }
 }
 

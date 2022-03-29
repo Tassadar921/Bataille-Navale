@@ -1,9 +1,61 @@
 <app-menu></app-menu>
 
+<ion-row>
+  <ion-col *ngIf="isMyTurn">
+    <p color="success">It's your turn</p>
+  </ion-col>
+  <ion-col *ngIf="!isMyTurn">
+    <p color="danger">It's not your turn</p>
+  </ion-col>
+</ion-row>
+<ion-row>
+      <ion-col>
+        <ion-row>
+          <ion-col *ngFor="let line of myWeapons">
+            <ion-row>
+              <ion-col>
+                <ion-img [src]="'../../assets/pics/weapons/' + line.name + '.png'"
+                         class="weapon"
+                         mwlDraggable
+                         dropData={{race}}{{el}}
+                         *ngIf="isMyTurn">
+                </ion-img>
+                <ion-img [src]="'../../assets/pics/weapons/' + line.name + '.png'"
+                         class="weapon"
+                         *ngIf="!isMyTurn">
+                </ion-img>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                {{line.nbr}}
+              </ion-col>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+      <ion-col>
+        <ion-row>
+          <ion-col *ngFor="let line of ennemyWeapons">
+            <ion-row>
+              <ion-col>
+                <ion-img [src]="'../../assets/pics/weapons/' + line.name + '.png'" class="weapon">
+                </ion-img>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                {{line.nbr}}
+              </ion-col>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
 <ion-grid style="width:100%;">
   <ion-content>
-  <ion-row>
-    <ion-col>
+    <ion-row>
+      <ion-col>
         <ion-grid class="grid">
           <ion-row>
             <ion-col style="border:none;">
@@ -30,20 +82,22 @@
             <ion-row>
               <ion-col>{{el}}</ion-col>
               <ion-col *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
-                <div *ngIf="myMatrix[el-1][opMatrix.letterToNum(letter)]!== 0">
-                  <ion-img
-                    alt=""
-                    [src]="'../../assets/pics/spaceship_pieces/piece_'+ myMatrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '.png'"
-                    [class]="myMatrix[el-1][opMatrix.letterToNum(letter)].direction"
-                    class="imgInGrid">
-                  </ion-img>
+                <div mwlDroppable (drop)="dropInMyMatrix($event.dropData, letter, el-1)">
+                  <div *ngIf="myMatrix[el-1][opMatrix.letterToNum(letter)]!== 0">
+                    <ion-img
+                      alt=""
+                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ myMatrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '.png'"
+                      [class]="myMatrix[el-1][opMatrix.letterToNum(letter)].direction"
+                      class="imgInGrid">
+                    </ion-img>
+                  </div>
                 </div>
               </ion-col>
             </ion-row>
           </div>
         </ion-grid>
-    </ion-col>
-    <ion-col>
+      </ion-col>
+      <ion-col>
         <ion-grid class="grid">
           <ion-row>
             <ion-col style="border:none;">
@@ -70,19 +124,21 @@
             <ion-row>
               <ion-col>{{el}}</ion-col>
               <ion-col *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
-                <div *ngIf="ennemyMatrix[el-1][opMatrix.letterToNum(letter)]!== 0">
-                  <ion-img
-                    alt=""
-                    [src]="'../../assets/pics/spaceship_pieces/piece_'+ ennemyMatrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '.png'"
-                    [class]="ennemyMatrix[el-1][opMatrix.letterToNum(letter)].direction"
-                    class="imgInGrid">
-                  </ion-img>
+                <div mwlDroppable (drop)="dropInEnnemyMatrix($event.dropData, letter, el-1)" style="width:50px; height:50px;">
+                  <div *ngIf="ennemyMatrix[el-1][opMatrix.letterToNum(letter)]!== 0">
+                    <ion-img
+                      alt=""
+                      [src]="'../../assets/pics/spaceship_pieces/piece_'+ ennemyMatrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '.png'"
+                      [class]="ennemyMatrix[el-1][opMatrix.letterToNum(letter)].direction"
+                      class="imgInGrid">
+                    </ion-img>
+                  </div>
                 </div>
               </ion-col>
             </ion-row>
           </div>
         </ion-grid>
-    </ion-col>
-  </ion-row>
+      </ion-col>
+    </ion-row>
   </ion-content>
 </ion-grid>
