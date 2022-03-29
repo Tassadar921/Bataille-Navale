@@ -1,11 +1,11 @@
 const Weapon = require("../classes/weapon");
 
 const weapons = [
-    {race : "Human", data:[new Weapon("normal",999),new Weapon("selfDestruct",2), new Weapon("IEM",1),new Weapon("VLaser",1),new Weapon("HBomb",1)]},
-    {race : "Vyrkul", data :[new Weapon("normal",999),new Weapon("sonar",2),new Weapon("fragBomb",3),new Weapon("invincibility",1),new Weapon("HLaser",1)]},
-    {race : "Arash", data : [new Weapon("tirSup",999),new Weapon("bait",1),new Weapon("radar",2),new Weapon("thermicShield",3),new Weapon("fireRing",3)]},
-    {race : "Enkar", data : [new Weapon("normal",999),new Weapon("immune",1),new Weapon("selfDestruct",2),new Weapon("thief",1),new Weapon("torpedo",2)]},
-    {race : "Sunari", data : [new Weapon("tirSup",999),new Weapon("badShooter",1),new Weapon("HLaser",1),new Weapon("VLaser",1),new Weapon("HBomb",1)]}
+    {race : "Human", data:[new Weapon("normal",999, 'Auto'),new Weapon("selfDestruct",2, 'Auto destruction'), new Weapon("IEM",1, 'IEM'),new Weapon("VLaser",1, 'Vertical laser'),new Weapon("HBomb",1, 'H bomb')]},
+    {race : "Vyrkul", data :[new Weapon("normal",999, 'Auto'),new Weapon("sonar",2, 'Sonar'),new Weapon("fragBomb",3, 'Fragmentation bomb'),new Weapon("invincibility",1, 'Invincibility'),new Weapon("HLaser",1, 'Honrizontal bomb')]},
+    {race : "Arash", data : [new Weapon("tirSup",999, 'Auto'),new Weapon("sonar",1, 'Sonar'),new Weapon("radar",2, 'Radar'),new Weapon("thermicShield",3, 'Thermic shield'),new Weapon("fireRing",3, 'Fire ring')]},
+    {race : "Enkar", data : [new Weapon("normal",999, 'Auto'),new Weapon("immune",1, 'Immunity'),new Weapon("selfDestruct",2, 'Auto destruction'),new Weapon("thief",1, 'Thief'),new Weapon("torpedo",2, 'Torpedo')]},
+    {race : "Sunari", data : [new Weapon("tirSup",999,'Auto'),new Weapon("badShooter",1, 'Bad shooter'),new Weapon("HLaser",1, 'Horizontal laser'),new Weapon("VLaser",1, 'Vertical laser'),new Weapon("HBomb",1, 'H bomb')]}
 ];
 
 
@@ -86,7 +86,7 @@ module.exports.deleteFromDatabase = function (deckName, con, res){
     });
 }
 
-module.exports.getNumberOfShips = function (race, con, res){
+module.exports.getNumberOfShips = function (race, res){
     const tab = [
         [1,1,1,1],
         [1,1,2,1],
@@ -114,14 +114,12 @@ module.exports.getNumberOfShips = function (race, con, res){
 }
 
 
-module.exports.getWeapons = function (race, res){
+module.exports.getWeapons = function (race){
     for(const line of weapons){
         if(line.race===race){
-            res.json({output: line.data});
-            return 1;
+            return line.data;
         }
     }
-    res.json({output:'erreur'});
     return -1;
 }
 

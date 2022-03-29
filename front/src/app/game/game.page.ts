@@ -58,18 +58,17 @@ export class GamePage implements OnInit, ViewWillEnter {
       this.ennemyName = data.ennemyName;
       this.ennemyRace = data.ennemyRace;
       this.isMyTurn = data.myTurn;
-      this.myWeapons = await this.http.getWeapons(this.myRace);
-      this.ennemyWeapons = await this.http.getWeapons(this.ennemyRace);
+      this.myWeapons = data.myWeapons;
+      this.ennemyWeapons = data.ennemyWeapons;
       this.myCount = await this.http.initCountMyShips(this.myMatrix);
     });
   }
 
-  dropInMyMatrix = (data, line, col) => {
-    this.socket.emit('testMatrix', this.myMatrix);
-  };
-
-  dropInEnnemyMatrix = (data, line, col) => {
-    console.log(col+line, 'drop into ennemy matrix : ', data);
+  dropInMatrix = (data, x, y, me: boolean) => {
+    if(me){
+      data={line: x, col:this.opMatrix.letterToNum(y), weapon:data};
+      this.socket.emit('play', data);
+    }
   };
 
 }

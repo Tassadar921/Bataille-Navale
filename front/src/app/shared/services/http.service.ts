@@ -227,14 +227,6 @@ export class HttpService {
     return this.retour;
   };
 
-  getWeapons = async (faction) => {
-    const data = {race: faction};
-    await this.http.post<string>(this.urlBack + 'getWeapons', data).toPromise().then(response => {
-      this.retour = response;
-    });
-    return this.retour.output;
-  };
-
   initCountMyShips = async (mat) => {
     const data = {matrix: mat};
     await this.http.post<string>(this.urlBack + 'initCountMyShips', data).toPromise().then(response => {

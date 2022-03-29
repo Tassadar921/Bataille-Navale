@@ -138,7 +138,7 @@ function preventDisconnect() {
             });
 
             app.post('/getNumberOfShips', function (req, res) {
-                battleSQL.getNumberOfShips(req.body.race, con, res);
+                battleSQL.getNumberOfShips(req.body.race, res);
             });
 
             app.post('/deleteFromDatabase', function (req, res) {
@@ -217,14 +217,18 @@ function preventDisconnect() {
                                 ennemyRace: room.race1,
                                 myRace: room.race2,
                                 myMatrix: room.matrix2,
-                                myTurn: room.isMyTurn(socket.id)
+                                myTurn: room.isMyTurn(socket.id),
+                                myWeapons: room.weapons2,
+                                ennemyWeapons: room.weapons1
                             });
                             socket.to(room.id1).emit('initGame', {
                                 ennemyName: room.name2,
                                 ennemyRace: room.race2,
                                 myRace: room.race1,
                                 myMatrix: room.matrix1,
-                                myTurn: room.isMyTurn(room.id1)
+                                myTurn: room.isMyTurn(room.id1),
+                                myWeapons: room.weapons1,
+                                ennemyWeapons: room.weapons2
                             });
                         }else{
                             socket.emit('initGame', {
@@ -232,21 +236,25 @@ function preventDisconnect() {
                                 ennemyRace: room.race2,
                                 myRace: room.race1,
                                 myMatrix: room.matrix1,
-                                myTurn: room.isMyTurn(socket.id)
+                                myTurn: room.isMyTurn(socket.id),
+                                myWeapons: room.weapons1,
+                                ennemyWeapons: room.weapons2
                             });
                             socket.to(room.id1).emit('initGame', {
                                 ennemyName: room.name1,
                                 ennemyRace: room.race1,
                                 myRace: room.race2,
                                 myMatrix: room.matrix2,
-                                myTurn: room.isMyTurn(room.id1)
+                                myTurn: room.isMyTurn(room.id1),
+                                myWeapons: room.weapons2,
+                                ennemyWeapons: room.weapons1
                             });
                         }
                     }
                 });
 
-                socket.on('testMatrix', (matrix)=> {
-                    battleSQL.initCountShips(matrix);
+                socket.on('play', (data)=> {
+
                 });
 
                 socket.on('debug', () => {
@@ -254,14 +262,6 @@ function preventDisconnect() {
                     console.log('waiting players : ', intoRoom);
                     console.log('rooms : ', rooms);
                     console.log('////////////////////// DEBUG //////////////////////');
-                });
-
-                app.post('/getWeapons', function (req, res) {
-                    battleSQL.getWeapons(req.body.race, res);
-                });
-
-                app.post('/initCountMyShips', function (req, res) {
-                    battleSQL.initCountShips(req.body.matrix, res);
                 });
 
                 app.post('/initCountMyShips', function (req, res) {

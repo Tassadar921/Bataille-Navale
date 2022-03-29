@@ -1,3 +1,5 @@
+const battleSQL = require('../modules/battle&SQL');
+
 class Room {
     name1;
     matrix1;
@@ -7,6 +9,8 @@ class Room {
     matrix2;
     race2;
     id2;
+    weapons1;
+    weapons2;
 
     turn;
 
@@ -21,6 +25,9 @@ class Room {
         this.id2 = p2.id;
 
         this.turn=Math.floor(Math.random()*2+1);
+
+        this.weapons1 = battleSQL.getWeapons(this.race1);
+        this.weapons2 = battleSQL.getWeapons(this.race2);
     }
 
     setId1(id){
@@ -36,11 +43,7 @@ class Room {
     }
 
     isMyTurn(id){
-        if((id===this.id1 && this.turn===1)||(id===this.id2 && this.turn===2)){
-            return true;
-        }else{
-            return false;
-        }
+        return (id === this.id1 && this.turn === 1) || (id === this.id2 && this.turn === 2);
     }
 
     played(){

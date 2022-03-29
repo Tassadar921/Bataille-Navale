@@ -1,10 +1,12 @@
 class Weapon {
     name;
     nbr;
+    realName;
 
-    constructor(name, nbr) {
+    constructor(name, nbr, realName) {
         this.name = name;
         this.nbr = nbr;
+        this.realName = realName;
     }
 }
 

@@ -2,10 +2,10 @@
 
 <ion-row>
   <ion-col *ngIf="isMyTurn">
-    <p color="success">It's your turn</p>
+    <ion-title color="success">It's your turn</ion-title>
   </ion-col>
   <ion-col *ngIf="!isMyTurn">
-    <p color="danger">It's not your turn</p>
+    <ion-title color="danger">It's not your turn</ion-title>
   </ion-col>
 </ion-row>
 <ion-row>
@@ -13,21 +13,26 @@
         <ion-row>
           <ion-col *ngFor="let line of myWeapons">
             <ion-row>
-              <ion-col>
+              <ion-col style="border:none;">
                 <ion-img [src]="'../../assets/pics/weapons/' + line.name + '.png'"
                          class="weapon"
                          mwlDraggable
-                         dropData={{race}}{{el}}
+                         dropData={{line.name}}
                          *ngIf="isMyTurn">
                 </ion-img>
                 <ion-img [src]="'../../assets/pics/weapons/' + line.name + '.png'"
                          class="weapon"
-                         *ngIf="!isMyTurn">
+                         *ngIf="!isMyTurn || !line.nbr">
                 </ion-img>
               </ion-col>
             </ion-row>
             <ion-row>
-              <ion-col>
+              <ion-col style="border:none;">
+                {{line.realName}}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col style="border:none;">
                 {{line.nbr}}
               </ion-col>
             </ion-row>
@@ -38,13 +43,18 @@
         <ion-row>
           <ion-col *ngFor="let line of ennemyWeapons">
             <ion-row>
-              <ion-col>
+              <ion-col  style="border:none;">
                 <ion-img [src]="'../../assets/pics/weapons/' + line.name + '.png'" class="weapon">
                 </ion-img>
               </ion-col>
             </ion-row>
             <ion-row>
-              <ion-col>
+              <ion-col style="border:none;">
+                {{line.realName}}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col style="border:none;">
                 {{line.nbr}}
               </ion-col>
             </ion-row>
@@ -82,7 +92,7 @@
             <ion-row>
               <ion-col>{{el}}</ion-col>
               <ion-col *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
-                <div mwlDroppable (drop)="dropInMyMatrix($event.dropData, letter, el-1)">
+                <div mwlDroppable (drop)="dropInMatrix($event.dropData, letter, el-1, true)">
                   <div *ngIf="myMatrix[el-1][opMatrix.letterToNum(letter)]!== 0">
                     <ion-img
                       alt=""
@@ -124,7 +134,7 @@
             <ion-row>
               <ion-col>{{el}}</ion-col>
               <ion-col *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
-                <div mwlDroppable (drop)="dropInEnnemyMatrix($event.dropData, letter, el-1)" style="width:50px; height:50px;">
+                <div mwlDroppable (drop)="dropInMatrix($event.dropData, letter, el-1, false)" style="width:50px; height:50px;">
                   <div *ngIf="ennemyMatrix[el-1][opMatrix.letterToNum(letter)]!== 0">
                     <ion-img
                       alt=""
