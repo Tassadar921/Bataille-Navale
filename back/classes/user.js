@@ -16,28 +16,11 @@ class User {
     }
 
     isItMe(id){
-        if(this.id===id){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    setMatrix(matrix){
-        this.matrix = matrix;
+        return this.id === id;
     }
 
     setRace(race){
         this.race = race;
-    }
-
-    checkToken(token, id){
-        if(this.token===token){
-            this.setId(id);
-            return true;
-        }else{
-            return false;
-        }
     }
 }
 

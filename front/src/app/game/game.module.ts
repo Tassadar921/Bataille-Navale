@@ -9,6 +9,7 @@ import { GamePageRoutingModule } from './game-routing.module';
 import { GamePage } from './game.page';
 
 import {ComponentsModule} from '../shared/components/components.module';
+import {DisconnectedComponent} from './disconnected/disconnected.component';
 
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
@@ -22,6 +23,6 @@ const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
     ComponentsModule,
     SocketIoModule.forRoot(config)
   ],
-  declarations: [GamePage]
+  declarations: [GamePage, DisconnectedComponent]
 })
 export class GamePageModule {}

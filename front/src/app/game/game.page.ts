@@ -13,34 +13,44 @@ import {DisconnectedComponent} from './disconnected/disconnected.component';
 })
 export class GamePage implements OnInit, ViewWillEnter {
 
+  public myName;
   public myMatrix = [];
+  public myRace;
+  public ennemyName;
   public ennemyMatrix = [];
-  public race;
-  public inGame = true;
+  public ennemyRace;
 
   constructor(
     private getVarInURL: ActivatedRoute,
-    private socket: Socket,
+    public socket: Socket,
     public opMatrix: OpMatrixService,
     private storage: StorageService,
     private modalController: ModalController,
     private router: Router,
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.myMatrix = this.opMatrix.reinitMatrix();
+    this.ennemyMatrix = this.opMatrix.reinitMatrix();
+  }
 
   ionViewWillEnter() {
-    let token;
     this.getVarInURL.queryParams.subscribe(params => {
-      token = params.token;
+      this.socket.emit('enterGame', params.token);
     });
-    this.socket.emit('enterGame', token);
-    this.socket.emit('createRoom', '/////////////////////////////////////////////////////');
+
+    this.socket.emit('createRoom');
     this.socket.on('destroy', () => {
-      console.log('destroyed');
       this.router.navigateByUrl('/room');
     });
-    this.socket.emit('test', this.race);
+    this.socket.on('initGame', async (data) => {
+      this.myName = await this.storage.getNickname();
+      this.myRace = data.myRace;
+      this.myMatrix = data.myMatrix;
+      this.ennemyMatrix = this.opMatrix.reinitMatrix();
+      this.ennemyName = data.ennemyName;
+      this.ennemyRace = data.ennemyRace;
+    });
   }
 
 }

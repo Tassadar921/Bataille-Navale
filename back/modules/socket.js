@@ -74,9 +74,9 @@ module.exports.destroy = function (intoRoom, rooms, id, socket){
     for(let i=0;i<rooms.length;i++){
         if(rooms[i].id1===id || rooms[i].id2===id){
             console.log('ON EST LA');
-            socket.emit('crash');
-            socket.to(rooms[i].id1).emit('crash');
-            socket.to(rooms[i].id2).emit('crash');
+            socket.emit('destroy');
+            socket.to(rooms[i].id1).emit('destroy');
+            socket.to(rooms[i].id2).emit('destroy');
             rooms.splice(i,1);
         }
     }

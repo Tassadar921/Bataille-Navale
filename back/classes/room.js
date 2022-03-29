@@ -28,11 +28,7 @@ class Room {
     }
 
     isHere(id){
-        if(this.id1===id||this.id2===id){
-            return true;
-        }else{
-            return false;
-        }
+        return this.id1 === id || this.id2 === id;
     }
 }
 

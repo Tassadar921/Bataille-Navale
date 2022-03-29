@@ -180,9 +180,7 @@ function preventDisconnect() {
                 socket.on('ready', (data) => { //trigger pour entrer dans la queue, on envoie les infos nécessaires depuis le front
                     console.log('ready');
                     intoRoom = socketFile.ready(intoRoom, data, socket, true);
-                    // console.log(intoRoom);
                     let sendToRoom = socketFile.checkReady(intoRoom);
-                    // console.log('sendToRoom : ', sendToRoom);
                     if (sendToRoom.fill) {
                         socket.emit('toGame', socket.id);
                         socket.to(sendToRoom.p1.id).emit('toGame', sendToRoom.p1.id);
@@ -192,53 +190,41 @@ function preventDisconnect() {
 
                 socket.on('enterGame', (token)=> {
                     console.log('enterGame');
-                    // console.log(intoRoom);
-                    // console.log(token);
-                    // console.log(socketFile.findUser(token, intoRoom));
                     if(socketFile.findUser(token, intoRoom)!==-1) {
-                        // console.log(token);
-                        // console.log('avant : ', intoRoom[socketFile.findUser(token, intoRoom)]);
-                        // console.log('**************************');
-                        // console.log(intoRoom[0].id);
-                        // console.log('on replace par : ', socket.id);
                         intoRoom[socketFile.findUser(token, intoRoom)].setId(socket.id);
-                        // console.log('après : ', intoRoom);
                     }else{
                         console.log('destroyed');
                         socket.emit('destroy');
                     }
                 });
 
-                socket.on('createRoom', (message) => {
+                socket.on('createRoom', () => {
                     console.log('createRoom');
-                    // console.log(message);
                     if (!tmp) {
-                        console.log('ici');
-                        // console.log(socketFile.findUser(socket.id, intoRoom));
-                        // console.log('intoRoom : ', intoRoom);
-                        // console.log('socket id : ', socket.id);
-                        // console.log(intoRoom[socketFile.findUser(socket.id, intoRoom)]);
                         tmp = intoRoom[socketFile.findUser(socket.id, intoRoom)];
                     } else {
-                        console.log('là');
-                        rooms.push(new Room(tmp, intoRoom[socketFile.findUser(socket.id, intoRoom)]));
-                        tmp = '';
-                        // console.log('rooms : ', rooms);
+                        if(intoRoom[0] && intoRoom[1]) {
+                            rooms.push(new Room(tmp, intoRoom[socketFile.findUser(socket.id, intoRoom)]));
+                            tmp = '';
+                        }
                     }
-                    // if (socketFile.findRoom(rooms, socket.id)!==-1) {
-                    //     socket.emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p1.name, race: rooms[socketFile.findRoom(rooms, socket.id)].p1.race});
-                    //     socket.to(rooms[socketFile.findRoom(rooms, socket.id)].p1.id).emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p2.name, race: rooms[socketFile.findRoom(rooms, socket.id)].p2.race});
-                    // }
-                });
-
-                socket.on('checkIfInGame', () => {
-                    if(!socketFile.checkIfInGame(socket, rooms)){
-                        // socket.emit('destroy');
+                    if (socketFile.findRoom(rooms, socket.id)!==-1) {
+                        const room  = rooms[socketFile.findRoom(rooms, socket.id)];
+                        if(socket.id===room.id2) {
+                            socket.emit('initGame', {
+                                ennemyName: room.name1,
+                                ennemyRace: room.race1,
+                                myRace: room.race2,
+                                myMatrix: room.matrix2
+                            });
+                            socket.to(room.id1).emit('initGame', {
+                                ennemyName: room.name2,
+                                ennemyRace: room.race2,
+                                myRace: room.race1,
+                                myMatrix: room.matrix1
+                            });
+                        }
                     }
-                });
-
-                socket.on('test', (message)=> {
-                    // console.log(message + ' ' + socket.id);
                 });
 
                 socket.on('debug', () => {
