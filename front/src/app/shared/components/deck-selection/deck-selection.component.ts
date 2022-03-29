@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {HttpService} from '../../services/http.service';
 import {LoginService} from '../../services/login.service';
+import {OpMatrixService} from '../../services/op-matrix.service';
 
 @Component({
   selector: 'app-deck-selection',
@@ -14,7 +15,7 @@ export class DeckSelectionComponent implements OnInit, AfterViewInit {
   public nbPages;
   public filter = '';
   public displayDecks;
-  public matrix;
+  public matrix = this.opMatrix.reinitMatrix();
   public output;
   public race;
 
@@ -24,11 +25,13 @@ export class DeckSelectionComponent implements OnInit, AfterViewInit {
   constructor(
     private http: HttpService,
     private loginServ: LoginService,
+    private opMatrix: OpMatrixService,
   ) {}
 
   async ngOnInit() {
     this.p = await this.loginServ.setPlatform();
     this.decks = await this.http.getDeckNames();
+    this.matrix = this.opMatrix.reinitMatrix();
   }
 
   async ngAfterViewInit() {

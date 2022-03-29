@@ -1,41 +1,77 @@
 <app-menu></app-menu>
 
 <ion-grid style="width:100%;">
+  <ion-content>
+    <ion-row>
+      <ion-col>
+        <ion-button (click)="socket.emit('debug')">display de toutes les var du back</ion-button>
+      </ion-col>
+    </ion-row>
   <ion-row>
     <ion-col>
-      <ion-grid class="grid">
-        <ion-row>
-          <ion-col>\</ion-col>
-          <ion-col>A</ion-col>
-          <ion-col>B</ion-col>
-          <ion-col>C</ion-col>
-          <ion-col>D</ion-col>
-          <ion-col>E</ion-col>
-          <ion-col>F</ion-col>
-          <ion-col>G</ion-col>
-          <ion-col>H</ion-col>
-          <ion-col>I</ion-col>
-          <ion-col>J</ion-col>
-        </ion-row>
-        <div *ngFor="let el of [1,2,3,4,5,6,7,8,9,10]">
-          <ion-row>
-            <ion-col>{{el}}</ion-col>
-            <ion-col *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
-              <div *ngIf="myMatrix[el-1][opMatrix.letterToNum(letter)]!== 0">
-                <ion-img
-                  alt=""
-                  [src]="'../../assets/pics/spaceship_pieces/piece_'+ myMatrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '.png'"
-                  [class]="myMatrix[el-1][opMatrix.letterToNum(letter)].direction"
-                  class="imgInGrid">
-                </ion-img>
-              </div>
-            </ion-col>
-          </ion-row>
-        </div>
-      </ion-grid>
+<!--        <ion-grid class="grid">-->
+<!--          <ion-row>-->
+<!--            <ion-col>\</ion-col>-->
+<!--            <ion-col>A</ion-col>-->
+<!--            <ion-col>B</ion-col>-->
+<!--            <ion-col>C</ion-col>-->
+<!--            <ion-col>D</ion-col>-->
+<!--            <ion-col>E</ion-col>-->
+<!--            <ion-col>F</ion-col>-->
+<!--            <ion-col>G</ion-col>-->
+<!--            <ion-col>H</ion-col>-->
+<!--            <ion-col>I</ion-col>-->
+<!--            <ion-col>J</ion-col>-->
+<!--          </ion-row>-->
+<!--          <div *ngFor="let el of [1,2,3,4,5,6,7,8,9,10]">-->
+<!--            <ion-row>-->
+<!--              <ion-col>{{el}}</ion-col>-->
+<!--              <ion-col *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">-->
+<!--                <div *ngIf="myMatrix[el-1][opMatrix.letterToNum(letter)]!== 0">-->
+<!--                  <ion-img-->
+<!--                    alt=""-->
+<!--                    [src]="'../../assets/pics/spaceship_pieces/piece_'+ myMatrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '.png'"-->
+<!--                    [class]="myMatrix[el-1][opMatrix.letterToNum(letter)].direction"-->
+<!--                    class="imgInGrid">-->
+<!--                  </ion-img>-->
+<!--                </div>-->
+<!--              </ion-col>-->
+<!--            </ion-row>-->
+<!--          </div>-->
+<!--        </ion-grid>-->
     </ion-col>
     <ion-col>
-      test
+<!--        <ion-grid class="grid">-->
+<!--          <ion-row>-->
+<!--            <ion-col>\</ion-col>-->
+<!--            <ion-col>A</ion-col>-->
+<!--            <ion-col>B</ion-col>-->
+<!--            <ion-col>C</ion-col>-->
+<!--            <ion-col>D</ion-col>-->
+<!--            <ion-col>E</ion-col>-->
+<!--            <ion-col>F</ion-col>-->
+<!--            <ion-col>G</ion-col>-->
+<!--            <ion-col>H</ion-col>-->
+<!--            <ion-col>I</ion-col>-->
+<!--            <ion-col>J</ion-col>-->
+<!--          </ion-row>-->
+<!--          <div *ngFor="let el of [1,2,3,4,5,6,7,8,9,10]">-->
+<!--            <ion-row>-->
+<!--              <ion-col>{{el}}</ion-col>-->
+<!--              <ion-col *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">-->
+<!--                <div *ngIf="ennemyMatrix[el-1][opMatrix.letterToNum(letter)]!== 0">-->
+<!--                  <ion-img-->
+<!--                    alt=""-->
+<!--                    [src]="'../../assets/pics/spaceship_pieces/piece_'+ ennemyMatrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '.png'"-->
+<!--                    [class]="ennemyMatrix[el-1][opMatrix.letterToNum(letter)].direction"-->
+<!--                    class="imgInGrid">-->
+<!--                  </ion-img>-->
+<!--                </div>-->
+<!--              </ion-col>-->
+<!--            </ion-row>-->
+<!--          </div>-->
+<!--        </ion-grid>-->
     </ion-col>
   </ion-row>
+  </ion-content>
 </ion-grid>

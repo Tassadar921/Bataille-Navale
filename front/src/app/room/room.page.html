@@ -21,6 +21,11 @@
             </ion-button>
           </ion-col>
         </ion-row>
+<!--        <ion-row>-->
+<!--          <ion-col>-->
+<!--            <ion-button (click)="socket.emit('debug')">display de toutes les var du back</ion-button>-->
+<!--          </ion-col>-->
+<!--        </ion-row>-->
         <ion-row>
           <ion-col style="border:none;">
             {{output}}
@@ -66,5 +71,6 @@
 <ion-modal id="modal" trigger="trigger-button" (ionModalWillDismiss)="closeModal()">
   <ng-template>
     <app-deck-selection></app-deck-selection>
+    <ion-button color="danger" (click)="closeModal()">Close</ion-button>
   </ng-template>
 </ion-modal>

@@ -11,6 +11,8 @@ const methodOverride = require('method-override');
 const cors = require('cors');
 const mysql = require('mysql');
 
+const port = 8080;
+
 const session = require('express-session')({
     secret: 'eb8fcc253281389225b4f7872f2336918ddc7f689e1fc41b64d5c4f378cdc438',
     resave: true,
@@ -25,6 +27,8 @@ const account = require('./modules/checkingAccounts.js');
 const mail = require('./modules/sendMail');
 const battleSQL = require('./modules/battle&SQL');
 const socketFile = require('./modules/socket');
+const User = require('./classes/user')
+const Room = require('./classes/room');
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -140,64 +144,108 @@ function preventDisconnect() {
                 battleSQL.deleteFromDatabase(req.body.deckName, con, res);
             });
 
-            let intoRoom = [];
-            let rooms = [];
+            let intoRoom = []; //queue
+            let rooms = []; //liste des rooms
             let tmp = '';
 
             io.on('connection', (socket) => {
 
                 console.log('Somebody connected');
 
-                socket.on('disconnect', () => {
+                socket.on('disconnect', () => { //destructeur, on clear les var de stockage
+                    console.log('disconnect');
                     let retour = socketFile.destroy(intoRoom, rooms, socket.id, socket);
-                    intoRoom = retour.waiting;
-                    rooms = retour.games;
+                    if(retour) {
+                        intoRoom = retour.waiting;
+                        rooms = retour.games;
+                    }
                 });
 
-                socket.on('enterRoom', () => {
-                    intoRoom = socketFile.enterRoom(intoRoom, socket);
-                    console.log(intoRoom);
+                socket.on('enterRoom', (data) => { //trigger quand on entre dans la page room
+                    console.log('enterRoom');
+                    socket.name = data.name;
+                    intoRoom = socketFile.enterRoom(intoRoom, socket, User);
                 });
 
-                socket.on('notReadyAnymore', () => {
+                socket.on('notReadyAnymore', () => { //trigger pour quitter la queue
+                    console.log('notReadyAnymore');
                     intoRoom = socketFile.ready(intoRoom, socket, false);
-                    console.log(intoRoom);
                 });
 
-                socket.on('leaveRoom', () => {
-                    console.log(socket.id + '  is leaving');
-                    console.log('before : ', intoRoom);
-                    intoRoom = socketFile.disconnect(intoRoom, socket);
-                    console.log('leave room : ', intoRoom);
+                socket.on('leaveRoom', () => { //trigger quand on quitte la page room
+                    console.log('leaveRoom');
+                    intoRoom = socketFile.leaveRoom(intoRoom, socket);
                 });
 
-                socket.on('ready', async () => {
-                    intoRoom = socketFile.ready(intoRoom, socket, true);
-                    console.log(intoRoom);
+                socket.on('ready', (data) => { //trigger pour entrer dans la queue, on envoie les infos nécessaires depuis le front
+                    console.log('ready');
+                    intoRoom = socketFile.ready(intoRoom, data, socket, true);
+                    // console.log(intoRoom);
                     let sendToRoom = socketFile.checkReady(intoRoom);
+                    // console.log('sendToRoom : ', sendToRoom);
                     if (sendToRoom.fill) {
-                        socket.emit('toGame');
-                        socket.to(sendToRoom.p2.id).emit('toGame');
+                        socket.emit('toGame', socket.id);
+                        socket.to(sendToRoom.p1.id).emit('toGame', sendToRoom.p1.id);
+                        socket.to(sendToRoom.p2.id).emit('toGame', sendToRoom.p2.id);
                     }
                 });
 
-                socket.on('enterGame', (data) => {
-                    data.id = socket.id;
+                socket.on('enterGame', (token)=> {
+                    console.log('enterGame');
+                    // console.log(intoRoom);
+                    // console.log(token);
+                    // console.log(socketFile.findUser(token, intoRoom));
+                    if(socketFile.findUser(token, intoRoom)!==-1) {
+                        // console.log(token);
+                        // console.log('avant : ', intoRoom[socketFile.findUser(token, intoRoom)]);
+                        // console.log('**************************');
+                        // console.log(intoRoom[0].id);
+                        // console.log('on replace par : ', socket.id);
+                        intoRoom[socketFile.findUser(token, intoRoom)].setId(socket.id);
+                        // console.log('après : ', intoRoom);
+                    }else{
+                        console.log('destroyed');
+                        socket.emit('destroy');
+                    }
+                });
+
+                socket.on('createRoom', (message) => {
+                    console.log('createRoom');
+                    // console.log(message);
                     if (!tmp) {
-                        tmp = data;
+                        console.log('ici');
+                        // console.log(socketFile.findUser(socket.id, intoRoom));
+                        // console.log('intoRoom : ', intoRoom);
+                        // console.log('socket id : ', socket.id);
+                        // console.log(intoRoom[socketFile.findUser(socket.id, intoRoom)]);
+                        tmp = intoRoom[socketFile.findUser(socket.id, intoRoom)];
                     } else {
-                        rooms.push({p1: tmp, p2: data});
+                        console.log('là');
+                        rooms.push(new Room(tmp, intoRoom[socketFile.findUser(socket.id, intoRoom)]));
                         tmp = '';
+                        // console.log('rooms : ', rooms);
                     }
-                    console.log('rooms : ', rooms);
-                    if (socketFile.findRoom(rooms, socket.id)!==-1) {
-                        socket.emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p1.name, race: rooms[socketFile.findRoom(rooms, socket.id)].p1.race});
-                        socket.to(rooms[socketFile.findRoom(rooms, socket.id)].p1.id).emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p2.name, race: rooms[socketFile.findRoom(rooms, socket.id)].p2.race});
+                    // if (socketFile.findRoom(rooms, socket.id)!==-1) {
+                    //     socket.emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p1.name, race: rooms[socketFile.findRoom(rooms, socket.id)].p1.race});
+                    //     socket.to(rooms[socketFile.findRoom(rooms, socket.id)].p1.id).emit('beginGame', {name: rooms[socketFile.findRoom(rooms, socket.id)].p2.name, race: rooms[socketFile.findRoom(rooms, socket.id)].p2.race});
+                    // }
+                });
+
+                socket.on('checkIfInGame', () => {
+                    if(!socketFile.checkIfInGame(socket, rooms)){
+                        // socket.emit('destroy');
                     }
                 });
 
-                socket.on('test', (message) => {
-                   console.log(message + ' TEST');
+                socket.on('test', (message)=> {
+                    // console.log(message + ' ' + socket.id);
+                });
+
+                socket.on('debug', () => {
+                    console.log('////////////////////// DEBUG //////////////////////');
+                    console.log('waiting players : ', intoRoom);
+                    console.log('rooms : ', rooms);
+                    console.log('////////////////////// DEBUG //////////////////////');
                 });
             });
         }
@@ -215,6 +263,6 @@ function preventDisconnect() {
 
 preventDisconnect();
 
-http.listen(8080, () => {
-    console.log('Serveur lancé sur le port 8080');
+http.listen(port, () => {
+    console.log('Serveur lancé sur le port '+ port);
 });

@@ -1,9 +1,9 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Socket} from 'ngx-socket-io';
 import {OpMatrixService} from '../shared/services/op-matrix.service';
 import {StorageService} from '../shared/services/storage.service';
-import {ModalController} from '@ionic/angular';
+import {ModalController, ViewWillEnter} from '@ionic/angular';
 import {DisconnectedComponent} from './disconnected/disconnected.component';
 
 @Component({
@@ -11,7 +11,7 @@ import {DisconnectedComponent} from './disconnected/disconnected.component';
   templateUrl: './game.page.html',
   styleUrls: ['./game.page.scss'],
 })
-export class GamePage implements OnInit, OnDestroy {
+export class GamePage implements OnInit, ViewWillEnter {
 
   public myMatrix = [];
   public ennemyMatrix = [];
@@ -27,37 +27,20 @@ export class GamePage implements OnInit, OnDestroy {
     private router: Router,
   ) { }
 
-  async ngOnInit() {
-    this.socket.connect();
-    this.ennemyMatrix = this.opMatrix.reinitMatrix();
+  ngOnInit() {}
+
+  ionViewWillEnter() {
+    let token;
     this.getVarInURL.queryParams.subscribe(params => {
-      console.log('my infos : ', params);
-      this.myMatrix = JSON.parse(params.matrix);
-      this.race = params.race;
+      token = params.token;
     });
-    this.socket.emit('enterGame', {name: await this.storage.getNickname(), matrix: this.myMatrix, race: this.race});
-    this.socket.on('beginGame', (data)=> {
-      console.log('ennemy infos : ', data);
+    this.socket.emit('enterGame', token);
+    this.socket.emit('createRoom', '/////////////////////////////////////////////////////');
+    this.socket.on('destroy', () => {
+      console.log('destroyed');
+      this.router.navigateByUrl('/room');
     });
-    this.socket.on('crash', async ()=>{
-      await this.crash();
-    });
-  }
-
-  ngOnDestroy() {
-    this.socket.emit('leaveGame', this.inGame);
-  }
-
-  async crash() {
-    const modal = await this.modalController.create({
-      component: DisconnectedComponent,
-    });
-    modal.onDidDismiss().then(() => {
-      if(this.router.url.includes('/game')) {
-        this.crash();
-      }
-    });
-    await modal.present();
+    this.socket.emit('test', this.race);
   }
 
 }

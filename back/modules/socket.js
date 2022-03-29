@@ -1,35 +1,48 @@
-module.exports.disconnect = function (users, socket) {
-    for(let i=0;i<users.length;i++) {
-        if(users[i].id === socket.id) {
-            users.splice(i, 1);
+module.exports.leaveRoom = function (intoRoom, socket) {
+    console.log('avant : ', intoRoom);
+    for(let i=0;i<intoRoom.length;i++) {
+        if(intoRoom[i].id === socket.id) {
+            intoRoom.splice(i, 1);
         }
     }
-    return users;
+    console.log('après : ', intoRoom);
+    return intoRoom;
 };
 
-module.exports.enterRoom = function (users, socket) {
-    users.push({id: socket.id, ready: false});
-    return users;
-}
-
-module.exports.ready = function (users, socket, val) {
-    for(let i=0;i<users.length;i++) {
-        if(users[i].id===socket.id){
-            users[i].ready=val;
+module.exports.findUser = function (id, intoRoom){
+    for(let i=0;i<intoRoom.length;i++){
+        if(intoRoom[i].id===id){
+            return i;
         }
     }
-    return users;
+    return -1;
 }
 
-module.exports.checkReady = function (users) {
+module.exports.enterRoom = function (intoRoom, socket, User) {
+    intoRoom.push(new User(socket.id, socket.name, socket.matrix, socket.race, false));
+    return intoRoom;
+}
+
+module.exports.ready = function (intoRoom, data, socket, val) {
+    for(let i=0;i<intoRoom.length;i++) {
+        if(intoRoom[i].id===socket.id){
+            intoRoom[i].race=data.race;
+            intoRoom[i].matrix=data.matrix;
+            intoRoom[i].ready=val;
+        }
+    }
+    return intoRoom;
+}
+
+module.exports.checkReady = function (intoRoom) {
     let user1;
     let user2;
-    for(let i=0;i<users.length;i++){
-        if(users[i].ready){
+    for(let i=0;i<intoRoom.length;i++){
+        if(intoRoom[i].ready){
             if(!user1){
-                user1 = users[i];
+                user1 = intoRoom[i];
             }else{
-                user2 = users[i];
+                user2 = intoRoom[i];
             }
         }
     }
@@ -42,7 +55,7 @@ module.exports.checkReady = function (users) {
 
 module.exports.findRoom = function (rooms, id) {
     for(let i=0;i<rooms.length; i++){
-        if(rooms[i].p1.id===id || rooms[i].p2.id===id){
+        if(rooms[i].id1===id || rooms[i].id2===id){
             return i;
         }
     }
@@ -50,19 +63,31 @@ module.exports.findRoom = function (rooms, id) {
 }
 
 module.exports.destroy = function (intoRoom, rooms, id, socket){
+    console.log('rooms : ', rooms);
+    console.log('id à destroy : ', id);
+
     for(let i=0;i<intoRoom.length;i++){
         if(intoRoom[i].id === id){
             intoRoom.splice(i,1);
-            return {waiting: intoRoom, games: rooms};
         }
     }
     for(let i=0;i<rooms.length;i++){
-        if(rooms[i].p1.id===id || rooms[i].p2.id===id){
+        if(rooms[i].id1===id || rooms[i].id2===id){
+            console.log('ON EST LA');
             socket.emit('crash');
-            socket.to(rooms[i].p1.id).emit('crash');
-            socket.to(rooms[i].p2.id).emit('crash');
+            socket.to(rooms[i].id1).emit('crash');
+            socket.to(rooms[i].id2).emit('crash');
             rooms.splice(i,1);
-            return {waiting: intoRoom, games: rooms};
         }
     }
+    return {waiting: intoRoom, games: rooms};
+}
+
+module.exports.checkIfInGame = function (socket, rooms) {
+    for(const line of rooms){
+        if(line.id1===socket.id || line.id2===socket.id){
+            return true;
+        }
+    }
+    return false;
 }

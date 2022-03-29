@@ -5,14 +5,14 @@ import {DeckSelectionComponent} from '../shared/components/deck-selection/deck-s
 import {Socket} from 'ngx-socket-io';
 import {StorageService} from '../shared/services/storage.service';
 import {Router} from '@angular/router';
-import {ViewDidLeave, ViewWillLeave} from '@ionic/angular';
+import {ViewWillEnter} from '@ionic/angular';
 
 @Component({
   selector: 'app-room',
   templateUrl: './room.page.html',
   styleUrls: ['./room.page.scss'],
 })
-export class RoomPage implements OnInit, ViewWillLeave{
+export class RoomPage implements OnInit, ViewWillEnter{
 
   @ViewChild(DeckSelectionComponent) deckSelection: DeckSelectionComponent;
 
@@ -33,31 +33,28 @@ export class RoomPage implements OnInit, ViewWillLeave{
     this.ready = false;
   }
 
-  async ngOnInit() {
+  ionViewWillEnter() {
     this.ready = false;
-    this.matrix = this.opMatrix.reinitMatrix();
-    this.socket.connect();
-    this.socket.emit('enterRoom');
-    this.socket.on('toGame', () => {
-      this.router.navigateByUrl('/game?race=' + this.race + '&matrix=' + JSON.stringify(this.matrix));
-    });
-    this.socket.emit('test', 'début');
-    console.log('trigger');
   }
 
-  ionViewWillLeave() {
-    console.log('///////////////////////////////////////////////////////');
-    this.socket.emit('test', 'fin');
+  async ngOnInit() {
+    this.matrix = this.opMatrix.reinitMatrix();
+    this.socket.connect();
+    this.socket.emit('enterRoom', {name: await this.storage.getNickname()});
+    this.socket.on('toGame', (token) => {
+      this.router.navigateByUrl('/game?token=' + token);
+    });
+    this.closeModal();
   }
 
   switchReady = async () => {
     if(this.ready) {
       this.ready = !this.ready;
-      this.socket.emit('notReadyAnymore', await this.storage.getNickname());
+      this.socket.emit('notReadyAnymore');
     }else{
       if(this.race) {
         this.ready = !this.ready;
-        this.socket.emit('ready', await this.storage.getNickname());
+        this.socket.emit('ready', {matrix: this.matrix, race: this.race});
       }else{
         this.output='Select a template first';
       }
@@ -70,10 +67,13 @@ export class RoomPage implements OnInit, ViewWillLeave{
   };
 
   closeModal = () => {
-    if(this.deckSelection.matrix) {
-      this.output='';
-      this.matrix = this.deckSelection.matrix;
-      this.race = this.deckSelection.race;
+    if(this.deckSelection) {
+      if (this.deckSelection.matrix) {
+        this.output = '';
+        this.matrix = this.deckSelection.matrix;
+        this.race = this.deckSelection.race;
+      }
     }
+    setTimeout(this.closeModal, 3000);
   };
 }
