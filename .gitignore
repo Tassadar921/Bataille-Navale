@@ -1,2 +1,33 @@
-/node_modules
+# Specifies intentionally untracked files to ignore when using Git
+# http://git-scm.com/docs/gitignore
 
+back/node_modules
+front/*~
+front/*.sw[mnpcod]
+front/.tmp
+front/*.tmp
+front/*.tmp.*
+front/*.sublime-project
+front/*.sublime-workspace
+front/.DS_Store
+front/Thumbs.db
+front/UserInterfaceState.xcuserstate
+front/$RECYCLE.BIN/
+
+front/*.log
+front/log.txt
+front/npm-debug.log*
+
+/front/.angular
+/front/.idea
+/front/.ionic
+/front/.sass-cache
+/front/.sourcemaps
+/front/.versions
+/front/.vscode
+/front/coverage
+/front/dist
+/front/node_modules
+/front/platforms
+/front/plugins
+/front/www

@@ -1,0 +1,65 @@
+#grid ion-col{
+  width:70px;
+  height:70px;
+}
+
+#grid {
+  width:780px;
+}
+
+ion-col{
+  border: solid 1px white;
+  text-align:center;
+}
+
+[mwlDraggable] {
+  display: inline;
+  z-index: 2;
+  cursor: move;
+  border: 1px white solid;
+  width:auto;
+  height:auto;
+}
+
+[mwlDroppable] {
+  color: white;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#selected{
+  border: solid 5px white;
+  margin:0;
+  ion-icon{
+    filter: drop-shadow(0 0 0.75rem rgb(243, 153, 24));
+  }
+}
+
+.direction{
+  margin: 4px;
+}
+
+.right{
+  transform: rotate(90deg);
+}
+
+.down{
+  transform: rotate(180deg);
+}
+
+.left{
+  transform: rotate(270deg);
+}
+
+.delete:hover{
+  border: 5px red solid;
+  cursor: pointer;
+  width:71px;
+  height:80px;
+}
+
+.imgInGrid{
+  width:70px;
+}

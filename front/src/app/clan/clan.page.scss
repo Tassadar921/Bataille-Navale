@@ -1,0 +1,26 @@
+ion-card {
+  width: 46%;
+  margin: 0 auto;
+}
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.h1{
+    text-decoration: underline solid #e4087e;
+}
+
+td
+{
+  border: 1px solid black;
+  width: 10%;
+  text-align: center;
+}
+tr
+{
+  width: 50%;
+}
+h2{
+  text-align: center;
+}

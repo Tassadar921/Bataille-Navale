@@ -1,0 +1,25 @@
+<ion-grid>
+  <ion-row *ngIf="redirect">
+    <ion-button (click)="redir('/welcome')">Click here if you're not redirected</ion-button>
+  </ion-row>
+  <div *ngIf="!redirect">
+    <ion-row>
+      <ion-text color="white">
+        <div class="toLine">Something went wrong : retry to signUp</div>
+        <div class="toLine">Send a mail to &nbsp;
+          <div id='adress' (click)='copy()'>noreply.tassadar.ovh@gmail.com</div> &nbsp; if the problem persists
+        </div>
+      </ion-text>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button (click)="redir('/home')">Back to login</ion-button>
+      </ion-col>
+    </ion-row>
+  </div>
+  <ion-row>
+    <ion-col>
+      <p>{{output}}</p>
+    </ion-col>
+  </ion-row>
+</ion-grid>

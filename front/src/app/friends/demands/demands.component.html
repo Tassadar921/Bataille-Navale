@@ -1,0 +1,17 @@
+<ion-grid>
+  <div *ngFor="let line of demands">
+    <div class="item">
+      <ion-row>
+        <ion-col>
+          {{line}}
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-button color="success" (click)="addFriend(line)">Accept</ion-button>
+          <ion-button color="danger" (click)="removeDemand(line)">Decline</ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
+</ion-grid>

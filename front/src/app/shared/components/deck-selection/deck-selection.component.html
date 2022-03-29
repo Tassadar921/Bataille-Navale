@@ -1,0 +1,85 @@
+<ion-content>
+  <ion-grid>
+  <ion-row>
+    <ion-searchbar type='text' (ionChange)="search(0,0, $event.target)" style="text-align:center;"></ion-searchbar>
+  </ion-row>
+    <ion-row style="text-align:center;">
+      <ion-col>
+        {{output}}
+      </ion-col>
+    </ion-row>
+  <ion-row style="text-align:center;">
+    <ion-col>
+      <ion-button (click)="previousPage()">
+        <ion-icon name="arrow-undo" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-col>
+    <ion-col>
+      Page {{count+1}}/{{this.nbPages}}
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="nextPage()">
+        <ion-icon name="arrow-redo" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col></ion-col>
+    <ion-col>
+      <ion-title style="text-align:center; text-decoration:underline">Name</ion-title>
+    </ion-col>
+    <ion-col>
+      <ion-title style="text-align:center; text-decoration:underline">Race</ion-title>
+    </ion-col>
+    <ion-col>
+    </ion-col>
+  </ion-row>
+  <div *ngFor="let line of displayDecks">
+    <div class="item">
+      <ion-row>
+        <ion-col>
+          <ion-button color="danger" (click)="deleteFromDatabase(line.name)">Delete</ion-button>
+        </ion-col>
+        <ion-col>
+          {{line.name}}
+        </ion-col>
+        <ion-col>
+          {{line.race}}
+        </ion-col>
+        <ion-col>
+          <ion-button color="success" (click)="select(line.name)">Select</ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
+  <ion-row style="text-align:center;">
+    <ion-col>
+      Page {{count+1}}/{{this.nbPages}}
+    </ion-col>
+  </ion-row>
+  <ion-row style="text-align:center;">
+    <ion-col>
+      <ion-button (click)="previousPage()">
+        <ion-icon name="arrow-undo" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-row *ngIf="decks">
+        <ion-col>{{decks.length}}
+        </ion-col>
+      </ion-row>
+      <ion-icon name="boat"></ion-icon>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="nextPage()">
+        <ion-icon name="arrow-redo" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+    <ion-row style="text-align:center;">
+      <ion-col>
+        {{output}}
+      </ion-col>
+    </ion-row>
+</ion-grid>
+</ion-content>

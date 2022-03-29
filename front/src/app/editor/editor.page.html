@@ -1,0 +1,197 @@
+<app-menu></app-menu>
+
+<ion-grid style="width:100%;">
+  <ion-row>
+    <ion-col class="grid">
+      <ion-content>
+        <ion-grid>
+          <ion-row style="color:red;">
+            <ion-col>
+              <p>{{output}}</p>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-row>
+                <ion-item>
+                  <ion-select (ionChange)="reinitMatrix()" placeholder="Select a race" value="Human" [(ngModel)]="race">
+                    <ion-select-option value="Human">Human</ion-select-option>
+                    <ion-select-option value="Vyrkul">Vyrkul Collective</ion-select-option>
+                    <ion-select-option value="Arash">Arash Enclave</ion-select-option>
+                    <ion-select-option value="Enkar">Enkar Republic</ion-select-option>
+                    <ion-select-option value="Sunari">Sunari Matriarchate</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-row>
+              <ion-row>
+                <ion-col style="border:none">
+                  <ion-button color="secondary" shape="round" id="trigger-button">Edit</ion-button>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col style="border:none">
+                  <ion-button color="danger" shape="round" (click)="reinitMatrix()">Reset</ion-button>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col style="border:none">
+                  <ion-button color="success" shape="round" id="openPopover">Save</ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+
+            <ion-col>
+              <ion-grid style="width:300px">
+                <ion-row>
+                  <ion-col style="border: none;">
+                  </ion-col>
+                  <ion-col [id]="setId('U')" class="direction">
+                    <ion-button fill="clear" size="large" title="Orienter vers le haut" style="margin:0; passing:0;"
+                                (click)="setSelected('U')">
+                      <ion-icon name="accessibility" slot="icon-only" color="success"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                  <ion-col style="border: none">
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col [id]="setId('L')" class="direction">
+                    <ion-button fill="clear" size="large" title="Orienter vers la gauche" style="margin:0; passing:0;"
+                                (click)="setSelected('L')">
+                      <ion-icon name="accessibility" slot="icon-only" color="success" class="left"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                  <ion-col [id]="setId('D')" class="direction">
+                    <ion-button fill="clear" size="large" title="Orienter vers le bas" style="margin:0; passing:0;"
+                                (click)="setSelected('D')">
+                      <ion-icon name="accessibility" slot="icon-only" color="success" class="down"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                  <ion-col [id]="setId('R')" class="direction">
+                    <ion-button fill="clear" size="large" title="Orienter vers la droite" style="margin:0; passing:0;"
+                                (click)="setSelected('R')">
+                      <ion-icon name="accessibility" slot="icon-only" color="success" class="right"></ion-icon>
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              To place
+            </ion-col>
+            <ion-col>
+              Spaceship
+            </ion-col>
+            <ion-col>
+              Schema
+            </ion-col>
+            <ion-col>
+              Piece to place
+            </ion-col>
+          </ion-row>
+
+          <div *ngFor="let el of [1,2,3,4]">
+            <div *ngIf="race">
+              <ion-row>
+                <ion-col>
+                  <ion-title style="font-size:2em;">{{numberOfShips[el - 1]}}</ion-title>
+                </ion-col>
+                <ion-col>
+                  <img [src]="'../../assets/pics/spaceships/spaceship_'+ race.toLowerCase() + el + '.png'"
+                       [class]="opMatrix.getRotation(direction)"
+                       style="height:150px; border: none">
+                </ion-col>
+                <ion-col>
+                  <img [src]="'../../assets/pics/spaceship_schemas/schema_spaceship_'+ race.toLowerCase() + el + '.png'"
+                       [class]="opMatrix.getRotation(direction)"
+                       style="height:150px; border:none;">
+                </ion-col>
+                <ion-col>
+                  <img [src]="'../../assets/pics/spaceship_pieces/piece_' + race.toLowerCase() + el + '_1.1.png'"
+                       mwlDraggable
+                       dropData={{race}}{{el}}
+                       [class]="opMatrix.getRotation(direction)"
+                       style="height:70px; width:70px; border: none; margin-top:40px;">
+                </ion-col>
+              </ion-row>
+            </div>
+          </div>
+        </ion-grid>
+      </ion-content>
+    </ion-col>
+    <ion-col>
+      <ion-grid id="grid">
+        <ion-row>
+          <ion-col>\</ion-col>
+          <ion-col>A</ion-col>
+          <ion-col>B</ion-col>
+          <ion-col>C</ion-col>
+          <ion-col>D</ion-col>
+          <ion-col>E</ion-col>
+          <ion-col>F</ion-col>
+          <ion-col>G</ion-col>
+          <ion-col>H</ion-col>
+          <ion-col>I</ion-col>
+          <ion-col>J</ion-col>
+        </ion-row>
+        <div *ngFor="let el of [1,2,3,4,5,6,7,8,9,10]">
+          <ion-row>
+            <ion-col>{{el}}</ion-col>
+            <div *ngFor="let letter of ['A','B','C','D','E','F','G','H','I','J']">
+              <ion-col mwlDroppable (drop)="onDrop($event.dropData, letter, el-1)">
+                <ion-row
+                  *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!== 0 && isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())"
+                  class="container">
+                  <ion-img
+                    alt=""
+                    [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '_editor.png'"
+                    [class]="matrix[el-1][opMatrix.letterToNum(letter)].direction"
+                    class="delete imgInGrid"
+                    (click)="deleteSpaceship(matrix[el-1][opMatrix.letterToNum(letter)].name, letter, el-1, matrix[el-1][opMatrix.letterToNum(letter)].direction)">
+                  </ion-img>
+                </ion-row>
+                <ion-row
+                  *ngIf="matrix[el-1][opMatrix.letterToNum(letter)]!== 0 && !isFirst(matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase())">
+                  <ion-img
+                    alt=""
+                    [src]="'../../assets/pics/spaceship_pieces/piece_'+ matrix[el-1][opMatrix.letterToNum(letter)].name.toLowerCase() + '.png'"
+                    [class]="matrix[el-1][opMatrix.letterToNum(letter)].direction"
+                    class="imgInGrid">
+                  </ion-img>
+                </ion-row>
+              </ion-col>
+            </div>
+          </ion-row>
+        </div>
+      </ion-grid>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+
+<ion-popover trigger="openPopover" size="auto" alignment="center">
+  <ng-template>
+    <form>
+      <ion-title>Name your deck</ion-title>
+      <ion-item>
+        <ion-label>Name</ion-label>
+        <ion-input type="text" (keyup)="trigger($event.key)" [(ngModel)]="deckName" required="true"
+                   [ngModelOptions]="{standalone: true}"></ion-input>
+      </ion-item>
+      <ion-button color="success" (click)="save()" type="submit">Submit deck</ion-button>
+      <div *ngIf="outputSubmit">
+        <p>Server response : {{outputSubmit}}</p>
+      </div>
+    </form>
+  </ng-template>
+</ion-popover>
+
+<ion-modal id="modal" trigger="trigger-button" (ionModalWillDismiss)="closeModal()">
+  <ng-template>
+    <app-deck-selection></app-deck-selection>
+  </ng-template>
+</ion-modal>
