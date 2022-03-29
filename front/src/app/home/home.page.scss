@@ -1,5 +1,7 @@
 ion-col{
   text-align:center;
+  background: #44e283;
+  margin: 1px;
   ion-input{
     border:solid 1px darkgrey;
     border-radius: 15px;
@@ -19,4 +21,10 @@ ion-col{
   ion-icon{
     margin-top:1px;
   }
+}
+
+ion-row{
+  background: #29c467;
+  margin: 1px;
+  border-color: yellow;
 }
