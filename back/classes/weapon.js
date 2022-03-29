@@ -6,7 +6,6 @@ class Weapon {
         this.name = name;
         this.nbr = nbr;
     }
-
 }
 
 module.exports = Weapon;

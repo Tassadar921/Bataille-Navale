@@ -5,6 +5,7 @@ import {OpMatrixService} from '../shared/services/op-matrix.service';
 import {StorageService} from '../shared/services/storage.service';
 import {ModalController, ViewWillEnter} from '@ionic/angular';
 import {DisconnectedComponent} from './disconnected/disconnected.component';
+import {HttpService} from '../shared/services/http.service';
 
 @Component({
   selector: 'app-game',
@@ -16,9 +17,11 @@ export class GamePage implements OnInit, ViewWillEnter {
   public myName;
   public myMatrix = [];
   public myRace;
+  public myWeapons;
   public ennemyName;
   public ennemyMatrix = [];
   public ennemyRace;
+  public ennemyWeapons;
 
   constructor(
     private getVarInURL: ActivatedRoute,
@@ -27,6 +30,7 @@ export class GamePage implements OnInit, ViewWillEnter {
     private storage: StorageService,
     private modalController: ModalController,
     private router: Router,
+    private http: HttpService,
   ) { }
 
   ngOnInit() {
@@ -34,7 +38,7 @@ export class GamePage implements OnInit, ViewWillEnter {
     this.ennemyMatrix = this.opMatrix.reinitMatrix();
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.getVarInURL.queryParams.subscribe(params => {
       this.socket.emit('enterGame', params.token);
     });
@@ -50,6 +54,11 @@ export class GamePage implements OnInit, ViewWillEnter {
       this.ennemyMatrix = this.opMatrix.reinitMatrix();
       this.ennemyName = data.ennemyName;
       this.ennemyRace = data.ennemyRace;
+      this.myWeapons = await this.http.getWeapons(this.myRace);
+      this.ennemyWeapons = await this.http.getWeapons(this.ennemyRace);
+      console.log('a');
+      console.log(this.myWeapons);
+      console.log(this.ennemyWeapons);
     });
   }
 

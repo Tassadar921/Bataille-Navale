@@ -203,6 +203,8 @@ function preventDisconnect() {
                     if (!tmp) {
                         tmp = intoRoom[socketFile.findUser(socket.id, intoRoom)];
                     } else {
+                        console.log('CREATE ROOM');
+                        console.log('intoRoom : ', intoRoom);
                         if(intoRoom[0] && intoRoom[1]) {
                             rooms.push(new Room(tmp, intoRoom[socketFile.findUser(socket.id, intoRoom)]));
                             tmp = '';
@@ -232,6 +234,10 @@ function preventDisconnect() {
                     console.log('waiting players : ', intoRoom);
                     console.log('rooms : ', rooms);
                     console.log('////////////////////// DEBUG //////////////////////');
+                });
+
+                app.post('/getWeapons', function (req, res) {
+                    battleSQL.getWeapons(req.body.race, res);
                 });
             });
         }

@@ -114,11 +114,11 @@ module.exports.getNumberOfShips = function (race, con, res){
 }
 
 
-module.exports.getWeapons=function(race){
+module.exports.getWeapons=function(race, res){
     for(const line of weapons){
         if(line.race===race){
-            return line.data
+            res.json({output: line.data});
         }
     }
-    return -1;
+    res.json({output:'erreur'});
 }
