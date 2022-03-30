@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {HttpService} from '../shared/services/http.service';
 
 @Component({
   selector: 'app-scoreboard',
@@ -7,9 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ScoreboardPage implements OnInit {
 
-  constructor() { }
+  public scoreboard = [];
 
-  ngOnInit() {
+  constructor(
+    private http: HttpService,
+  ) { }
+
+  async ngOnInit() {
+    this.scoreboard = await this.http.getScoreboard();
+    await this.http.lastConnected();
   }
 
 }

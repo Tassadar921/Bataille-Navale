@@ -22,6 +22,7 @@ export class FriendsPage implements OnInit {
 
   async ngOnInit() {
     this.numberInvits = await this.httpService.getUserDemandsReceivedLength();
+    await this.httpService.lastConnected();
   }
 
   switchMain = (val) => {

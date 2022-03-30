@@ -9,12 +9,14 @@ export class HttpService {
 
   private retour;
   private urlBack = 'http://localhost:8080/';
+
   // private urlBack = 'http://loginmtg.tassadar.ovh:8080/';
 
   constructor(
     private storage: StorageService,
     private http: HttpClient,
-  ) {}
+  ) {
+  }
 
   ////////////////////////////// MAILS //////////////////////////////
 
@@ -230,6 +232,22 @@ export class HttpService {
   initCountMyShips = async (mat) => {
     const data = {matrix: mat};
     await this.http.post<string>(this.urlBack + 'initCountMyShips', data).toPromise().then(response => {
+      this.retour = response;
+    });
+    return this.retour.output;
+  };
+
+  setScore = async (scr) => {
+    const data = {name: await this.storage.getNickname(), score: scr};
+    await this.http.post<string>(this.urlBack + 'setScore', data).toPromise().then(response => {
+      this.retour = response;
+    });
+    return this.retour.output;
+  };
+
+  getScoreboard = async () => {
+    const data = {};
+    await this.http.post<string>(this.urlBack + 'getScoreboard', data).toPromise().then(response => {
       this.retour = response;
     });
     return this.retour.output;

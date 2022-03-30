@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {HttpService} from '../shared/services/http.service';
 
 @Component({
   selector: 'app-welcome',
@@ -7,11 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WelcomePage implements OnInit {
 
-  public videoPlayer;
+  private http: HttpService;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.http.lastConnected();
   }
 
 }

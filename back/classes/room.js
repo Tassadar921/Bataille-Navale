@@ -61,6 +61,10 @@ class Room {
     }
 
     isMyTurn(id){
+        console.log('requesting id : ', id);
+        console.log('this.turn : ', this.turn);
+        console.log('id1 : ', this.id1);
+        console.log('id2 : ', this.id2);
         return (id === this.id1 && this.turn === 1) || (id === this.id2 && this.turn === 2);
     }
 

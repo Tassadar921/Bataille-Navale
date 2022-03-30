@@ -8,6 +8,21 @@ const weapons = [
     {race : "Sunari", data : [new Weapon("tirSup",999,'Auto'),new Weapon("badShooter",1, 'Bad shooter'),new Weapon("HLaser",1, 'Horizontal laser'),new Weapon("VLaser",1, 'Vertical laser'),new Weapon("HBomb",1, 'H bomb')]}
 ];
 
+module.exports.getScoreboard = function (con, res) {
+    con.query('SELECT username, score FROM users', (e,r)=>{
+        if(e){
+            throw e;
+        }else{
+            console.log(r);
+            let tab = [];
+            for(const line of r){
+                tab.push({name: line.username, score: line.score});
+            }
+            res.json({output: tab});
+        }
+    })
+
+}
 
 module.exports.saveDeck = function (username, matrix, race, deckName, con, res){
     con.query('SELECT owner FROM decks WHERE name = ?', [deckName], (e, r) =>{
@@ -124,7 +139,7 @@ module.exports.getWeapons = function (race){
 }
 
 module.exports.initCountShips = function (matrix, res){
-    console.log(matrix);
+    // console.log(matrix);
     let spaceship1 = 0;
     let spaceship2 = 0;
     let spaceship3 = 0;

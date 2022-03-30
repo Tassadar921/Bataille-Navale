@@ -12,7 +12,7 @@ module.exports.signUp= function (name, pass, email, id, con, res){
   console.log('ash pass : ', ash(pass));
   console.log('email : ', email);
   console.log('id : ', id);
-  con.query("INSERT INTO users (username, password, email, id) VALUES " + "(\'" + name + "\', \'" + ash(pass)+ "\', \'" + email + "\', \'" + id + "\')", (err, result) => {
+  con.query("INSERT INTO users (username, password, email, id, score) VALUES " + "(\'" + name + "\', \'" + ash(pass)+ "\', \'" + email + "\', \'" + id + "\', \'" + 0 + "\')", (err, result) => {
     if (err) {
       throw err;
     } else {

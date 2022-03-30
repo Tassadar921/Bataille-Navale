@@ -47,6 +47,8 @@ module.exports.sendToken = function (mail, name, pass, con, id, res) {
         if (err) {
             throw err
         } else {
+            console.log('////////////////');
+            console.log(result);
             for (const line of result) {
                 if (line.username === name) {
                     nexists = 1;

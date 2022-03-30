@@ -36,9 +36,10 @@ export class GamePage implements OnInit, ViewWillEnter {
     private http: HttpService,
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.myMatrix = this.opMatrix.reinitMatrix();
     this.ennemyMatrix = this.opMatrix.reinitMatrix();
+    await this.http.lastConnected();
   }
 
   async ionViewWillEnter() {
@@ -62,13 +63,19 @@ export class GamePage implements OnInit, ViewWillEnter {
       this.ennemyWeapons = data.ennemyWeapons;
       this.myCount = await this.http.initCountMyShips(this.myMatrix);
     });
+    this.socket.on('update', async (data) => {
+      this.myMatrix = data.myMatrix;
+      this.ennemyMatrix = data.ennemyMatrix;
+      this.isMyTurn = data.myTurn;
+      this.myWeapons = data.myWeapons;
+      this.ennemyWeapons = data.ennemyWeapons;
+    });
   }
 
   dropInMatrix = (data, x, y, me: boolean) => {
-    if(me){
-      data={line: x, col:this.opMatrix.letterToNum(y), weapon:data};
+    console.log('dropped');
+      data={line: this.opMatrix.letterToNum(x), col:y, weapon:data};
       this.socket.emit('play', data);
-    }
   };
 
 }

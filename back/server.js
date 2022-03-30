@@ -145,6 +145,10 @@ function preventDisconnect() {
                 battleSQL.deleteFromDatabase(req.body.deckName, con, res);
             });
 
+            app.post('/getScoreboard', function (req, res) {
+                battleSQL.getScoreboard(con, res);
+            });
+
             let intoRoom = []; //queue
             let rooms = []; //liste des rooms
             let tmp = '';
@@ -254,7 +258,50 @@ function preventDisconnect() {
                 });
 
                 socket.on('play', (data)=> {
-
+                    // console.log('data : ', data);
+                    rooms = game.play(data.line, data.col, data.matrix, data.weapon, rooms, socket);
+                    if (socketFile.findRoom(rooms, socket.id)!==-1) {
+                        const room  = rooms[socketFile.findRoom(rooms, socket.id)];
+                        if(socket.id===room.id2) {
+                            console.log('ICI WESH WESH WESH');
+                            console.log(room.myTurn==='1');
+                            console.log(room.myTurn==='2');
+                            socket.emit('initGame', {
+                                myMatrix: room.matrix2,
+                                myTurn: room.myTurn==='2',
+                                myWeapons: room.weapons2,
+                                ennemyWeapons: room.weapons1,
+                                ennemyMatrix: room.playingMatrix1,
+                            });
+                            socket.to(room.id1).emit('initGame', {
+                                myMatrix: room.matrix1,
+                                myTurn: room.myTurn==='1',
+                                myWeapons: room.weapons1,
+                                ennemyWeapons: room.weapons2,
+                                ennemyMatrix: room.playingMatrix2,
+                            });
+                        }else if(socket.id===room.id1){
+                            console.log('LA GROS BOLOSSSSSS');
+                            console.log(room.myTurn==='1');
+                            console.log(room.myTurn==='2');
+                            socket.emit('initGame', {
+                                myMatrix: room.matrix1,
+                                myTurn: room.myTurn==='1',
+                                myWeapons: room.weapons1,
+                                ennemyWeapons: room.weapons2,
+                                ennemyMatrix: room.playingMatrix2,
+                            });
+                            socket.to(room.id2).emit('initGame', {
+                                myMatrix: room.matrix2,
+                                myTurn: room.myTurn==='2',
+                                myWeapons: room.weapons2,
+                                ennemyWeapons: room.weapons1,
+                                ennemyMatrix: room.playingMatrix1,
+                            });
+                        }else{
+                            console.log('C\'EST LA DECHETERIE MOUAHAHAH');
+                        }
+                    }
                 });
 
                 socket.on('debug', () => {

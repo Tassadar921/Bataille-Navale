@@ -33,7 +33,7 @@
                   <ion-button color="danger" shape="round" (click)="reinitMatrix()">Reset</ion-button>
                 </ion-col>
               </ion-row>
-              <ion-row>
+              <ion-row *ngIf="numberOfShips[0]===0 && numberOfShips[1]===0 && numberOfShips[2]===0 && numberOfShips[3]===0">
                 <ion-col style="border:none">
                   <ion-button color="success" shape="round" id="openPopover">Save</ion-button>
                 </ion-col>

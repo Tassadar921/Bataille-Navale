@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {HttpService} from '../shared/services/http.service';
 
 @Component({
   selector: 'app-settings',
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SettingsPage implements OnInit {
 
+  private http: HttpService;
+
   constructor() { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.http.lastConnected();
   }
 
 }

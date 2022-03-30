@@ -20,7 +20,9 @@ function changeProtectionLevel(data, sign) {
     }
 }
 
-module.exports.play = function (line, col, matrix, weapon, race, rooms, socket) {
+module.exports.play = function (line, col, matrix, weapon, rooms, socket) {
+    console.log('line : ', line);
+    console.log('col : ', col);
     const room = rooms[socketFile.findRoom(rooms, socket.id)];
     let refMatrix = [];
     if (room.id1 === socket.id) {
@@ -45,7 +47,7 @@ module.exports.play = function (line, col, matrix, weapon, race, rooms, socket) 
                 if (refMatrix[line][col].name === 'immune' || refMatrix[line][col].name === 'thermicShield') {
                     matrix[line][col].name = changeProtectionLevel(matrix[line][col], '-');
                 } else {
-                    matrix[line][col] = {name: 'touched'};
+                    matrix[line][col].name='touched';
                 }
             }
             break;
@@ -417,4 +419,7 @@ module.exports.play = function (line, col, matrix, weapon, race, rooms, socket) 
     } else {
         room.playingMatrix2 = matrix;
     }
+    room.played();
+    rooms[socketFile.findRoom(rooms, socket.id)]=room;
+    return rooms;
 };

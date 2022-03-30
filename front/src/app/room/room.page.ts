@@ -45,6 +45,7 @@ export class RoomPage implements OnInit, ViewWillEnter{
       this.router.navigateByUrl('/game?token=' + token);
     });
     this.closeModal();
+    await this.http.lastConnected();
   }
 
   switchReady = async () => {

@@ -18,6 +18,6 @@ import {ComponentsModule} from '../shared/components/components.module';
     WelcomePageRoutingModule,
     ComponentsModule
   ],
-  declarations: [WelcomePage]
+  declarations: [WelcomePage],
 })
 export class WelcomePageModule {}

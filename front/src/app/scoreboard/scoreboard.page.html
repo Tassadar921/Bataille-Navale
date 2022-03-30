@@ -1,1 +1,25 @@
 <app-menu></app-menu>
+
+<ion-grid style="width:100%">
+  <ion-row>
+    <ion-col>
+      <ion-title>Scoreboard</ion-title>
+    </ion-col>
+  </ion-row>
+  <ion-row style="height:50px;">
+    <ion-col>
+      <ion-title>Username</ion-title>
+    </ion-col>
+    <ion-col>
+      <ion-title>Score</ion-title>
+    </ion-col>
+  </ion-row>
+  <ion-row *ngFor="let line of scoreboard">
+    <ion-col>
+      {{line.name}}
+    </ion-col>
+    <ion-col>
+      {{line.score}}
+    </ion-col>
+  </ion-row>
+</ion-grid>

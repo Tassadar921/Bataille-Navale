@@ -32,6 +32,7 @@ export class EditorPage implements OnInit {
 
   async ngOnInit() {
     await this.reinitMatrix();
+    await this.http.lastConnected();
   }
 
   closeModal = () => {
