@@ -39,6 +39,7 @@ export class EditorPage implements OnInit {
     if(this.deckSelection.matrix) {
       this.matrix = this.deckSelection.matrix;
       this.race = this.deckSelection.race;
+      this.numberOfShips = [0,0,0,0];
     }
   };
 
