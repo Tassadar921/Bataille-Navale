@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as PluginsLibrary from 'capacitor-video-player';
 
 @Component({
   selector: 'app-welcome',
@@ -13,7 +12,6 @@ export class WelcomePage implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.videoPlayer = PluginsLibrary.CapacitorVideoPlayer
   }
 
 }
