@@ -39,7 +39,7 @@ export class GamePage implements OnInit, ViewWillEnter {
   async ngOnInit() {
     this.myMatrix = this.opMatrix.reinitMatrix();
     this.ennemyMatrix = this.opMatrix.reinitMatrix();
-    await this.http.lastConnected();
+    // await this.http.lastConnected();
   }
 
   async ionViewWillEnter() {

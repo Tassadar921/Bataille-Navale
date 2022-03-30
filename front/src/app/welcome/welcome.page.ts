@@ -13,7 +13,7 @@ export class WelcomePage implements OnInit {
   constructor() {}
 
   async ngOnInit() {
-    await this.http.lastConnected();
+    // await this.http.lastConnected();
   }
 
 }

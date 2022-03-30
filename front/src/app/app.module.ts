@@ -10,8 +10,6 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
-import {VideoPlayer} from '@ionic-native/video-player';
-
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],

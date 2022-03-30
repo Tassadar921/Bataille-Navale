@@ -15,8 +15,8 @@ export class ScoreboardPage implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.scoreboard = await this.http.getScoreboard();
-    await this.http.lastConnected();
+    // this.scoreboard = await this.http.getScoreboard();
+    // await this.http.lastConnected();
   }
 
 }
