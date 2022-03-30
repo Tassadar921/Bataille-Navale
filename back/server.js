@@ -264,36 +264,38 @@ function preventDisconnect() {
                         const room  = rooms[socketFile.findRoom(rooms, socket.id)];
                         if(socket.id===room.id2) {
                             console.log('ICI WESH WESH WESH');
-                            console.log(room.myTurn==='1');
-                            console.log(room.myTurn==='2');
+                            console.log(room.turn);
+                            console.log(room.turn===1);
+                            console.log(room.turn===2);
                             socket.emit('initGame', {
                                 myMatrix: room.matrix2,
-                                myTurn: room.myTurn==='2',
+                                myTurn: room.turn===2,
                                 myWeapons: room.weapons2,
                                 ennemyWeapons: room.weapons1,
                                 ennemyMatrix: room.playingMatrix1,
                             });
                             socket.to(room.id1).emit('initGame', {
                                 myMatrix: room.matrix1,
-                                myTurn: room.myTurn==='1',
+                                myTurn: room.turn===1,
                                 myWeapons: room.weapons1,
                                 ennemyWeapons: room.weapons2,
                                 ennemyMatrix: room.playingMatrix2,
                             });
                         }else if(socket.id===room.id1){
                             console.log('LA GROS BOLOSSSSSS');
-                            console.log(room.myTurn==='1');
-                            console.log(room.myTurn==='2');
+                            console.log(room.turn);
+                            console.log(room.turn===1);
+                            console.log(room.turn===2);
                             socket.emit('initGame', {
                                 myMatrix: room.matrix1,
-                                myTurn: room.myTurn==='1',
+                                myTurn: room.turn===1,
                                 myWeapons: room.weapons1,
                                 ennemyWeapons: room.weapons2,
                                 ennemyMatrix: room.playingMatrix2,
                             });
                             socket.to(room.id2).emit('initGame', {
                                 myMatrix: room.matrix2,
-                                myTurn: room.myTurn==='2',
+                                myTurn: room.turn===2,
                                 myWeapons: room.weapons2,
                                 ennemyWeapons: room.weapons1,
                                 ennemyMatrix: room.playingMatrix1,
