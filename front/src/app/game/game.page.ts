@@ -64,6 +64,8 @@ export class GamePage implements OnInit, ViewWillEnter {
       this.myCount = await this.http.initCountMyShips(this.myMatrix);
     });
     this.socket.on('update', async (data) => {
+      console.log('DATA : ', data);
+      console.log(data.ennemyMatrix);
       this.myMatrix = data.myMatrix;
       this.ennemyMatrix = data.ennemyMatrix;
       this.isMyTurn = data.myTurn;
@@ -73,9 +75,12 @@ export class GamePage implements OnInit, ViewWillEnter {
   }
 
   dropInMatrix = (data, x, y, me: boolean) => {
-    console.log('dropped');
-      data={line: this.opMatrix.letterToNum(x), col:y, weapon:data};
-      this.socket.emit('play', data);
+    if(me) {
+      data = {line: this.opMatrix.letterToNum(x), col: y, weapon: data, matrix: this.myMatrix};
+    }else{
+      data = {line: this.opMatrix.letterToNum(x), col: y, weapon: data, matrix: this.ennemyMatrix};
+    }
+    this.socket.emit('play', data);
   };
 
 }

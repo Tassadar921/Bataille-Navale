@@ -38,6 +38,7 @@ export class EditorPage implements OnInit {
   closeModal = () => {
     if(this.deckSelection.matrix) {
       this.matrix = this.deckSelection.matrix;
+      this.race = this.deckSelection.race;
     }
   };
 

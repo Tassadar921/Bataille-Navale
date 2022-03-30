@@ -31,22 +31,27 @@ module.exports.play = function (line, col, matrix, weapon, rooms, socket) {
                 line.nbr--;
             }
         }
-        refMatrix = room.matrix2;
+        refMatrix = room.playingMatrix2;
     } else {
         for (const line of room.weapons2) {
             if (line.name === weapon && line.nbr > 0) {
                 line.nbr--;
             }
         }
-        refMatrix = room.matrix1;
+        refMatrix = room.playingMatrix1;
     }
 
     switch (weapon) {
         case 'normal':
+            // console.log('CA : ');
+            console.log('OUTPUT MATRIX : ', matrix);
+            console.log('ON PASSE ICI : ', refMatrix[line][col]);
             if (refMatrix[line][col]) {
                 if (refMatrix[line][col].name === 'immune' || refMatrix[line][col].name === 'thermicShield') {
+                    refMatrix[line][col].name = changeProtectionLevel(matrix[line][col], '-');
                     matrix[line][col].name = changeProtectionLevel(matrix[line][col], '-');
                 } else {
+                    refMatrix[line][col].name='touched';
                     matrix[line][col].name='touched';
                 }
             }

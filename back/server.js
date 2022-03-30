@@ -258,23 +258,20 @@ function preventDisconnect() {
                 });
 
                 socket.on('play', (data)=> {
-                    // console.log('data : ', data);
+                    console.log('rooms : ', rooms);
                     rooms = game.play(data.line, data.col, data.matrix, data.weapon, rooms, socket);
+                    console.log('rooms : ', rooms);
                     if (socketFile.findRoom(rooms, socket.id)!==-1) {
                         const room  = rooms[socketFile.findRoom(rooms, socket.id)];
                         if(socket.id===room.id2) {
-                            console.log('ICI WESH WESH WESH');
-                            console.log(room.turn);
-                            console.log(room.turn===1);
-                            console.log(room.turn===2);
-                            socket.emit('initGame', {
+                            socket.emit('update', {
                                 myMatrix: room.matrix2,
                                 myTurn: room.turn===2,
                                 myWeapons: room.weapons2,
                                 ennemyWeapons: room.weapons1,
                                 ennemyMatrix: room.playingMatrix1,
                             });
-                            socket.to(room.id1).emit('initGame', {
+                            socket.to(room.id1).emit('update', {
                                 myMatrix: room.matrix1,
                                 myTurn: room.turn===1,
                                 myWeapons: room.weapons1,
@@ -282,18 +279,14 @@ function preventDisconnect() {
                                 ennemyMatrix: room.playingMatrix2,
                             });
                         }else if(socket.id===room.id1){
-                            console.log('LA GROS BOLOSSSSSS');
-                            console.log(room.turn);
-                            console.log(room.turn===1);
-                            console.log(room.turn===2);
-                            socket.emit('initGame', {
+                            socket.emit('update', {
                                 myMatrix: room.matrix1,
                                 myTurn: room.turn===1,
                                 myWeapons: room.weapons1,
                                 ennemyWeapons: room.weapons2,
                                 ennemyMatrix: room.playingMatrix2,
                             });
-                            socket.to(room.id2).emit('initGame', {
+                            socket.to(room.id2).emit('update', {
                                 myMatrix: room.matrix2,
                                 myTurn: room.turn===2,
                                 myWeapons: room.weapons2,
@@ -301,16 +294,8 @@ function preventDisconnect() {
                                 ennemyMatrix: room.playingMatrix1,
                             });
                         }else{
-                            console.log('C\'EST LA DECHETERIE MOUAHAHAH');
                         }
                     }
-                });
-
-                socket.on('debug', () => {
-                    console.log('////////////////////// DEBUG //////////////////////');
-                    console.log('waiting players : ', intoRoom);
-                    console.log('rooms : ', rooms);
-                    console.log('////////////////////// DEBUG //////////////////////');
                 });
 
                 app.post('/initCountMyShips', function (req, res) {
