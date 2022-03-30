@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: bn
 -- ------------------------------------------------------
--- Server version	5.7.31
+-- Server version	5.6.17
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -28,11 +28,22 @@ CREATE TABLE `users` (
   `email` varchar(45) NOT NULL,
   `id` varchar(150) NOT NULL,
   `lastConnected` varchar(45) DEFAULT NULL,
+  `score` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`username`),
   UNIQUE KEY `email_UNIQUE` (`email`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES ('francois','91709808331b09747539653dddd7f9f2ae63722cfbdbfbf48ae2c4139377a218','francois.beaucour@student.junia.com','9CyBsBkqAyVDWnOjjoL1LzAO4gfN9ivn','29/03/2022 at 12:54',0);
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -43,4 +54,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-03-18 15:49:53
+-- Dump completed on 2022-03-30  8:00:19
