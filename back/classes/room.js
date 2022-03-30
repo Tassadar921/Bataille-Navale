@@ -11,6 +11,8 @@ class Room {
     id2;
     weapons1;
     weapons2;
+    playingMatrix1;
+    playingMatrix2;
 
     turn;
 
@@ -28,7 +30,23 @@ class Room {
 
         this.weapons1 = battleSQL.getWeapons(this.race1);
         this.weapons2 = battleSQL.getWeapons(this.race2);
+
+        this.playingMatrix1 = this.reinitMatrix();
+        this.playingMatrix2 = this.reinitMatrix();
     }
+
+    reinitMatrix = () => {
+        const matrix = [];
+        let row;
+        for (let i = 0; i < 10; i++) {
+            row = [];
+            for (let k = 0; k < 10; k++) {
+                row.push(0);
+            }
+            matrix.push(row);
+        }
+        return matrix;
+    };
 
     setId1(id){
         this.id1 = id;
