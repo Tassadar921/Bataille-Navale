@@ -1,19 +1,8 @@
-ion-col{
-  text-align:center;
-  ion-input{
-    border:solid 1px white;
+ion-col {
+  text-align: center;
+}
+
+ion-input {
+    border:solid 1px darkgrey;
     border-radius: 15px;
-  }
-  ion-item{
-    background-color:transparent;
-    border: 1px solid white;
-    border-radius:30px;
-    text-align:center;
-    ion-label{
-      margin-bottom:10px;
-    }
-    ion-icon{
-      margin-top:18px;
-    }
-  }
 }
