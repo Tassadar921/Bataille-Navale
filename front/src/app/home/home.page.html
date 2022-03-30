@@ -1,5 +1,6 @@
-<ion-content>
+<ion-content scroll-y="false">
   <ion-grid id="grid">
+
 
     <ion-row>
       <ion-segment value="1">
@@ -10,145 +11,131 @@
 
     <div *ngIf="exists===0">
       <div *ngIf="displayToken===0"> <!-- ////////////////////// INPUT INSCRIPTION //////////////////////-->
-        <ion-row>
-          <ion-col><h1>Inscripton :</h1></ion-col>
-        </ion-row>
+        <ion-grid>    <!-- grid Inscripton  -->
 
-        <ion-row>
-          <ion-col>
-            <ion-input clearInput="true" color="warning" placeholder="Nickname" (keyup)="updateSignUp($event)" [(ngModel)]="iname" type="text"></ion-input>
-          </ion-col>
-        </ion-row>
 
-        <ion-row>
-          <ion-col>
-              <ion-input class="pass" clearInput="true" color="warning" placeholder="Password" (keyup)="updateSignUp($event)" [(ngModel)]="ipassword" [type]="showPassword ? 'password' : 'text'"></ion-input>
-              <ion-icon name="eye" slot="end" (click)="showPass()" *ngIf="showPassword"></ion-icon>
-              <ion-icon name="eye-off" slot="end" (click)="showPass()" *ngIf="!showPassword"></ion-icon>
-          </ion-col>
-        </ion-row>
+          <ion-row>   <!-- col bordure -->
+            <ion-col size="2"></ion-col>
 
-        <ion-row>
-          <ion-col>
-              <ion-input class="pass" clearInput="true" color="warning" placeholder="Confirm password" (keyup)="updateSignUp($event)" [(ngModel)]="confPassword" [type]="showPassword ? 'password' : 'text'"></ion-input>
-              <ion-icon name="eye" slot="end" (click)="showPass()" *ngIf="showPassword"></ion-icon>
-              <ion-icon name="eye-off" slot="end" (click)="showPass()" *ngIf="!showPassword"></ion-icon>
-          </ion-col>
-        </ion-row>
+            <ion-col>   <!-- col principale -->
+              <h1>Inscription :</h1>
+              <ion-row>   <!-- row nickname -->
+                <ion-col size="1"></ion-col>
 
-        <ion-row>
-          <ion-col>
-              <ion-input type="mail" clearInput="true" color="warning" placeholder="Mail" (keyup)="updateSignUp($event)" [(ngModel)]="imail" type="email"></ion-input>
-          </ion-col>
-        </ion-row>
+                <ion-col> <!-- col nickname -->
+                  <ion-input clearInput="true" color="warning" placeholder="Nickname" (keyup)="updateSignUp($event)" [(ngModel)]="iname" type="text"></ion-input>
+                </ion-col>
 
-        <ion-row>
-          <ion-col>
-            <ion-button color="warning" (click)="reset()">Reset</ion-button>
-          </ion-col>
-          <ion-col>
-            <ion-button color="warning"  (click)="signUp()">Submit</ion-button>
-          </ion-col>
-        </ion-row>
+                <ion-col size="1"></ion-col>
+              </ion-row>
 
+              <ion-row>   <!-- row mail -->
+                <ion-col size="1"></ion-col>
+
+                <ion-col>   <!-- col mail -->
+                  <ion-input type="mail" clearInput="true" color="warning" placeholder="Mail" (keyup)="updateSignUp($event)" [(ngModel)]="imail" type="email"></ion-input>
+                </ion-col>
+
+                <ion-col size="1"></ion-col>
+              </ion-row>
+
+              <ion-row>   <!-- row password -->
+                <ion-col size="1"></ion-col>
+
+                <ion-col>   <!-- col password -->
+                  <ion-input class="pass" clearInput="true" color="warning" placeholder="Password" (keyup)="updateSignUp($event)" [(ngModel)]="ipassword" [type]="showPassword ? 'password' : 'text'"></ion-input>
+                                  </ion-col>
+
+                <ion-col size="1">    <!-- col pass_preview -->
+                  <div class="eyes">
+                    <ion-icon style="font-size: 44px;" color="warning" name="eye" slot="end" (click)="showPass()" *ngIf="showPassword"></ion-icon>
+                    <ion-icon style="font-size: 44px; color: #A9A9A9;" name="eye-off" slot="end" (click)="showPass()" *ngIf="!showPassword"></ion-icon>
+                  </div>
+                </ion-col>
+
+                <ion-col>   <!-- col confirm password -->
+                  <ion-input class="pass" clearInput="true" color="warning" placeholder="Confirm password" (keyup)="updateSignUp($event)" [(ngModel)]="confPassword" [type]="showPassword ? 'password' : 'text'"></ion-input>
+                </ion-col>
+
+                <ion-col size="1"></ion-col>
+              </ion-row>
+
+              <ion-row class="ion-align-items-center">  <!-- rst & sub button -->
+                <ion-col>
+                  <ion-button color="warning" (click)="reset()">
+                    <ion-icon name="trash"></ion-icon> Reset
+                  </ion-button>
+                </ion-col>
+
+                <ion-col>
+                  <ion-button color="warning" (click)="signUp()">
+                    Submit <ion-icon name="send"></ion-icon>
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+
+            <ion-col size="2"></ion-col>
+          </ion-row>
+        </ion-grid>
       </div>
     </div>
-
-
-
-
-
-
 
     <div *ngIf="exists===1"> <!-- ////////////////////// INPUT CONNEXION //////////////////////-->
       <ion-grid>
         <ion-row>
-          <ion-col size="2">
-            s2
-          </ion-col>
+          <ion-col size="2"></ion-col>
+
           <ion-col>
             <h1>Connexion :</h1>
+
             <ion-row>
-              <ion-col size="1">
-                s1
-              </ion-col>
+              <ion-col size="1"></ion-col>
+
               <ion-col>
                 <ion-input clearInput="true" color="warning" placeholder="Nickname or email" (keyup)="updateSignIn($event)" [(ngModel)]="cname" type="text"></ion-input>
               </ion-col>
-              <ion-col size="1">
-                s1
-              </ion-col>
+
+              <ion-col size="1"></ion-col>
             </ion-row>
 
             <ion-row>
-              <ion-col size="1">
-                s1
-              </ion-col>
+              <ion-col size="1"></ion-col>
 
               <ion-col>
                 <ion-input class="pass" clearInput="true" color="warning" placeholder="Password" (keyup)="updateSignIn($event)" [(ngModel)]="cpassword" [type]="showPassword ? 'password' : 'text'"></ion-input>
               </ion-col>
 
-
-              <ion-col size="2">
+              <ion-col size="1">
                 <div class="eyes">
-                  <ion-icon name="eye" slot="end" (click)="showPass()" *ngIf="showPassword"></ion-icon>
-                  <ion-icon name="eye-off" slot="end" (click)="showPass()" *ngIf="!showPassword"></ion-icon>
+                  <ion-icon style="font-size: 44px;" color="warning" name="eye" slot="end" (click)="showPass()" *ngIf="showPassword"></ion-icon>
+                  <ion-icon style="font-size: 44px; color: #A9A9A9;" name="eye-off" slot="end" (click)="showPass()" *ngIf="!showPassword"></ion-icon>
                 </div>
               </ion-col>
 
-
-              <ion-col size="1">
-                s1
-              </ion-col>
+              <ion-col size="1"></ion-col>
             </ion-row>
 
-            <ion-row>
-              <ion-col size="1">
-                s1
-              </ion-col>
+            <ion-row class="ion-align-items-center">  <!-- rst & sub button -->
               <ion-col>
-
-                <ion-row>
-                  <ion-col>
-                    <ion-button color="warning" (click)="reset()">
-                      <ion-icon name="trash"></ion-icon> Reset
-                    </ion-button>
-                  </ion-col>
-
-                  <ion-col>
-                    <ion-button color="warning" (click)="signIn(this.cname, this.cpassword)">
-                      Submit <ion-icon name="send"></ion-icon>
-                    </ion-button>f
-                  </ion-col>
-
-
-
-
-                </ion-row>
+                <ion-button color="warning" (click)="reset()">
+                  <ion-icon name="trash"></ion-icon> Reset</ion-button>
               </ion-col>
-              <ion-col size="1">
-                s1
-              </ion-col>
-            </ion-row>
 
-            <ion-row>
-              <ion-col size="1">
-                s1
-              </ion-col>
               <ion-col>
-                <ion-button color="warning" (click)="sendPassword()">Forgot password</ion-button>
-              </ion-col>
-              <ion-col size="1">
-                s1
+                <ion-button color="warning" (click)="signIn(this.cname, this.cpassword)">
+                  Submit <ion-icon name="send"></ion-icon>
+                </ion-button>
               </ion-col>
             </ion-row>
 
 
+            <ion-col>  <!-- frgt button -->
+              <ion-button color="warning" (click)="sendPassword()">Forgot password</ion-button>
+            </ion-col>
           </ion-col>
-          <ion-col size="2">
-            s2
-          </ion-col>
+
+          <ion-col size="2"></ion-col>
         </ion-row>
       </ion-grid>
     </div>
@@ -159,26 +146,60 @@
 
 
     <div *ngIf="exists===2"> <!-- ////////////////////// INPUT RESET PASSWORD //////////////////////-->
-      <ion-row>
-        <ion-col>
-            <ion-label color="warning" position="floating">Email</ion-label>
-            <ion-input clearInput="true" color="warning" placeholder="Email" (keyup)="updateResetPassword($event)" [(ngModel)]="recupMail" type="email"></ion-input>
-        </ion-col>
-      </ion-row>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="2"></ion-col>
 
-      <ion-row>
-        <ion-col>
-          <ion-button color="warning" (click)="backToLogin()">Back to login</ion-button>
-        </ion-col>
-        <ion-col>
-          <ion-button color="warning" (click)="resetPassword()">Submit</ion-button>
-        </ion-col>
-      </ion-row>
+          <ion-col>
+            <h1>Forgot password :</h1>
+
+            <ion-row>
+              <ion-col size="1"></ion-col>
+
+              <ion-col>
+                <ion-input clearInput="true" color="warning" placeholder="Email" (keyup)="updateResetPassword($event)" [(ngModel)]="recupMail" type="email"></ion-input>
+              </ion-col>
+
+              <ion-col size="1"></ion-col>
+            </ion-row>
+
+            <ion-row class="ion-align-items-center">  <!-- rst & sub button -->
+              <ion-col>
+                <ion-button color="warning" (click)="backToLogin()">Back to login</ion-button>
+              </ion-col>
+
+              <ion-col>
+                <ion-button color="warning" (click)="resetPassword()">Submit</ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-col>
+
+          <ion-col size="2"></ion-col>
+        </ion-row>
+      </ion-grid>
     </div>
-
-    <ion-row><ion-col><p>{{output}}</p></ion-col></ion-row>
 
   </ion-grid>
 
+  <ion-row><ion-col><p>{{output}}</p></ion-col></ion-row>
+
+
+
+
+
 
 </ion-content>
+
+<ion-footer>
+  <ion-grid>
+    <ion-row>
+      <ion-col class="ion-align-start" size="1">
+      </ion-col>
+      <ion-col class="ion-align-self-center">
+        <img src="../../assets\SBS_grand.png">
+      </ion-col>
+      <ion-col class="ion-align-end" size="1">
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-footer>

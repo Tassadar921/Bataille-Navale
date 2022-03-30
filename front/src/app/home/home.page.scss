@@ -1,30 +1,8 @@
-ion-col{
-  text-align:center;
-  background: #44e283;
-  margin: 1px;
-  ion-input{
-    border:solid 1px darkgrey;
-    border-radius: 15px;
-  }
-  ion-item{
-    background-color:transparent;
-    border: 1px solid white;
-    border-radius:40px;
-    text-align:center;
-    ion-label{
-      margin-bottom:10px;
-    }
-    ion-icon{
-      margin-top:1px;
-    }
-  }
-  ion-icon{
-    margin-top:1px;
-  }
+ion-col {
+  text-align: center;
 }
 
-ion-row{
-  background: #29c467;
-  margin: 1px;
-  border-color: yellow;
+ion-input {
+    border:solid 1px darkgrey;
+    border-radius: 15px;
 }
