@@ -23,7 +23,7 @@
                 <ion-col size="1"></ion-col>
 
                 <ion-col> <!-- col nickname -->
-                  <ion-input clearInput="true" color="warning" placeholder="Nickname" (keyup)="updateSignUp($event)" [(ngModel)]="iname" type="text"></ion-input>
+                  <ion-input clearInput="true" color="primary" placeholder="Nickname" (keyup)="updateSignUp($event)" [(ngModel)]="iname" type="text"></ion-input>
                 </ion-col>
 
                 <ion-col size="1"></ion-col>
@@ -33,7 +33,7 @@
                 <ion-col size="1"></ion-col>
 
                 <ion-col>   <!-- col mail -->
-                  <ion-input type="mail" clearInput="true" color="warning" placeholder="Mail" (keyup)="updateSignUp($event)" [(ngModel)]="imail" type="email"></ion-input>
+                  <ion-input type="mail" clearInput="true" color="primary" placeholder="Mail" (keyup)="updateSignUp($event)" [(ngModel)]="imail" type="email"></ion-input>
                 </ion-col>
 
                 <ion-col size="1"></ion-col>
@@ -43,18 +43,18 @@
                 <ion-col size="1"></ion-col>
 
                 <ion-col>   <!-- col password -->
-                  <ion-input class="pass" clearInput="true" color="warning" placeholder="Password" (keyup)="updateSignUp($event)" [(ngModel)]="ipassword" [type]="showPassword ? 'password' : 'text'"></ion-input>
+                  <ion-input class="pass" clearInput="true" color="primary" placeholder="Password" (keyup)="updateSignUp($event)" [(ngModel)]="ipassword" [type]="showPassword ? 'password' : 'text'"></ion-input>
                                   </ion-col>
 
                 <ion-col size="1">    <!-- col pass_preview -->
                   <div class="eyes">
-                    <ion-icon style="font-size: 44px;" color="warning" name="eye" slot="end" (click)="showPass()" *ngIf="showPassword"></ion-icon>
+                    <ion-icon style="font-size: 44px;" color="primary" name="eye" slot="end" (click)="showPass()" *ngIf="showPassword"></ion-icon>
                     <ion-icon style="font-size: 44px; color: #A9A9A9;" name="eye-off" slot="end" (click)="showPass()" *ngIf="!showPassword"></ion-icon>
                   </div>
                 </ion-col>
 
                 <ion-col>   <!-- col confirm password -->
-                  <ion-input class="pass" clearInput="true" color="warning" placeholder="Confirm password" (keyup)="updateSignUp($event)" [(ngModel)]="confPassword" [type]="showPassword ? 'password' : 'text'"></ion-input>
+                  <ion-input class="pass" clearInput="true" color="primary" placeholder="Confirm password" (keyup)="updateSignUp($event)" [(ngModel)]="confPassword" [type]="showPassword ? 'password' : 'text'"></ion-input>
                 </ion-col>
 
                 <ion-col size="1"></ion-col>
@@ -62,14 +62,14 @@
 
               <ion-row class="ion-align-items-center">  <!-- rst & sub button -->
                 <ion-col>
-                  <ion-button color="warning" (click)="reset()">
-                    <ion-icon name="trash"></ion-icon> Reset
+                  <ion-button color="primary" (click)="reset()">
+                    <ion-icon style="margin-bottom: 3px; margin-right: 5px;" name="trash"></ion-icon> Reset
                   </ion-button>
                 </ion-col>
 
                 <ion-col>
-                  <ion-button color="warning" (click)="signUp()">
-                    Submit <ion-icon name="send"></ion-icon>
+                  <ion-button color="primary" (click)="signUp()">
+                    Submit <ion-icon style="margin-bottom: 2px; margin-left: 5px;" name="send"></ion-icon>
                   </ion-button>
                 </ion-col>
               </ion-row>
@@ -93,7 +93,7 @@
               <ion-col size="1"></ion-col>
 
               <ion-col>
-                <ion-input clearInput="true" color="warning" placeholder="Nickname or email" (keyup)="updateSignIn($event)" [(ngModel)]="cname" type="text"></ion-input>
+                <ion-input clearInput="true" color="primary" placeholder="Nickname or email" (keyup)="updateSignIn($event)" [(ngModel)]="cname" type="text"></ion-input>
               </ion-col>
 
               <ion-col size="1"></ion-col>
@@ -103,12 +103,12 @@
               <ion-col size="1"></ion-col>
 
               <ion-col>
-                <ion-input class="pass" clearInput="true" color="warning" placeholder="Password" (keyup)="updateSignIn($event)" [(ngModel)]="cpassword" [type]="showPassword ? 'password' : 'text'"></ion-input>
+                <ion-input class="pass" clearInput="true" color="primary" placeholder="Password" (keyup)="updateSignIn($event)" [(ngModel)]="cpassword" [type]="showPassword ? 'password' : 'text'"></ion-input>
               </ion-col>
 
               <ion-col size="1">
                 <div class="eyes">
-                  <ion-icon style="font-size: 44px;" color="warning" name="eye" slot="end" (click)="showPass()" *ngIf="showPassword"></ion-icon>
+                  <ion-icon style="font-size: 44px;" color="primary" name="eye" slot="end" (click)="showPass()" *ngIf="showPassword"></ion-icon>
                   <ion-icon style="font-size: 44px; color: #A9A9A9;" name="eye-off" slot="end" (click)="showPass()" *ngIf="!showPassword"></ion-icon>
                 </div>
               </ion-col>
@@ -118,20 +118,19 @@
 
             <ion-row class="ion-align-items-center">  <!-- rst & sub button -->
               <ion-col>
-                <ion-button color="warning" (click)="reset()">
-                  <ion-icon name="trash"></ion-icon> Reset</ion-button>
+                <ion-button color="primary" (click)="reset()">
+                  <ion-icon style="margin-bottom: 3px; margin-right: 5px;" name="trash"></ion-icon>Reset</ion-button>
               </ion-col>
 
               <ion-col>
-                <ion-button color="warning" (click)="signIn(this.cname, this.cpassword)">
-                  Submit <ion-icon name="send"></ion-icon>
-                </ion-button>
+                <ion-button color="primary" (click)="signIn(this.cname, this.cpassword)">
+                  Submit <ion-icon style="margin-bottom: 2px; margin-left: 5px;" name="send"></ion-icon></ion-button>
               </ion-col>
             </ion-row>
 
 
             <ion-col>  <!-- frgt button -->
-              <ion-button color="warning" (click)="sendPassword()">Forgot password</ion-button>
+              <ion-button color="primary" (click)="sendPassword()">Forgot password</ion-button>
             </ion-col>
           </ion-col>
 
@@ -157,7 +156,7 @@
               <ion-col size="1"></ion-col>
 
               <ion-col>
-                <ion-input clearInput="true" color="warning" placeholder="Email" (keyup)="updateResetPassword($event)" [(ngModel)]="recupMail" type="email"></ion-input>
+                <ion-input clearInput="true" color="primary" placeholder="Email" (keyup)="updateResetPassword($event)" [(ngModel)]="recupMail" type="email"></ion-input>
               </ion-col>
 
               <ion-col size="1"></ion-col>
@@ -165,11 +164,11 @@
 
             <ion-row class="ion-align-items-center">  <!-- rst & sub button -->
               <ion-col>
-                <ion-button color="warning" (click)="backToLogin()">Back to login</ion-button>
+                <ion-button color="primary" (click)="backToLogin()">Back to login</ion-button>
               </ion-col>
 
               <ion-col>
-                <ion-button color="warning" (click)="resetPassword()">Submit</ion-button>
+                <ion-button color="primary" (click)="resetPassword()">Submit</ion-button>
               </ion-col>
             </ion-row>
           </ion-col>
@@ -182,11 +181,6 @@
   </ion-grid>
 
   <ion-row><ion-col><p>{{output}}</p></ion-col></ion-row>
-
-
-
-
-
 
 </ion-content>
 
